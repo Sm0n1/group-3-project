@@ -1,3 +1,8 @@
+---
+title: Game Art
+layout: page
+---
+
 # Section VIII – Game Art
 
 - Concept Art

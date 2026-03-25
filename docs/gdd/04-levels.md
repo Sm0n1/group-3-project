@@ -1,3 +1,8 @@
+---
+title: Levels
+layout: page
+---
+
 # Section IV – Levels
 
 ## Level #1

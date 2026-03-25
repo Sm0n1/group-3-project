@@ -1,3 +1,8 @@
+---
+title: Technical
+layout: page
+---
+
 # Section VII – Technical
 
 - Target Hardware

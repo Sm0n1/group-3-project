@@ -1,3 +1,8 @@
+---
+title: Game Overview
+layout: page
+---
+
 # Section I – Game Overview
 
 ## 1. Game Concept
@@ -24,3 +29,5 @@
 - Number of NPCs
 - Number of weapons
 - Etc.
+
+[Next Section →](02-mechanics.md)

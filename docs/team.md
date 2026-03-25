@@ -1,6 +1,6 @@
 ---
-title: Home
+title: Team
 layout: page
 ---
 
-# Home
+# Team

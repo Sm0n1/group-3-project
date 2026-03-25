@@ -1,3 +1,8 @@
+---
+title: Gameplay & Mechanics
+layout: page
+---
+
 # Section II – Gameplay & Mechanics
 
 ## 1. Gameplay

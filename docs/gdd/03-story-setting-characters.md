@@ -1,4 +1,9 @@
-# Section III – Story, Setting and Character
+---
+title: Story, Setting, and Characters
+layout: page
+---
+
+# Section III – Story, Setting, and Characters
 
 ## 1. Story and Narrative
 *Details like scripts may be in Story Bible.*

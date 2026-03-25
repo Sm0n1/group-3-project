@@ -1,3 +1,8 @@
+---
+title: Interface
+layout: page
+---
+
 # Section V – Interface
 
 ## 1. Visual System

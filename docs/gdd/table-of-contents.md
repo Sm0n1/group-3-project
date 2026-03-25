@@ -1,3 +1,8 @@
+---
+title: Table of Contents
+layout: page
+---
+
 # Table of Contents
 
 - [Design History](DesignHistory.md)

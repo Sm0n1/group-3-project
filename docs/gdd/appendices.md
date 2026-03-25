@@ -1,3 +1,8 @@
+---
+title: Appendices
+layout: page
+---
+
 # Appendices
 
 ## 1. Asset List
