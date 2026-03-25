@@ -1,6 +1,6 @@
 ---
-title: Interface
 layout: page
+title: Interface
 ---
 
 # Section V – Interface

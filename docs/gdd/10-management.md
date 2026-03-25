@@ -1,6 +1,6 @@
 ---
-title: Management
 layout: page
+title: Management
 ---
 
 # Section X – Management

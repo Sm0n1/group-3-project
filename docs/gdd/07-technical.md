@@ -1,6 +1,6 @@
 ---
-title: Technical
 layout: page
+title: Technical
 ---
 
 # Section VII – Technical

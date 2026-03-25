@@ -1,6 +1,6 @@
 ---
-title: Appendices
 layout: page
+title: Appendices
 ---
 
 # Appendices

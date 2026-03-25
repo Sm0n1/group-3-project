@@ -1,6 +1,6 @@
 ---
-title: Story, Setting, and Characters
 layout: page
+title: Story, Setting, and Characters
 ---
 
 # Section III – Story, Setting, and Characters

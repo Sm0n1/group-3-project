@@ -1,6 +1,6 @@
 ---
-title: Design History
 layout: page
+title: Design History
 ---
 
 # Design History

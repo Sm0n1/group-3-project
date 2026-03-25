@@ -1,6 +1,6 @@
 ---
-title: Levels
 layout: page
+title: Levels
 ---
 
 # Section IV – Levels

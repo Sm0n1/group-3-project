@@ -1,6 +1,6 @@
 ---
-title: Game Art
 layout: page
+title: Game Art
 ---
 
 # Section VIII – Game Art

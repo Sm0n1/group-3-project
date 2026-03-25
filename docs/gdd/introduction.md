@@ -1,6 +1,6 @@
 ---
-title: Introduction
 layout: page
+title: Introduction
 ---
 
 # Game Design Document Outline

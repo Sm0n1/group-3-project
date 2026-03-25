@@ -1,6 +1,6 @@
 ---
-title: Game Overview
 layout: page
+title: Game Overview
 ---
 
 # Section I – Game Overview
