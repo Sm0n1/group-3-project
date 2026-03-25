@@ -1,13 +1,1 @@
 remote_theme: cotes2020/jekyll-theme-chirpy
-plugins:
-  - jekyll-remote-theme
-
-title: Game Project
-description: description description
-theme_mode: dark
-
-url: "https://sm0n1.github.io"
-baseurl: "/docs"
-
-github:
-  username: sm0n1
