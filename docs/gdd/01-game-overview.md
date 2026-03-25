@@ -30,4 +30,4 @@ layout: page
 - Number of weapons
 - Etc.
 
-[Next Section →](02-mechanics.md)
+[Next Section →](02-gameplay-mechanics.md)
