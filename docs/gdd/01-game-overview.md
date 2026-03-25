@@ -1,6 +1,7 @@
 ---
-layout: page
 title: Game Overview
+layout: page
+nav_order: 3
 ---
 
 # Section I – Game Overview

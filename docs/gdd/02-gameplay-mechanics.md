@@ -1,6 +1,7 @@
 ---
-layout: page
 title: Gameplay and Mechanics
+layout: page
+nav_order: 4
 ---
 
 # Section II – Gameplay and Mechanics

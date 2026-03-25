@@ -1,6 +1,7 @@
 ---
-layout: page
 title: Introduction
+layout: page
+nav_order: 1
 ---
 
 # Game Design Document Outline

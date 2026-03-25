@@ -1,6 +1,7 @@
 ---
-layout: page
 title: Levels
+layout: page
+nav_order: 6
 ---
 
 # Section IV – Levels

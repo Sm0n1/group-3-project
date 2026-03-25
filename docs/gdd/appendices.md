@@ -1,6 +1,7 @@
 ---
-layout: page
 title: Appendices
+layout: page
+nav_order: 13
 ---
 
 # Appendices

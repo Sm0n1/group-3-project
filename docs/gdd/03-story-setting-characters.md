@@ -1,6 +1,7 @@
 ---
-layout: page
 title: Story, Setting, and Characters
+layout: page
+nav_order: 5
 ---
 
 # Section III – Story, Setting, and Characters

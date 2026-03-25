@@ -1,6 +1,7 @@
 ---
-layout: page
 title: Design History
+layout: page
+nav_order: 2
 ---
 
 # Design History

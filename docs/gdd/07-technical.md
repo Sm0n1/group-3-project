@@ -1,6 +1,7 @@
 ---
-layout: page
 title: Technical
+layout: page
+nav_order: 9
 ---
 
 # Section VII – Technical

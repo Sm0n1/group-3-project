@@ -1,6 +1,7 @@
 ---
-layout: page
 title: Management
+layout: page
+nav_order: 12
 ---
 
 # Section X – Management

@@ -1,6 +1,7 @@
 ---
-layout: page
 title: Interface
+layout: page
+nav_order: 7
 ---
 
 # Section V – Interface

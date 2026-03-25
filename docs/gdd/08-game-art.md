@@ -1,6 +1,7 @@
 ---
-layout: page
 title: Game Art
+layout: page
+nav_order: 10
 ---
 
 # Section VIII – Game Art
