@@ -28,3 +28,12 @@ This helps make the overall document more manageable and readable.
 One last comment, a game design document is meant to be a living document.
 Just as when the artist changes the design of his painting every time he takes his brush to the canvas, a computer or video game evolves as code and art are created.
 The GDD then is the communication tool from which all the members of the team can follow that evolution.
+
+## Game Name
+*Perhaps also add a subtitle or high concept sentence.*
+
+## Copyright Information
+*Add copyright details here.*
+
+## Version Number, Author, Date
+*Add versioning info and date here.*
