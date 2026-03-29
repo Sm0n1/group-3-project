@@ -32,6 +32,14 @@ All header files should contain a header guard of the following form:
 #endif  // NAME_OF_FILE_HPP
 ```
 
+#### Variable Initialization
+
+Prefer brace-initialization over initializing with `=`.
+
+```cpp
+int x{ 0 };
+```
+
 #### Enums
 
 ```cpp
