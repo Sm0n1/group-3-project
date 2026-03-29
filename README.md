@@ -13,7 +13,7 @@ The coding guidelines presented here are subject to change for the time being.
 
 #### Naming Conventions
 
-All names, except template parameters, use `snake_case`. Template parameter names use `UpperPascalCase`. Variable names are never prefixed with `m_`, `g_`, etc, and never contain type information.
+All names, except template parameters, use `snake_case`. Template parameter names use `PascalCase`. Variable names are never prefixed with `m_`, `g_`, etc, and never contain type information.
 
 #### Namespaces
 
