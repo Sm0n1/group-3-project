@@ -8,6 +8,8 @@ target_sources(clayborne PRIVATE
     src/main.cpp
 )
 
+target_compile_options(clayborne PRIVATE -std=c++23)
+
 if (MSVC)
     target_compile_options(clayborne PRIVATE /W4 /WX)
 else()
