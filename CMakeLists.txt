@@ -8,10 +8,16 @@ target_sources(clayborne PRIVATE
     src/main.cpp
 )
 
-target_compile_options(clayborne PRIVATE -std=c++23)
+set_property(TARGET clayborne PROPERTY CXX_STANDARD 23)
+set_property(TARGET clayborne PROPERTY CXX_STANDARD_REQUIRED ON)
+set_property(TARGET clayborne PROPERTY CXX_EXTENSIONS OFF)
 
 if (MSVC)
-    target_compile_options(clayborne PRIVATE /W4 /WX)
+    target_compile_options(clayborne PRIVATE
+        /W4
+        /WX
+        $<$<CONFIG:Release>:/O2 /DNDEBUG>
+    )
 else()
     target_compile_options(clayborne PRIVATE
         -Wall
@@ -27,12 +33,11 @@ else()
         -Wimplicit-fallthrough
         -Wmissing-declarations
         -Wcast-qual
-        -Wwrite-strings
         -Wold-style-cast
         -Woverloaded-virtual
         -Wnon-virtual-dtor
         -Wzero-as-null-pointer-constant
+        $<$<CONFIG:Debug>:-O0 -g>
+        $<$<CONFIG:Release>:-O3 -DNDEBUG>
     )
 endif()
-
-# Add different builds
