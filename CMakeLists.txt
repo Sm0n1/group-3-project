@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.31)
 
 project(Clayborne VERSION 0.1 LANGUAGES C CXX)
 
+add_executable(clayborne)
+
 target_sources(clayborne PRIVATE
     src/main.cpp
 )
