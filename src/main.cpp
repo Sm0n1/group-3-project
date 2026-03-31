@@ -17,7 +17,7 @@ namespace clayborne
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
 {
-    auto gamestate{ new clayborne::gamestate{ .current_time{ SDL_GetTicksNS() } } };
+    auto gamestate{ new clayborne::gamestate{ .current_time = SDL_GetTicksNS() } };
     *appstate = gamestate;
 
     (void)argc;
@@ -60,7 +60,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
-    auto gamestate{ (clayborne::gamestate *)appstate };
+    auto gamestate{ static_cast<clayborne::gamestate*>(appstate) };
 
     Uint64 frame_time = SDL_GetTicksNS() - gamestate->current_time;
     gamestate->current_time += frame_time;
@@ -75,14 +75,14 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     // render_game(gamestate)
 
-    std::println("frame_time: {0:10.3f}", (double)frame_time / (SDL_NS_PER_SECOND / 60));
+    std::println("frame_time: {0:10.3f}", static_cast<double>(frame_time) / (SDL_NS_PER_SECOND / 60));
 
     return SDL_APP_CONTINUE;
 }
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
-    auto gamestate{ (clayborne::gamestate *)appstate };
+    auto gamestate{ static_cast<clayborne::gamestate*>(appstate) };
 
     (void)result;
 
