@@ -62,6 +62,7 @@ jobs:
           emcmake cmake -B build -DCMAKE_BUILD_TYPE=Release -DCLAYBORNE_VENDORED=ON
           cmake --build build --target clayborne
           mkdir -p website/game
+          cp build/clayborne.js   website/game/
           cp build/clayborne.html website/game/
           cp build/clayborne.wasm website/game/
 
