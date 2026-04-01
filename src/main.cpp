@@ -16,6 +16,7 @@ struct gamestate {
     entt::registry registry;
     clayborne::player player;
     clayborne::camera camera;
+    bool is_fullscreen{ false };
 };
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
@@ -32,7 +33,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     }
 
     // Initialize window
-    gs.window = SDL_CreateWindow("Clayborne", 640, 360, 0);
+    gs.window = SDL_CreateWindow("Clayborne", 640, 360, SDL_WINDOW_RESIZABLE);
     if (!gs.window) {
         SDL_Log("SDL create window failed: %s", SDL_GetError());
         return SDL_APP_FAILURE;
@@ -44,6 +45,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
         SDL_Log("SDL create renderer failed: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
+
+    // Enable automatic scaling
+    SDL_SetRenderLogicalPresentation(gs.renderer, 320, 180, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
 
     // Initialize canvas
     gs.canvas = SDL_CreateTexture(gs.renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, 320, 180);
@@ -77,6 +81,10 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
         case SDL_SCANCODE_A: gs.player.is_a_down = true; break;
         case SDL_SCANCODE_S: gs.player.is_s_down = true; break;
         case SDL_SCANCODE_D: gs.player.is_d_down = true; break;
+        case SDL_SCANCODE_F11:
+            gs.is_fullscreen = !gs.is_fullscreen;
+            SDL_SetWindowFullscreen(gs.window, gs.is_fullscreen);
+            break;
         }
         break;
     case SDL_EVENT_KEY_UP:
