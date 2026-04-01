@@ -59,7 +59,7 @@ endif()
 if(EMSCRIPTEN)
     set_target_properties(clayborne PROPERTIES
         SUFFIX ".html"
-        LINK_FLAGS "-s USE_SDL=3 -s ALLOW_MEMORY_GROWTH=1 -s NO_EXIT_RUNTIME=1 -s MODULARIZE=1 -s EXPORT_NAME='createModule' -s BANNER="""
+        LINK_FLAGS "-s USE_SDL=3 -s ALLOW_MEMORY_GROWTH=1 -s NO_EXIT_RUNTIME=1 -s MODULARIZE=1 -s EXPORT_NAME='createModule'"
     )
 
     target_link_options(clayborne PRIVATE "-s FORCE_FILESYSTEM=1")
