@@ -28,12 +28,49 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Setup Emscripten
+      - name: Cache Emscripten SDK
+        uses: actions/cache@v4
+        with:
+          path: emsdk
+          key: emsdk-${{ runner.os }}-latest
+      - name: Setup Emscripten
+        run: |
+          if [ ! -d "emsdk" ]; then
+            git clone https://github.com/emscripten-core/emsdk.git
+          fi
+          cd emsdk
+          ./emsdk install latest
+          ./emsdk activate latest
+      - name: Activate Emscripten
+        run: echo "$PWD/emsdk/upstream/emscripten" >> $GITHUB_PATH
+      
+      # Build game
+      - name: Cache build folder
+        uses: actions/cache@v4
+        with:
+          path: build_wasm
+          key: build_wasm-${{ runner.os }}-${{ hashFiles('CMakeLists.txt','src/**') }}
+      - name: Build game
+        run: |
+          source emsdk/emsdk_env.sh
+          mkdir -p build_wasm
+          cd build_wasm
+          emcmake cmake ../ -B . -DCMAKE_BUILD_TYPE=Release -DCLAYBORNE_VENDORED=ON
+          cmake --build . --target clayborne
+          mkdir -p ../website/game
+          cp clayborne.html ../website/game/index.html
+          cp *.js ../website/game/ || echo "no JS generated"
+          cp *.wasm ../website/game/ || echo "no WASM generated"
+          cd ..
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./
+          source: ./website/
           destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

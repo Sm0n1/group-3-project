@@ -23,17 +23,21 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
     (void)argc;
     (void)argv;
 
-    SDL_Init(SDL_INIT_VIDEO);
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS))
+    {
+        SDL_Log("SDL init failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
 
     gamestate->window = SDL_CreateWindow("Clayborne", 512, 512, 0);
-    if (gamestate->window == nullptr)
+    if (!gamestate->window)
     {
         SDL_Log("SDL create window failed: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
     gamestate->renderer = SDL_CreateRenderer(gamestate->window, nullptr);
-    if (gamestate->renderer == nullptr)
+    if (!gamestate->renderer)
     {
         SDL_Log("SDL create renderer failed: %s", SDL_GetError());
         return SDL_APP_FAILURE;
@@ -88,12 +92,12 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
 
     // deinit_game(gamestate)
 
-    if (gamestate->renderer != nullptr)
+    if (gamestate->renderer)
     {
         SDL_DestroyRenderer(gamestate->renderer);
     }
 
-    if (gamestate->window != nullptr)
+    if (gamestate->window)
     {
         SDL_DestroyWindow(gamestate->window);
     }
