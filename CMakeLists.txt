@@ -20,6 +20,8 @@ endif()
 
 target_compile_features(clayborne PUBLIC cxx_std_23)
 
+target_include_directories(clayborne PRIVATE vendored/entt/single_include)
+
 target_link_libraries(clayborne PRIVATE SDL3::SDL3)
 
 target_sources(clayborne PRIVATE
