@@ -23,12 +23,12 @@ Do not circumvent namespaces with `using namespace`. Always wrap file contents i
 All header files should contain a header guard of the following form:
 
 ```cpp
-#ifndef NAME_OF_FILE_HPP
-#define NAME_OF_FILE_HPP
+#ifndef CLAYBORNE_FILE_NAME_HPP
+#define CLAYBORNE_FILE_NAME_HPP
 
 ...
 
-#endif  // NAME_OF_FILE_HPP
+#endif  // CLAYBORNE_FILE_NAME_HPP
 ```
 
 #### Variable Initialization
@@ -42,8 +42,7 @@ int x{ 0 };
 #### Enums
 
 ```cpp
-enum class color
-{
+enum class color {
     red,
     green,
     blue,
@@ -56,13 +55,11 @@ Note the use of an enum class and the trailing comma.
 #### Branches and Loops
 
 ```cpp
-if (should_return)
-{
+if (should_return) {
     return;
 }
 
-for (int i = 0; i < n; i += 1)
-{
+for (int i = 0; i < n; i += 1) {
     sum += arr[i];
 }
 ```
@@ -72,8 +69,7 @@ Always use curly braces for bodies, even if they only contain a single statement
 #### Functions
 
 ```cpp
-constexpr void foo_bar(int arg1, int arg2)
-{
+constexpr void foo_bar(int arg1, int arg2) {
     return 0;
 }
 ```

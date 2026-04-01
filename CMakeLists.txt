@@ -26,6 +26,9 @@ target_link_libraries(clayborne PRIVATE SDL3::SDL3)
 
 target_sources(clayborne PRIVATE
     src/main.cpp
+    src/camera.cpp
+    src/player.cpp
+    src/physics.cpp
 )
 
 if(MSVC)
