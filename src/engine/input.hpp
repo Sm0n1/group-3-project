@@ -1,76 +1,103 @@
 #ifndef CLAYBORNE_INPUT_HPP
 #define CLAYBORNE_INPUT_HPP
 
-
-#include <cstdint>
-#include <unordered_map>
 #include <SDL3/SDL.h>
+#include <array>
+#include <cstdint>
+#include <optional>
+#include <vector>
 
 namespace clayborne::input {
-    enum class menu_input : std::uint8_t  {
+    template <class Enum>
+    constexpr std::size_t to_index(Enum e) noexcept {
+        return static_cast<std::size_t>(e);
+    }
+
+    template<typename Context>
+    concept context = requires(Context &ctx, const SDL_Event &event) {
+        { Context::handle_event(ctx, event) } -> std::same_as<bool>;
+    };
+    
+    enum class state_tag {
         up,
         down,
-        left,
-        right,
-        confirm,
-        cancel,
     };
 
-    enum class gameplay_input : std::uint8_t {
-        up,
-        down,
-        left,
-        right,
-        jump,
-        head,
-        // pause,
+    enum class event_tag : std::uint8_t {
+        pressed,
+        released,
     };
 
-    enum class joystick : std::uint8_t  {
-        neutral    = 0b0000,
-        up         = 0b0001,
-        down       = 0b0010,
-        left       = 0b0100,
-        right      = 0b1000,
-        up_left    = 0b0101,
-        up_right   = 0b1001,
-        down_left  = 0b0110,
-        down_right = 0b1010,
+    struct menu_context {
+        enum class command_tag : std::uint8_t {
+            confirm,
+            cancel,
+            move_up, 
+            move_down,
+            move_left,
+            move_right,
+            //
+            count,
+        };
+
+        struct event {
+            event_tag event;
+            command_tag command;
+        };
+
+        std::array<state_tag, to_index(command_tag::count)> states;
+        std::vector<event> events;
+        std::array<std::optional<command_tag>, SDL_SCANCODE_COUNT> keybinds;
+
+        static menu_context init();
+        static bool handle_event(menu_context &ctx, const SDL_Event &event);
     };
 
-    enum class button : std::uint8_t  {
-        up       = 0b00,
-        down     = 0b01,
-        pressed  = 0b11,
-        released = 0b10,
+    struct gameplay_context {
+        enum class command_tag : std::uint8_t {
+            jump,
+            use_head,
+            move_up,
+            move_down,
+            move_left,
+            move_right,
+            //
+            count,
+        };
+
+        struct event {
+            event_tag event;
+            command_tag command;
+        };
+
+        std::array<state_tag, to_index(command_tag::count)> states;
+        std::vector<event> events;
+        std::array<std::optional<command_tag>, SDL_SCANCODE_COUNT> keybinds;
+
+        static gameplay_context init();
+        static bool handle_event(gameplay_context &ctx, const SDL_Event &event);
+        static bool is_move_up(const gameplay_context &ctx);
+        static bool is_move_down(const gameplay_context &ctx);
+        static bool is_move_left(const gameplay_context &ctx);
+        static bool is_move_right(const gameplay_context &ctx);
     };
 
-    struct input_manager {
-        std::unordered_map<SDL_Scancode, gameplay_input> keyboard_inputs;
+    struct manager {
+        enum class context_tag {
+            menu,
+            gameplay,
+        };
 
-        bool is_joystick_up{ false };
-        bool is_joystick_down{ false };
-        bool is_joystick_left{ false };
-        bool is_joystick_right{ false };
-        bool is_button_a_down{ false };
-        bool is_button_a_pressed{ false };
-        bool is_button_a_released{ false };
-        bool is_button_b_down{ false };
-        bool is_button_b_pressed{ false };
-        bool is_button_b_released{ false };
+        menu_context menu{ menu_context::init() };
+        gameplay_context gameplay{ gameplay_context::init() };
+        context_tag active_context{ context_tag::gameplay };
 
-        // Walking, aiming, and navigating menus.
-        joystick joystick{ joystick::neutral };
-        // Jumping, skipping dialogue, and selecting menu options.
-        button button_a{ button::up };
-        // Throwing/detonating the head, and going back in the menu.
-        button button_b{ button::up };
+        static manager init();
+
+        // Returns true in case event was handled, otherwise false.
+        static bool handle_event(manager &manager, const SDL_Event &event);
+        static void clear_events(manager &manager);
     };
-
-    input_manager init();
-    void deinit(input_manager &input_manager);
-    void update(input_manager &input_manager);
-    void handle_keyboard_event(input_manager &input_manager, SDL_KeyboardEvent &event);
 }
 
 // There are three different possible states the game can be in:

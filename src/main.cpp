@@ -22,7 +22,7 @@ struct gamestate {
     clayborne::camera camera;
     bool is_fullscreen{ false };
 
-    clayborne::input::input_manager input_manager;
+    clayborne::input::manager input_manager;
 };
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
@@ -72,7 +72,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     gs.current_time = SDL_GetTicksNS();
 
     // Initialize input manager
-    gs.input_manager = clayborne::input::init();
+    gs.input_manager = clayborne::input::manager::init();
 
     return SDL_APP_CONTINUE;
 }
@@ -91,16 +91,14 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
             SDL_SetWindowFullscreen(gs.window, gs.is_fullscreen);
             break;
         default:
-            clayborne::input::handle_keyboard_event(gs.input_manager, event->key);
             break;
         }
         break;
-    case SDL_EVENT_KEY_UP:
-        clayborne::input::handle_keyboard_event(gs.input_manager, event->key);
-        break;
     // case SDL_EVENT_GAMEPAD_ADDED:
     // case SDL_EVENT_GAMEPAD_REMOVED:
-    default: break;
+    default:
+        clayborne::input::manager::handle_event(gs.input_manager, event);
+        break;
     }
 
     return SDL_APP_CONTINUE;
@@ -113,10 +111,8 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
     gs.current_time += frame_time;
     gs.accumulated_time += frame_time;
 
-    clayborne::input::update(gs.input_manager);
-
     while (gs.accumulated_time >= SDL_NS_PER_SECOND / 60) {
-        clayborne::update_player(gs.player, gs.registry);
+        clayborne::update_player(gs.player, gs.registry, gs.input_manager.gameplay);
         clayborne::update_physics(gs.registry);
         gs.accumulated_time -= SDL_NS_PER_SECOND / 60;
     }

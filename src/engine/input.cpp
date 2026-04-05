@@ -1,118 +1,113 @@
 #include <SDL3/SDL.h>
 #include "input.hpp"
-#include "SDL3/SDL_events.h"
 
 namespace clayborne::input {
-    input_manager init() {
-        input_manager input_manager;
+    menu_context menu_context::init() {
+        menu_context menu_context;
 
-        // TODO: Load from json instead
-        input_manager.keyboard_inputs.emplace(SDL_SCANCODE_W, gameplay_input::up);
-        input_manager.keyboard_inputs.emplace(SDL_SCANCODE_A, gameplay_input::left);
-        input_manager.keyboard_inputs.emplace(SDL_SCANCODE_S, gameplay_input::down);
-        input_manager.keyboard_inputs.emplace(SDL_SCANCODE_D, gameplay_input::right);
-        input_manager.keyboard_inputs.emplace(SDL_SCANCODE_J, gameplay_input::jump);
-        input_manager.keyboard_inputs.emplace(SDL_SCANCODE_K, gameplay_input::head);
+        menu_context.states.fill(state_tag::up);
+        menu_context.keybinds[SDL_SCANCODE_W] = menu_context::command_tag::move_up;
+        menu_context.keybinds[SDL_SCANCODE_A] = menu_context::command_tag::move_left;
+        menu_context.keybinds[SDL_SCANCODE_S] = menu_context::command_tag::move_down;
+        menu_context.keybinds[SDL_SCANCODE_D] = menu_context::command_tag::move_right;
+        menu_context.keybinds[SDL_SCANCODE_RETURN] = menu_context::command_tag::confirm;
+        menu_context.keybinds[SDL_SCANCODE_ESCAPE] = menu_context::command_tag::cancel;
 
-        return input_manager;
+        return menu_context;
     }
 
-    void deinit(input_manager &input_manager) {
-        (void)input_manager;
+    bool menu_context::handle_event(menu_context &ctx, const SDL_Event &event) {
+        (void)ctx;
+        (void)event;
+        return false;
     }
 
-    void update(input_manager &input_manager) {
-        auto joystick_mask = static_cast<std::uint8_t>(
-            (input_manager.is_joystick_up    << 0) |
-            (input_manager.is_joystick_down  << 1) |
-            (input_manager.is_joystick_left  << 2) |
-            (input_manager.is_joystick_right << 3)
-        );
-        
-        // up + down == none
-        if (input_manager.is_joystick_up && input_manager.is_joystick_down) {
-            joystick_mask &= 0b1100;
-        }
+    gameplay_context gameplay_context::init() {
+        gameplay_context gameplay_context;
 
-        // left + right == none
-        if (input_manager.is_joystick_left && input_manager.is_joystick_right) {
-            joystick_mask &= 0b0011;
-        }
+        gameplay_context.states.fill(state_tag::up);
+        gameplay_context.keybinds[SDL_SCANCODE_W] = gameplay_context::command_tag::move_up;
+        gameplay_context.keybinds[SDL_SCANCODE_A] = gameplay_context::command_tag::move_left;
+        gameplay_context.keybinds[SDL_SCANCODE_S] = gameplay_context::command_tag::move_down;
+        gameplay_context.keybinds[SDL_SCANCODE_D] = gameplay_context::command_tag::move_right;
+        gameplay_context.keybinds[SDL_SCANCODE_J] = gameplay_context::command_tag::jump;
+        gameplay_context.keybinds[SDL_SCANCODE_K] = gameplay_context::command_tag::use_head;
 
-        // Update joystick
-        input_manager.joystick = static_cast<joystick>(joystick_mask);
-
-        // Update button_a
-        if (input_manager.is_button_a_pressed) {
-            input_manager.button_a = button::pressed;
-        } else if (input_manager.is_button_a_released) {
-            input_manager.button_a = button::released;
-        } else if (input_manager.is_button_a_down) {
-            input_manager.button_a = button::down;
-        } else {
-            input_manager.button_a = button::up;
-        }
-
-        // Update button_b
-        if (input_manager.is_button_b_pressed) {
-            input_manager.button_b = button::pressed;
-        } else if (input_manager.is_button_b_released) {
-            input_manager.button_b = button::released;
-        } else if (input_manager.is_button_b_down) {
-            input_manager.button_b = button::down;
-        } else {
-            input_manager.button_b = button::up;
-        }
-
-        // Reset flags lasting a single frame
-        input_manager.is_button_a_pressed = false;
-        input_manager.is_button_a_released = false;
-        input_manager.is_button_b_pressed = false;
-        input_manager.is_button_b_released = false;
+        return gameplay_context;
     }
 
-    void handle_keyboard_event(input_manager &input_manager, SDL_KeyboardEvent &event) {
-        if (event.repeat) {
-            return;
-        }
+    manager manager::init() {
+        return manager{};
+    }
 
-        auto it{ input_manager.keyboard_inputs.find(event.scancode) };
-
-        if (it == input_manager.keyboard_inputs.end()) {
-            return;
-        }
-
-        switch (it->second) {
-        case gameplay_input::up:
-            input_manager.is_joystick_up = event.down;
-            break;
-        case gameplay_input::down:
-            input_manager.is_joystick_down = event.down;
-            break;
-        case gameplay_input::left:
-            input_manager.is_joystick_left = event.down;
-            break;
-        case gameplay_input::right:
-            input_manager.is_joystick_right = event.down;
-            break;
-        case gameplay_input::jump:
-            if (event.down) {
-                input_manager.is_button_a_pressed = true;
-                input_manager.is_button_a_down = true;
-            } else {
-                input_manager.is_button_a_released = true;
-                input_manager.is_button_a_down = false;
+    bool gameplay_context::handle_event(gameplay_context &ctx, const SDL_Event &event) {
+        switch (event.type) {
+        case SDL_EVENT_KEY_UP: {
+            if (event.key.repeat) {
+                return false;
             }
-            break;
-        case gameplay_input::head:
-            if (event.down) {
-                input_manager.is_button_b_pressed = true;
-                input_manager.is_button_b_down = true;
-            } else {
-                input_manager.is_button_b_released = true;
-                input_manager.is_button_b_down = false;
+
+            auto keybind{ ctx.keybinds[event.key.scancode] };
+            if (!keybind) {
+                return false;
             }
-            break;
+
+            auto command{ *keybind }; // deref for no safety check
+            ctx.states[to_index(command)] = state_tag::up;
+            ctx.events.push_back({ event_tag::released, command });
+
+            return true;
         }
+        case SDL_EVENT_KEY_DOWN: {
+            if (event.key.repeat) {
+                return false;
+            }
+            
+            auto keybind{ ctx.keybinds[event.key.scancode] };
+            if (!keybind) {
+                return false;
+            }
+
+            auto command{ *keybind }; // deref for no safety check
+            ctx.states[to_index(command)] = state_tag::down;
+            ctx.events.push_back({ event_tag::pressed, command });
+
+            return true;
+        }
+        default:
+            return false;
+        }
+    }
+
+    bool gameplay_context::is_move_up(const gameplay_context &ctx) {
+        return ctx.states[to_index(gameplay_context::command_tag::move_up)] == state_tag::down;
+    }
+
+    bool gameplay_context::is_move_down(const gameplay_context &ctx) {
+        return ctx.states[to_index(gameplay_context::command_tag::move_down)] == state_tag::down;
+    }
+
+    bool gameplay_context::is_move_left(const gameplay_context &ctx) {
+        return ctx.states[to_index(gameplay_context::command_tag::move_left)] == state_tag::down;
+    }
+
+    bool gameplay_context::is_move_right(const gameplay_context &ctx) {
+        return ctx.states[to_index(gameplay_context::command_tag::move_right)] == state_tag::down;
+    }
+
+    bool manager::handle_event(manager &manager, const SDL_Event &event) {
+        switch (manager.active_context) {
+        case context_tag::menu:
+            return menu_context::handle_event(manager.menu, event);
+        case context_tag::gameplay:
+            return gameplay_context::handle_event(manager.gameplay, event);
+        }
+
+        return false;
+    }
+
+    void manager::clear_events(manager &manager) {
+        manager.menu.events.clear();
+        manager.gameplay.events.clear();
     }
 }
