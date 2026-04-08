@@ -14,6 +14,7 @@ option(CLAYBORNE_VENDORED "Use vendored libraries" OFF)
 if(CLAYBORNE_VENDORED)
     set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
     add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
+    add_subdirectory(vendored/SDL_image EXCLUDE_FROM_ALL)
 else()
     find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 endif()
@@ -25,7 +26,7 @@ target_include_directories(clayborne SYSTEM PRIVATE
     vendored/SDL/include
 )
 
-target_link_libraries(clayborne PRIVATE SDL3::SDL3)
+target_link_libraries(clayborne PRIVATE SDL3::SDL3 SDL3_image::SDL3_image)
 
 target_sources(clayborne PRIVATE
     src/main.cpp

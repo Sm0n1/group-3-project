@@ -10,6 +10,7 @@
 // #include <utility>
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 #include <entt/entt.hpp>
 // #include <print>
 #include "engine/input/manager.hpp"
@@ -82,10 +83,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
 
     // Quick and dirty ldtk super simple level format reader
     // move this to its own file
-
-    // need sdl_image to get the level sprite from png
-    // auto level{ gs.registry.create() };
-    // gs.registry.emplace<clayborne::renderer>(level, nullptr, SDL_FRect{}, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = 640.0f, .h = 360.0f });
+    SDL_Texture * level_sprite = IMG_LoadTexture(gs.renderer, "../data/levels/sprite.png");
+    auto level{ gs.registry.create() };
+    gs.registry.emplace<clayborne::position>(level, 0.0f, 0.0f);
+    gs.registry.emplace<clayborne::renderer>(level, level_sprite, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = 320.0f, .h = 180.0f }, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = 320.0f, .h = 180.0f });
 
     std::ifstream file("../data/levels/tiles.csv");
 
@@ -93,22 +94,20 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
 
     float x{0};
     float y{0};
-    int total{0};
 
-    float tile_size{ 4.0f };
+    float tile_size{ 8.0f };
 
     while (getline (file, line, ',')) {
         if (line == "1") {
             auto tile{ gs.registry.create() };
             gs.registry.emplace<clayborne::position>(tile, x * tile_size, y * tile_size);
             gs.registry.emplace<clayborne::collider>(tile, tile_size, tile_size);
-            gs.registry.emplace<clayborne::renderer>(tile, nullptr, SDL_FRect{}, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = tile_size, .h = tile_size });
+            //gs.registry.emplace<clayborne::renderer>(tile, nullptr, SDL_FRect{}, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = tile_size, .h = tile_size });
         }
 
         if (line == "0" ||  line == "1") {
-            total++;
             x = x + 1;
-            if (x>=79) {
+            if (x>=39) {
                 x = 0;
                 y = y + 1;
             }
