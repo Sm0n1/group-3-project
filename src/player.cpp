@@ -5,9 +5,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <entt/entt.hpp>
+#include <optional>
 #include "player.hpp"
 #include "physics.hpp"
 #include "camera.hpp"
+#include "clay.hpp"
 
 [[nodiscard]] static inline constexpr float approach(const float from, const float to, const float amount) noexcept {
     const float delta{ to - from };
@@ -21,7 +23,8 @@ namespace clayborne {
         auto &player{ registry.get<clayborne::player>(collision.self) };
         auto &position{ registry.get<clayborne::position>(collision.self) };
         auto &velocity{ registry.get<clayborne::velocity>(collision.self) };
-        const auto &collider{ registry.get<clayborne::collider>(collision.self) };
+        auto &collider{ registry.get<clayborne::collider>(collision.self) };
+        auto &renderer{ registry.get<clayborne::renderer>(collision.self) };
 
         // --------------------- //
         // Horizontal Collisions //
@@ -42,7 +45,18 @@ namespace clayborne {
         // Vertical Collisions //
         // ------------------- //
 
-        // TODO: head landing on body should reattach it
+        // Reattach head if it falls on player
+        if (player.head == collision.other && collision.normal_y > 0.0f) {
+            player.is_head_attached = true;
+
+            registry.destroy(player.head);
+            player.head = entt::null;
+
+            // Update player shape
+            position.y -= player::hitbox_height - player::headless_hitbox_height;
+            collider.h = player::hitbox_height;
+            renderer.dstrect.h = player::hitbox_height;
+        }
 
         if (velocity.y < 0.0f) {
             if (velocity.x <= 0.0f) {
@@ -80,10 +94,17 @@ namespace clayborne {
 
         registry.emplace<player>(player_entity);
         registry.emplace<position>(player_entity, x, y);
-        registry.emplace<velocity>(player_entity, 0.0f, 0.0f);
-        registry.emplace<collider>(player_entity, 8.0f, 11.0f, player_collision_handler);
-        registry.emplace<renderer>(player_entity, nullptr, SDL_FRect{}, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = 8.0f, .h = 11.0f });
+        registry.emplace<velocity>(player_entity);
 
+        auto &collider{ registry.emplace<clayborne::collider>(player_entity) };
+        collider.w = player::hitbox_width;
+        collider.h = player::hitbox_height;
+        collider.collide = player_collision_handler;
+
+        auto &renderer{ registry.emplace<clayborne::renderer>(player_entity) };
+        renderer.dstrect.w = player::hitbox_width;
+        renderer.dstrect.h = player::hitbox_height;
+        
         return player_entity;
     }
 
@@ -99,24 +120,27 @@ namespace clayborne {
         auto &velocity{ registry.get<clayborne::velocity>(player_entity) };
         auto &position{ registry.get<clayborne::position>(player_entity) };
         auto &collider{ registry.get<clayborne::collider>(player_entity) };
+        auto &renderer{ registry.get<clayborne::renderer>(player_entity) };
 
         // Check if grounded
         player.is_grounded = false;
         if (velocity.y >= 0) {
             auto below{ position };
             below.y += 1.0f;
-
-            auto view{ registry.view<const clayborne::position, const clayborne::collider>() };
-            for (auto [e, p, c] : view.each()) {
-                if (player_entity == e) {
-                    continue;
-                }
-                
-                if (clayborne::overlap(below, collider, p, c)) {
-                    player.is_grounded = true;
-                    break;
-                }
+            if (overlap_any(registry, player_entity, below, collider)) {
+                player.is_grounded = true;
             }
+            // auto view{ registry.view<const clayborne::position, const clayborne::collider>() };
+            // for (auto [e, p, c] : view.each()) {
+            //     if (player_entity == e) {
+            //         continue;
+            //     }
+                
+            //     if (clayborne::overlap(below, collider, p, c)) {
+            //         player.is_grounded = true;
+            //         break;
+            //     }
+            // }
         }
 
         // Update jump buffer timer
@@ -157,16 +181,15 @@ namespace clayborne {
                 auto p{ position };
                 p.x += static_cast<float>(player.wall_speed_retention > 0.0f) + static_cast<float>(player.wall_speed_retention < 0.0f);
                 
-                bool is_wall{ false };
-
-                auto view{ registry.view<const clayborne::position, const clayborne::collider>() };
-                for (auto [e2, p2, c2] : view.each()) {
-                    (void)e2;
-                    if (overlap(position, collider, p2, c2)) {
-                        is_wall = true;
-                        break;
-                    }
-                }
+                bool is_wall{ overlap_any(registry, player_entity, p, collider) };
+                // auto view{ registry.view<const clayborne::position, const clayborne::collider>() };
+                // for (auto [e2, p2, c2] : view.each()) {
+                //     (void)e2;
+                //     if (overlap(position, collider, p2, c2)) {
+                //         is_wall = true;
+                //         break;
+                //     }
+                // }
 
                 if (!is_wall) {
                     velocity.x = player.wall_speed_retention;
@@ -230,6 +253,84 @@ namespace clayborne {
         // Reset jump buffer timer on ground
         if (player.is_grounded) {
             player.jump_buffer_timer = 0.0f;
+        }
+
+        // ---- //
+        // Head //
+        // ---- //
+
+        if (player.head_just_pressed) {
+            // Throw head
+            if (player.is_head_attached) {
+                printf("throw\n");
+                // Update player shape
+                position.y += player::hitbox_height - player::headless_hitbox_height;
+                collider.h = player::headless_hitbox_height;
+                renderer.dstrect.h = player::headless_hitbox_height;
+
+                const float x{ static_cast<float>(player.right - player.left) };
+                const float y{ static_cast<float>(player.down - player.up) };
+                const float len2{ x * x + y * y };
+
+                player.is_head_attached = false;
+                player.head = registry.create();
+                registry.emplace<clayborne::head>(player.head);
+
+                auto &head_position{ registry.emplace<clayborne::position>(player.head) };
+                head_position = position;
+                head_position.x += x * player::hitbox_width;
+                head_position.y += y * player::headless_hitbox_height;
+                
+                auto &head_velocity{ registry.emplace<clayborne::velocity>(player.head) };
+                if (len2 == 0.0f) {
+                    const int direction{ (player.facing == player::facing::right) - (player.facing == player::facing::left) };
+                    head_velocity.x = static_cast<float>(direction) * head::throw_speed;
+                    head_velocity.y = 0.0f;
+                }
+                else {
+                    const float invlen{ (len2 == 2.0f) ? 0.70710678f : 1 };
+                    head_velocity.x = x * invlen * head::throw_speed;
+                    head_velocity.y = y * invlen * head::throw_speed;
+                }
+
+                auto &head_collider{ registry.emplace<clayborne::collider>(player.head) };
+                head_collider.w = head::hitbox_width;
+                head_collider.h = head::hitbox_height;
+
+                auto &head_renderer{ registry.emplace<clayborne::renderer>(player.head) };
+                head_renderer.dstrect.w = head::hitbox_width;
+                head_renderer.dstrect.h = head::hitbox_height;
+            }
+            // Detonate head
+            else if (player.head != entt::null) {
+                printf("detonate\n");
+                registry.destroy(player.head);
+                player.head = entt::null;
+            }
+        }
+
+        // Update head
+        // TODO: maybe move to separate system
+        if (player.head != entt::null) {
+            auto &head{ registry.get<clayborne::head>(player.head) };
+            auto &head_position{ registry.get<clayborne::position>(player.head) };
+            auto &head_velocity{ registry.get<clayborne::velocity>(player.head) };
+            auto &head_collider{ registry.get<clayborne::collider>(player.head) };
+
+            // Apply gravity
+            if (!head.is_grounded) {
+                head_velocity.y = approach(head_velocity.y, head::fall_speed, head::gravity * delta_time);
+            }
+
+            // Check if grounded
+            head.is_grounded = false;
+            if (head_velocity.y >= 0) {
+                auto below{ head_position };
+                below.y += 1.0f;
+                if (overlap_any<clayborne::clay>(registry, player.head , below, head_collider)) {
+                    head.is_grounded = true;
+                }
+            }
         }
 
         // ------------------------ //

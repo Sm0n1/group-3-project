@@ -99,23 +99,4 @@ namespace clayborne {
         // const auto percent_of_frame{ (static_cast<double>(total_ns) / (SDL_NS_PER_SECOND / 60.0)) * 100.0 };
         // printf("physics_time: %.2f%% of 60 FPS frame\n", percent_of_frame);
     }
-
-    [[nodiscard]] bool overlap_any(
-        const entt::registry &registry,
-        const entt::entity self,
-        const position &self_position,
-        const collider &self_collider
-    ) noexcept {
-        auto view{ registry.view<const clayborne::position, const clayborne::collider>() };
-        for (auto [other, other_position, other_collider]: view.each()) {
-            if (self == other) {
-                continue;
-            }
-
-            if (overlap(self_position, self_collider, other_position, other_collider)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

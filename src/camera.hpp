@@ -12,9 +12,9 @@ namespace clayborne {
     };
 
     struct renderer {
-        SDL_Texture *texture;
-        SDL_FRect srcrect;
-        SDL_FRect dstrect;
+        SDL_Texture *texture{ nullptr };
+        SDL_FRect srcrect{};
+        SDL_FRect dstrect{};
     };
 
     clayborne::camera init_camera(entt::registry &registry);

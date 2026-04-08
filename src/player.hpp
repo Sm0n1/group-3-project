@@ -7,6 +7,24 @@
 #include <entt/entt.hpp>
 #include "engine/input/action.hpp"
 #include "engine/input/manager.hpp"
+#include "physics.hpp"
+
+// HEAD MECHANIC
+//
+// Edge case 1: 
+//     If the player is partially under ceiling, then reattachment should not be possible.
+//     If possible, the player and/or the head should be moved to the side.
+//     If no movement is possible, then the head should be destroyed.
+// 
+// Edge case 2:
+//     If the player throws the head against an surface they are close to,
+//     then the player should be pushed away to accomodate the head collider.
+//     If this is not possible, then the head should not be thrown.
+//
+// Edge case 3:
+//     ...
+//
+//
 
 namespace clayborne {
     struct player {
@@ -46,6 +64,10 @@ namespace clayborne {
         static constexpr float ceiling_jump_boost_grace{ 0.5f };
         static constexpr int ceiling_corner_correction{ 4 };
 
+        static constexpr float hitbox_width{ 8.0f };
+        static constexpr float hitbox_height{ 11.0f };
+        static constexpr float headless_hitbox_height{ 8.0f };
+
         bool is_grounded{ true };
         facing facing{ facing::right };
 
@@ -62,8 +84,21 @@ namespace clayborne {
         // Moving into a wall retains the momentum for a short duration.
         float wall_speed_retention_timer{ 0.0f };
         float wall_speed_retention{ 0.0f };
+
+        bool is_head_attached{ true };
+        entt::entity head{ entt::null };
     };
 
+    struct head {
+        static constexpr float hitbox_width{ 8.0f };
+        static constexpr float hitbox_height{ 8.0f };
+        static constexpr float throw_speed{ 300.0f };
+        static constexpr float gravity{ player::gravity };
+        static constexpr float fall_speed{ player::fall_speed };
+
+        bool is_grounded{ true };
+    };
+    
     entt::entity init_player(entt::registry &registry, float x, float y) noexcept;
     void update_player(entt::entity player_entity, entt::registry &registry, const input::manager &inputs, Uint64 dt_ns) noexcept;
 }

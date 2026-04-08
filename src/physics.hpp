@@ -120,12 +120,26 @@ namespace clayborne {
             (position_2.y + collider_2.h > position_1.y );
     }
 
+    template<typename... Includes, typename...Excludes>
     [[nodiscard]] bool overlap_any(
         const entt::registry &registry,
         const entt::entity self,
         const position &self_position,
-        const collider &self_collider
-    ) noexcept;
+        const collider &self_collider,
+        entt::exclude_t<Excludes...> excludes = entt::exclude_t{}
+    ) noexcept {
+        auto view{ registry.view<const clayborne::position, const clayborne::collider, Includes...>(excludes) };
+        for (auto [other, other_position, other_collider]: view.each()) {
+            if (self == other) {
+                continue;
+            }
+
+            if (overlap(self_position, self_collider, other_position, other_collider)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 #endif // CLAYBORNE_PHYSICS_HPP
