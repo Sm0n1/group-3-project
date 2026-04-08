@@ -1,5 +1,6 @@
 #include <optional>
 #include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 #include <entt/entt.hpp>
 #include "camera.hpp"
 #include "physics.hpp"
@@ -29,7 +30,7 @@ namespace clayborne {
         SDL_RenderClear(renderer);
 
         // Load image TODO: Move into seperate entity, don't reload every frame lol
-        auto image = SDL_LoadBMP("Character A.bmp");
+        auto image = IMG_Load("Character A.png");
         auto texture = SDL_CreateTextureFromSurface(renderer, image);
 
         // Draw camera view
