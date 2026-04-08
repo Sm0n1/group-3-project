@@ -38,6 +38,7 @@ target_sources(clayborne PRIVATE
     src/camera.cpp
     src/player.cpp
     src/physics.cpp
+	src/resources.cpp
 )
 
 if(MSVC)

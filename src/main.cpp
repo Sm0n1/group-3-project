@@ -6,6 +6,7 @@
 #include "camera.hpp"
 #include "player.hpp"
 #include "physics.hpp"
+#include "resources.hpp"
 
 struct gamestate {
     SDL_Window *window{ nullptr };
@@ -16,6 +17,7 @@ struct gamestate {
     entt::registry registry;
     clayborne::player player;
     clayborne::camera camera;
+    clayborne::resources resources;
     bool is_fullscreen{ false };
 };
 
@@ -61,6 +63,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
 
     // Initialize player
     gs.player = clayborne::init_player(gs.registry);
+
+    // Initialize resources
+    gs.resources = clayborne::init_resources(gs.renderer);
 
     // Initialize timer
     gs.current_time = SDL_GetTicksNS();
@@ -113,7 +118,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
         gs.accumulated_time -= SDL_NS_PER_SECOND / 60;
     }
 
-    clayborne::render(gs.camera, gs.registry, gs.renderer, gs.canvas);
+    clayborne::render(gs.camera, gs.registry, gs.resources, gs.renderer, gs.canvas);
 
     return SDL_APP_CONTINUE;
 }
@@ -123,6 +128,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) {
 
     clayborne::deinit_player(gs.player, gs.registry);
     clayborne::deinit_camera(gs.camera, gs.registry);
+    //clayborne::deinit_resources(gs.resources); //TODO implement
 
     SDL_DestroyTexture(gs.canvas);
     SDL_DestroyRenderer(gs.renderer);

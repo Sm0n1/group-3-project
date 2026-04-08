@@ -4,6 +4,7 @@
 #include <entt/entt.hpp>
 #include "camera.hpp"
 #include "physics.hpp"
+#include "resources.hpp"
 #include <print>
 
 namespace clayborne {
@@ -22,7 +23,7 @@ namespace clayborne {
         registry.destroy(camera.entity);
     }
 
-    void render(const clayborne::camera &camera, const entt::registry &registry, SDL_Renderer *renderer, SDL_Texture *canvas) {
+    void render(const clayborne::camera& camera, const entt::registry& registry, const clayborne::resources& resources, SDL_Renderer* renderer, SDL_Texture* canvas) {
         // Clear last frame
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
@@ -30,11 +31,10 @@ namespace clayborne {
         SDL_RenderClear(renderer);
 
         // Load image TODO: Move into seperate entity, don't reload every frame lol
-        auto image = IMG_Load("Character A.png");
-        auto texture = SDL_CreateTextureFromSurface(renderer, image);
+        auto texture = resources.spritesheet;
 
         // Draw camera view
-        SDL_SetRenderDrawColor(renderer, 255, 155, 255, 255);
+        SDL_SetRenderDrawColor(renderer, 255, 55, 255, 255);
         auto &cpos = registry.get<const clayborne::position>(camera.entity);
         auto view = registry.view<const clayborne::position, const clayborne::collider>();
         for (auto [entity, pos, col]: view.each()) {
@@ -47,10 +47,6 @@ namespace clayborne {
             SDL_RenderFillRect(renderer, &rect);
             SDL_RenderTexture(renderer, texture, nullptr, &rect);
         }
-
-        // Unload image TODO: delete when no longer needed.
-        SDL_DestroyTexture(texture);
-        //SDL_DestorySurface(image); (I feel like this being commented out should create a memory leak. A few kbs per frame? so, a mb a second, roughly?
 
         // Render camera view
         SDL_SetRenderTarget(renderer, nullptr);

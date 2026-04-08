@@ -4,6 +4,7 @@
 #include <expected>
 #include <SDL3/SDL.h>
 #include <entt/entt.hpp>
+#include "resources.hpp"
 
 namespace clayborne {
     struct camera {
@@ -12,7 +13,7 @@ namespace clayborne {
 
     clayborne::camera init_camera(entt::registry &registry);
     void deinit_camera(clayborne::camera &camera, entt::registry &registry);
-    void render(const clayborne::camera &camera, const entt::registry &registry, SDL_Renderer *renderer, SDL_Texture *canvas);
+    void render(const clayborne::camera &camera, const entt::registry &registry, const clayborne::resources &resources, SDL_Renderer *renderer, SDL_Texture *canvas);
 }
 
 #endif // CLAYBORNE_CAMERA_HPP
