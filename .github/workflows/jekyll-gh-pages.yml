@@ -66,7 +66,7 @@ jobs:
           cp build/clayborne.html website/game/
           cp build/clayborne.wasm website/game/
           mkdir -p website/game/data
-          cp -r data/* website/game/data/
+          cp -r data/* website/data/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
