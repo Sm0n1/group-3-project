@@ -90,6 +90,10 @@ namespace clayborne {
     }
 
     static void head_collision_handler(entt::registry &registry, const collider::collision &collision) {
+        if (!registry.valid(collision.self)) {
+            return;
+        }
+
         auto &head{ registry.get<clayborne::head>(collision.self) };
         auto &velocity{ registry.get<clayborne::velocity>(collision.self) };
 
