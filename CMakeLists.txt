@@ -70,8 +70,14 @@ endif()
 if(EMSCRIPTEN)
     set_target_properties(clayborne PROPERTIES
         SUFFIX ".html"
-        LINK_FLAGS "-s USE_SDL=3 -s ALLOW_MEMORY_GROWTH=1 -s NO_EXIT_RUNTIME=1 -s MODULARIZE=1"
     )
 
-    target_link_options(clayborne PRIVATE "-s FORCE_FILESYSTEM=1")
+    target_link_options(clayborne PRIVATE
+        "-sUSE_SDL=3"
+        "-sALLOW_MEMORY_GROWTH=1"
+        "-sNO_EXIT_RUNTIME=1"
+        "-sMODULARIZE=1"
+        "-sFORCE_FILESYSTEM=1"
+        "--preload-file" "${CMAKE_SOURCE_DIR}/data@/data"
+    )
 endif()
