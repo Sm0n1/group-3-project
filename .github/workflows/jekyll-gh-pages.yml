@@ -65,8 +65,7 @@ jobs:
           cp build/clayborne.js   website/game/
           cp build/clayborne.html website/game/
           cp build/clayborne.wasm website/game/
-          mkdir -p website/data
-          cp -r data/* website/data/
+          emcc ... --preload-file data
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
