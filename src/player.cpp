@@ -53,7 +53,7 @@ namespace clayborne {
 
         // Reattach head if it falls on player
         if (player.head == collision.other && collision.normal_y > 0.0f) {
-            if (registry.valid(player.head)) {
+            if (!registry.valid(player.head)) {
                 log("player has invalid head\n");
             }
             player.is_head_attached = true;
@@ -316,7 +316,7 @@ namespace clayborne {
             // TODO: trigger other things that can react to explosions
             // TODO: explosion should move the player in a fixed trajectory, rather than physics-based
             else if (player.head != entt::null) {
-                if (registry.valid(player.head)) {
+                if (!registry.valid(player.head)) {
                     log("player has invalid head\n");
                 }
                 auto &head_position{ registry.get<clayborne::position>(player.head) };
@@ -366,7 +366,7 @@ namespace clayborne {
         // Update head
         // TODO: maybe move to separate system
         if (player.head != entt::null) {
-            if (registry.valid(player.head)) {
+            if (!registry.valid(player.head)) {
                 log("player has invalid head\n");
             }
             auto &head{ registry.get<clayborne::head>(player.head) };
