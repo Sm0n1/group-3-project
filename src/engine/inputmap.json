@@ -1,0 +1,19 @@
+{
+    "menu": {
+        "up": ["SDL_SCANCODE_W"],
+        "left": ["SDL_SCANCODE_A"],
+        "down": ["SDL_SCANCODE_S"],
+        "right": ["SDL_SCANCODE_D"],
+        "confirm": ["SDL_SCANCODE_ENTER"],
+        "cancel": ["SDL_SCANCODE_ESCAPE"]
+    },
+    "gameplay": {
+        "up": ["SDL_SCANCODE_W"],
+        "left": ["SDL_SCANCODE_A"],
+        "down": ["SDL_SCANCODE_S"],
+        "right": ["SDL_SCANCODE_D"],
+        "jump": ["SDL_SCANCODE_J"],
+        "head": ["SDL_SCANCODE_K"],
+        "pause": ["SDL_SCANCODE_ESCAPE"]
+    }
+}

@@ -1,4 +1,3 @@
-#include <optional>
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <entt/entt.hpp>
@@ -6,6 +5,12 @@
 #include "physics.hpp"
 #include "resources.hpp"
 #include <print>
+#include <SDL3/SDL_oldnames.h>
+#include <SDL3/SDL_render.h>
+#include <cstdio>
+#include <entt/entt.hpp>
+#include "camera.hpp"
+#include "physics.hpp"
 
 namespace clayborne {
     // TODO: match destination rectangle with window
@@ -23,29 +28,30 @@ namespace clayborne {
         registry.destroy(camera.entity);
     }
 
-    void render(const clayborne::camera& camera, const entt::registry& registry, const clayborne::resources& resources, SDL_Renderer* renderer, SDL_Texture* canvas) {
+    void render(const clayborne::camera& camera, const entt::registry& registry, SDL_Renderer* renderer, SDL_Texture* canvas) {
         // Clear last frame
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
         SDL_SetRenderTarget(renderer, canvas);
         SDL_RenderClear(renderer);
 
-        // Load image TODO: Move into seperate entity, don't reload every frame lol
-        auto texture = resources.spritesheet;
-
         // Draw camera view
-        SDL_SetRenderDrawColor(renderer, 255, 55, 255, 255);
-        auto &cpos = registry.get<const clayborne::position>(camera.entity);
-        auto view = registry.view<const clayborne::position, const clayborne::collider>();
-        for (auto [entity, pos, col]: view.each()) {
-            const SDL_FRect rect{
-                .x = pos.x - cpos.x, // camera relative
-                .y = pos.y - cpos.y, // camera relative
-                .w = col.w,
-                .h = col.h
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        auto &camera_position = registry.get<const clayborne::position>(camera.entity);
+        auto view = registry.view<const clayborne::position, const clayborne::renderer>();
+        for (auto [entity, position, renderable]: view.each()) {
+            const SDL_FRect dstrect{
+                .x = renderable.dstrect.x + position.x - camera_position.x,
+                .y = renderable.dstrect.y + position.y - camera_position.y,
+                .w = renderable.dstrect.w,
+                .h = renderable.dstrect.h,
             };
-            SDL_RenderFillRect(renderer, &rect);
-            SDL_RenderTexture(renderer, texture, nullptr, &rect);
+            if (renderable.texture) {
+                SDL_RenderTexture(renderer, renderable.texture, &renderable.srcrect, &dstrect);
+            }
+            else {
+                SDL_RenderFillRect(renderer, &dstrect);
+            }
         }
 
         // Render camera view

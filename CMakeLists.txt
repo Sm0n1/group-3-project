@@ -14,14 +14,14 @@ option(CLAYBORNE_VENDORED "Use vendored libraries" OFF)
 if(CLAYBORNE_VENDORED)
     set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
     add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
-	set(SDLIMAGE_PNG  ON  CACHE BOOL "" FORCE)
-	set(SDLIMAGE_JPG  OFF CACHE BOOL "" FORCE)
-	set(SDLIMAGE_AVIF OFF CACHE BOOL "" FORCE)
-	set(SDLIMAGE_JXL  OFF CACHE BOOL "" FORCE)
-	set(SDLIMAGE_TIF  OFF CACHE BOOL "" FORCE)
-	set(SDLIMAGE_WEBP OFF CACHE BOOL "" FORCE)
-	set(SDLIMAGE_PNG_SAVE OFF CACHE BOOL "" FORCE)
-	add_subdirectory(vendored/SDL_image EXCLUDE_FROM_ALL)
+    set(SDLIMAGE_PNG  ON  CACHE BOOL "" FORCE)
+    set(SDLIMAGE_JPG  OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_AVIF OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_JXL  OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_TIF  OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_WEBP OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_PNG_SAVE OFF CACHE BOOL "" FORCE)
+    add_subdirectory(vendored/SDL_image EXCLUDE_FROM_ALL)
 else()
     find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 	find_package(SDL3_image REQUIRED CONFIG)
@@ -29,7 +29,10 @@ endif()
 
 target_compile_features(clayborne PUBLIC cxx_std_23)
 
-target_include_directories(clayborne PRIVATE vendored/entt/single_include)
+target_include_directories(clayborne SYSTEM PRIVATE
+    vendored/entt/single_include
+    vendored/SDL/include
+)
 
 target_link_libraries(clayborne PRIVATE SDL3::SDL3 SDL3_image::SDL3_image)
 
@@ -38,7 +41,9 @@ target_sources(clayborne PRIVATE
     src/camera.cpp
     src/player.cpp
     src/physics.cpp
-	src/resources.cpp
+    src/resources.cpp
+    src/engine/input/manager.cpp
+    src/engine/input/map.cpp
 )
 
 if(MSVC)
@@ -74,8 +79,14 @@ endif()
 if(EMSCRIPTEN)
     set_target_properties(clayborne PROPERTIES
         SUFFIX ".html"
-        LINK_FLAGS "-s USE_SDL=3 -s ALLOW_MEMORY_GROWTH=1 -s NO_EXIT_RUNTIME=1 -s MODULARIZE=1"
     )
 
-    target_link_options(clayborne PRIVATE "-s FORCE_FILESYSTEM=1")
+    target_link_options(clayborne PRIVATE
+        "-sUSE_SDL=3"
+        "-sALLOW_MEMORY_GROWTH=1"
+        "-sNO_EXIT_RUNTIME=1"
+        "-sMODULARIZE=1"
+        "-sFORCE_FILESYSTEM=1"
+        "--preload-file" "${CMAKE_SOURCE_DIR}/data@/data"
+    )
 endif()

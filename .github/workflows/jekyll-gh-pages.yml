@@ -65,6 +65,7 @@ jobs:
           cp build/clayborne.js   website/game/
           cp build/clayborne.html website/game/
           cp build/clayborne.wasm website/game/
+          cp build/clayborne.data website/game/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
