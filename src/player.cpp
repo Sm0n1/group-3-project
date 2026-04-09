@@ -10,6 +10,7 @@
 #include "physics.hpp"
 #include "camera.hpp"
 #include "clay.hpp"
+#include "resources.hpp"
 
 [[nodiscard]] static inline constexpr float approach(const float from, const float to, const float amount) noexcept {
     const float delta{ to - from };
@@ -109,7 +110,7 @@ namespace clayborne {
         // }
     }
 
-    entt::entity init_player(entt::registry &registry, float x, float y) noexcept {
+    entt::entity init_player(entt::registry &registry, clayborne::resources &resources, float x, float y) noexcept {
         auto player_entity{ registry.create() };
 
         registry.emplace<player>(player_entity);
@@ -124,6 +125,10 @@ namespace clayborne {
         auto &renderer{ registry.emplace<clayborne::renderer>(player_entity) };
         renderer.dstrect.w = player::hitbox_width;
         renderer.dstrect.h = player::hitbox_height;
+        renderer.srcrect.w = player::hitbox_width;
+        renderer.srcrect.h = player::hitbox_height;
+        renderer.srcrect.x = 4.0f;
+        renderer.texture = resources.spritesheet;
         
         return player_entity;
     }

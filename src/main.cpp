@@ -58,6 +58,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
         return SDL_APP_FAILURE;
     }
 
+    // Initialize resources
+    gs.resources = clayborne::init_resources(gs.renderer);
+
     // Enable automatic scaling
     SDL_SetRenderLogicalPresentation(gs.renderer, 320, 180, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
     
@@ -76,7 +79,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     gs.camera = clayborne::init_camera(gs.registry);
 
     // Initialize player
-    gs.player = clayborne::init_player(gs.registry, 70.0f, 140.0f);
+    gs.player = clayborne::init_player(gs.registry, gs.resources, 70.0f, 140.0f);
 
     // Initialize play area
 
