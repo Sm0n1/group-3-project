@@ -28,6 +28,8 @@
 //
 //
 //
+// Throwing the head should throw it at the height of the head.
+// Throwing the head should stall the player in the air for a moment.
 
 namespace clayborne {
     struct player {

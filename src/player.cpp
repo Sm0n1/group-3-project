@@ -13,9 +13,9 @@
 #include "camera.hpp"
 #include "clay.hpp"
 
-static void log(const char* msg, const std::source_location loc = std::source_location::current()) {
-    std::cout << loc.line() << " " << msg << std::endl;
-}
+// static void log(const char* msg, const std::source_location loc = std::source_location::current()) {
+//     std::cout << loc.line() << " " << msg << std::endl;
+// }
 
 [[nodiscard]] static inline constexpr float approach(const float from, const float to, const float amount) noexcept {
     const float delta{ to - from };
@@ -53,9 +53,6 @@ namespace clayborne {
 
         // Reattach head if it falls on player
         if (player.head == collision.other && collision.normal_y > 0.0f) {
-            if (!registry.valid(player.head)) {
-                log("player has invalid head\n");
-            }
             player.is_head_attached = true;
 
             registry.destroy(player.head);
@@ -99,10 +96,6 @@ namespace clayborne {
     }
 
     static void head_collision_handler(entt::registry &registry, const collider::collision &collision) {
-        if (!registry.valid(collision.self)) {
-            return;
-        }
-
         auto &head{ registry.get<clayborne::head>(collision.self) };
         auto &velocity{ registry.get<clayborne::velocity>(collision.self) };
 
@@ -316,9 +309,6 @@ namespace clayborne {
             // TODO: trigger other things that can react to explosions
             // TODO: explosion should move the player in a fixed trajectory, rather than physics-based
             else if (player.head != entt::null) {
-                if (!registry.valid(player.head)) {
-                    log("player has invalid head\n");
-                }
                 auto &head_position{ registry.get<clayborne::position>(player.head) };
                 auto &head_collider{ registry.get<clayborne::collider>(player.head) };
 
@@ -366,9 +356,6 @@ namespace clayborne {
         // Update head
         // TODO: maybe move to separate system
         if (player.head != entt::null) {
-            if (!registry.valid(player.head)) {
-                log("player has invalid head\n");
-            }
             auto &head{ registry.get<clayborne::head>(player.head) };
             auto &head_position{ registry.get<clayborne::position>(player.head) };
             auto &head_velocity{ registry.get<clayborne::velocity>(player.head) };

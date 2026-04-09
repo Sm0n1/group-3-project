@@ -48,10 +48,14 @@ namespace clayborne {
                     if (overlap(self_position, self_collider, other_position, other_collider)) {
                         is_collision = true;
                         if (self_collider.collide) {
-                            self_collider.collide.value()(registry, {self, other, -x_sgn, 0.0f});
+                            (*self_collider.collide)(registry, {self, other, -x_sgn, 0.0f});
+                            const auto other_collider_opt{ registry.try_get<clayborne::collider>(other) };
+                            if (other_collider_opt && (*other_collider_opt).collide) {
+                                (*other_collider_opt->collide)(registry, {other, self, x_sgn, 0.0f });
+                            }
                         }
-                        if (other_collider.collide) {
-                            other_collider.collide.value()(registry, {other, self, x_sgn, 0.0f});
+                        else if (other_collider.collide) {
+                            (*other_collider.collide)(registry, {other, self, x_sgn, 0.0f});
                         }
                     }
                 }
@@ -78,10 +82,14 @@ namespace clayborne {
                     if (overlap(self_position, self_collider, other_position, other_collider)) {
                         is_collision = true;
                         if (self_collider.collide) {
-                            self_collider.collide.value()(registry, {self,  other, 0.0f, -y_sgn });
+                            (*self_collider.collide)(registry, {self,  other, 0.0f, -y_sgn });
+                            const auto other_collider_opt{ registry.try_get<clayborne::collider>(other) };
+                            if (other_collider_opt && (*other_collider_opt).collide) {
+                                (*other_collider_opt->collide)(registry, {other, self, 0.0f, y_sgn });
+                            }
                         }
-                        if (other_collider.collide) {
-                            other_collider.collide.value()(registry, {other, self, 0.0f, y_sgn });
+                        else if (other_collider.collide) {
+                            (*other_collider.collide)(registry, {other, self, 0.0f, y_sgn });
                         }
                     }
                 }
