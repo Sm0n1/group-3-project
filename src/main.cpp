@@ -74,7 +74,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     gs.camera = clayborne::init_camera(gs.registry);
 
     // Initialize player
-    gs.player = clayborne::init_player(gs.registry, 180.0f, 90.0f);
+    gs.player = clayborne::init_player(gs.registry, 70.0f, 140.0f);
 
     // Initialize play area
 
@@ -110,9 +110,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
             auto tile{ gs.registry.create() };
             gs.registry.emplace<clayborne::position>(tile, x * tile_size, y * tile_size);
             gs.registry.emplace<clayborne::collider>(tile, tile_size, tile_size);
-            if (y == 22) {
-                gs.registry.emplace<clayborne::clay>(tile);
-            }
+            gs.registry.emplace<clayborne::clay>(tile);
             //gs.registry.emplace<clayborne::renderer>(tile, nullptr, SDL_FRect{}, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = tile_size, .h = tile_size });
         }
 
