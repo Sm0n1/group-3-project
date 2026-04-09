@@ -101,6 +101,7 @@ namespace clayborne {
         static constexpr float fall_speed{ player::fall_speed };
 
         static constexpr float explosion_radius{ 14.0f };
+        static constexpr float explosion_speed{ 400.0f };
 
         bool is_grounded{ true };
         bool is_thrown{ true };

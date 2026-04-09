@@ -278,15 +278,13 @@ namespace clayborne {
                     head_velocity.x = static_cast<float>(direction) * head::throw_speed;
                     head_velocity.y = 0.0f;
                     head_position.x += static_cast<float>(direction) * player::hitbox_width;
-                    printf("throw (facing): %f\n", static_cast<double>(direction));
                 }
                 else {
-                    const float invlen{ (len2 == 2.0f) ? 0.70710678f : 1 };
-                    head_velocity.x = x * invlen * head::throw_speed;
-                    head_velocity.y = y * invlen * head::throw_speed;
+                    // const float invlen{ (len2 == 2.0f) ? 0.70710678f : 1 };
+                    head_velocity.x = x * 1 * head::throw_speed;
+                    head_velocity.y = y * 1 * head::throw_speed;
                     head_position.x += x * player::hitbox_width;
                     head_position.y += y * player::headless_hitbox_height;
-                    printf("throw (aim): %f, %f\n", static_cast<double>(head_velocity.x), static_cast<double>(head_velocity.y));
                 }
 
                 auto &head_collider{ registry.emplace<clayborne::collider>(player.head) };
@@ -299,8 +297,49 @@ namespace clayborne {
                 head_renderer.dstrect.h = head::hitbox_height;
             }
             // Detonate head
+            // TODO: make detonation continue over a period of time
+            // TODO: trigger other things that can react to explosions
+            // TODO: explosion should move the player in a fixed trajectory, rather than physics-based
             else if (player.head != entt::null) {
-                printf("detonate\n");
+                auto &head_position{ registry.get<clayborne::position>(player.head) };
+                auto &head_collider{ registry.get<clayborne::collider>(player.head) };
+
+                const float explosion_center_x{ head_position.x + head_collider.w * 0.5f };
+                const float explosion_center_y{ head_position.y + head_collider.h * 0.5f };
+
+                const clayborne::position explosion_position{
+                    .x = explosion_center_x - head::explosion_radius,
+                    .y = explosion_center_y - head::explosion_radius,
+                };
+
+                const clayborne::collider explosion_collider{
+                    .w = 2.0f * head::explosion_radius,
+                    .h = 2.0f * head::explosion_radius,
+                };
+
+                if (overlap(explosion_position, explosion_collider, position, collider)) {
+                    const float center_x{ position.x + collider.w * 0.5f };
+                    const float center_y{ position.y + collider.h * 0.5f };
+                    const float delta_x{ center_x - explosion_center_x };
+                    const float delta_y{ center_y - explosion_center_y };
+                    static const float inv_sqrt2{ 0.70710678f };
+                    static const float pi{ 3.14159265358979323846f };
+                    static const clayborne::velocity directions[8] = {
+                        { 1.0f,  0.0f },
+                        { inv_sqrt2,  inv_sqrt2 },
+                        { 0.0f,  1.0f },
+                        { -inv_sqrt2,  inv_sqrt2 },
+                        { -1.0f,  0.0f },
+                        { -inv_sqrt2, -inv_sqrt2 },
+                        { 0.0f, -1.0f },
+                        { inv_sqrt2, -inv_sqrt2 }
+                    };
+                    const float angle = std::atan2(delta_y, delta_x);
+                    const int octant = static_cast<int>(std::round(angle / (pi / 4.0f))) & 7;
+                    velocity.x = directions[octant].x * head::explosion_speed;
+                    velocity.y = directions[octant].y * head::explosion_speed;
+                }
+
                 registry.destroy(player.head);
                 player.head = entt::null;
             }
