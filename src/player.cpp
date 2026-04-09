@@ -124,9 +124,10 @@ namespace clayborne {
 
         auto &renderer{ registry.emplace<clayborne::renderer>(player_entity) };
         renderer.dstrect.w = player::hitbox_width;
-        renderer.dstrect.h = player::hitbox_height;
+        renderer.dstrect.h = player::hitbox_height+5.0f;
+        renderer.dstrect.y = -5.0f;
         renderer.srcrect.w = player::hitbox_width;
-        renderer.srcrect.h = player::hitbox_height;
+        renderer.srcrect.h = player::hitbox_height+5.0f;
         renderer.srcrect.x = 4.0f;
         renderer.texture = resources.spritesheet;
         
