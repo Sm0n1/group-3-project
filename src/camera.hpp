@@ -5,7 +5,6 @@
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
 #include <entt/entt.hpp>
-#include "resources.hpp"
 
 namespace clayborne {
     struct camera {
