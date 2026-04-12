@@ -109,7 +109,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
         if (line == "1") {
             auto tile{ gs.registry.create() };
             gs.registry.emplace<clayborne::position>(tile, x * tile_size, y * tile_size);
-            gs.registry.emplace<clayborne::aabb_collider>(tile, tile_size, tile_size);
+            gs.registry.emplace<clayborne::collider>(tile, tile_size, tile_size);
             if (y >= 22) {
                 gs.registry.emplace<clayborne::clay>(tile);
             }

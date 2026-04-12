@@ -10,7 +10,7 @@ namespace clayborne {
     void update_physics(entt::registry &registry, Uint64 dt_ns) {
         // const auto start = std::chrono::steady_clock::now();
 
-        float delta_time{ static_cast<float>(static_cast<double>(dt_ns) / SDL_NS_PER_SECOND )};
+        const float delta_time{ static_cast<float>(static_cast<double>(dt_ns) / SDL_NS_PER_SECOND )};
 
         // Move entities that cannot collide
         auto noncollidable_view{ registry.view<position, const velocity>(entt::exclude<collider>) };
@@ -25,7 +25,7 @@ namespace clayborne {
             self_velocity.subpos_x += self_velocity.x * delta_time;
             self_velocity.subpos_y += self_velocity.y * delta_time;
 
-            auto move{ round(vec2{ self_velocity.subpos_x, self_velocity.y }) };
+            auto move{ round(vec2{ self_velocity.subpos_x, self_velocity.subpos_y }) };
             const auto sign{ sgn(move) };
 
             self_velocity.subpos_x -= move.x;
@@ -79,7 +79,7 @@ namespace clayborne {
                         continue;
                     }
                     
-                    if (overlap(self_position, self_collider, other_position, other_collider)) {
+                    if (overlap(self_new_position, self_collider, other_position, other_collider)) {
                         is_collision = true;
                         if (self_collider.collide) {
                             (*self_collider.collide)(registry, { self,  other, { 0.0f, -sign.y } });

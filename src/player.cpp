@@ -57,6 +57,7 @@ namespace clayborne {
                 for (int i{ 1 }; i <= player::ceiling_corner_correction; i += 1) {
                     auto new_position{ position };
                     new_position.x -= static_cast<float>(i);
+                    new_position.y -= 1;
                     if (!overlap_any(registry, collision.self, new_position, collider)) {
                         position = new_position;
                         return;
@@ -68,6 +69,7 @@ namespace clayborne {
                 for (int i{ 1 }; i <= player::ceiling_corner_correction; i += 1) {
                     auto new_position{ position };
                     new_position.x += static_cast<float>(i);
+                    new_position.y -= 1;
                     if (!overlap_any(registry, collision.self, new_position, collider)) {
                         position = new_position;
                         return;
