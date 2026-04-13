@@ -43,8 +43,17 @@ namespace clayborne {
         if (player.head == collision.other && collision.normal.y > 0.0f) {
             player.is_head_attached = true;
 
+            const auto head_position{ registry.get<const clayborne::position>(player.head) };
+
             registry.destroy(player.head);
             player.head = entt::null;
+
+            auto above{ position };
+            above.y -= 1.0f;
+            while (overlap_any(registry, collision.self, above, collider)) {
+                above.x += sgn(head_position.x - position.x);
+            }
+            position.x = above.x;
 
             // Update player shape
             position.y -= player::hitbox_height - player::headless_hitbox_height;
