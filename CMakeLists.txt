@@ -14,9 +14,17 @@ option(CLAYBORNE_VENDORED "Use vendored libraries" OFF)
 if(CLAYBORNE_VENDORED)
     set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
     add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
+    set(SDLIMAGE_PNG  ON  CACHE BOOL "" FORCE)
+    set(SDLIMAGE_JPG  OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_AVIF OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_JXL  OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_TIF  OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_WEBP OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_PNG_SAVE OFF CACHE BOOL "" FORCE)
     add_subdirectory(vendored/SDL_image EXCLUDE_FROM_ALL)
 else()
     find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
+	find_package(SDL3_image REQUIRED CONFIG)
 endif()
 
 target_compile_features(clayborne PUBLIC cxx_std_23)
@@ -33,6 +41,7 @@ target_sources(clayborne PRIVATE
     src/camera.cpp
     src/player.cpp
     src/physics.cpp
+    src/resources.cpp
     src/engine/input/manager.cpp
     src/engine/input/map.cpp
 )

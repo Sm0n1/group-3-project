@@ -1,4 +1,10 @@
 #include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
+#include <entt/entt.hpp>
+#include "camera.hpp"
+#include "physics.hpp"
+#include "resources.hpp"
+#include <print>
 #include <SDL3/SDL_oldnames.h>
 #include <SDL3/SDL_render.h>
 #include <cstdio>
@@ -41,6 +47,12 @@ namespace clayborne {
                 .h = renderable.dstrect.h,
             };
             if (renderable.texture) {
+                // Debug stuff for showing drawbox
+                //SDL_SetRenderDrawColor(renderer, 255, 155, 255, 255);
+                //SDL_RenderRect(renderer, &dstrect);
+                //SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+                // Render the sprite itself
                 SDL_RenderTexture(renderer, renderable.texture, &renderable.srcrect, &dstrect);
             }
             else {

@@ -6,6 +6,7 @@
 #include <SDL3/SDL_timer.h>
 #include <entt/entt.hpp>
 #include "engine/input/manager.hpp"
+#include "resources.hpp"
 
 // HEAD MECHANIC
 //
@@ -110,7 +111,7 @@ namespace clayborne {
         bool is_detonated{ false };
     };
     
-    entt::entity init_player(entt::registry &registry, float x, float y) noexcept;
+    entt::entity init_player(entt::registry &registry, clayborne::resources &resources, float x, float y) noexcept;
     void update_player(entt::entity player_entity, entt::registry &registry, const input::manager &inputs, Uint64 dt_ns) noexcept;
 }
 

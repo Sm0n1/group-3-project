@@ -13,6 +13,7 @@
 #include "camera.hpp"
 #include "player.hpp"
 #include "physics.hpp"
+#include "resources.hpp"
 #include "clay.hpp"
 
 struct gamestate {
@@ -24,6 +25,7 @@ struct gamestate {
     entt::registry registry;
     entt::entity player;
     clayborne::camera camera;
+    clayborne::resources resources;
     bool is_fullscreen{ false };
 
     clayborne::input::manager inputs;
@@ -56,6 +58,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
         return SDL_APP_FAILURE;
     }
 
+    // Initialize resources
+    gs.resources = clayborne::init_resources(gs.renderer);
+
     // Enable automatic scaling
     SDL_SetRenderLogicalPresentation(gs.renderer, 320, 180, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
     
@@ -74,7 +79,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     gs.camera = clayborne::init_camera(gs.registry);
 
     // Initialize player
-    gs.player = clayborne::init_player(gs.registry, 70.0f, 140.0f);
+    gs.player = clayborne::init_player(gs.registry, gs.resources, 70.0f, 140.0f);
 
     // Initialize play area
 
@@ -162,6 +167,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     // gs.registry.emplace<clayborne::position>(p5, 240.0f, 120.0f);
     // gs.registry.emplace<clayborne::collider>(p5, 32.0f, 32.0f);
     // gs.registry.emplace<clayborne::renderer>(p5, nullptr, SDL_FRect{}, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = 32.0f, .h = 32.0f });
+
 
     // Initialize timer
     gs.current_time = SDL_GetTicksNS();
@@ -254,6 +260,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) {
     auto &gs{ *static_cast<gamestate*>(appstate) };
 
     clayborne::deinit_camera(gs.camera, gs.registry);
+    //clayborne::deinit_resources(gs.resources); //TODO implement
 
     SDL_DestroyTexture(gs.canvas);
     SDL_DestroyRenderer(gs.renderer);
