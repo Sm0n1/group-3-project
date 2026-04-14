@@ -5,77 +5,9 @@
 #include <cmath>
 #include <entt/entt.hpp>
 #include <optional>
+#include "utils.hpp"
 
 namespace clayborne {
-    struct vector {
-        float x{ 0.0f };
-        float y{ 0.0f };
-
-        constexpr vector() noexcept = default;
-        constexpr vector(float x_, float y_) noexcept : x(x_), y(y_) {}
-
-        constexpr vector operator+(const vector& other) const noexcept {
-            return {x + other.x, y + other.y};
-        }
-
-        constexpr vector operator-(const vector& other) const noexcept {
-            return {x - other.x, y - other.y};
-        }
-
-        constexpr vector operator*(float scalar) const noexcept {
-            return {x * scalar, y * scalar};
-        }
-
-        constexpr vector operator/(float scalar) const noexcept {
-            return {x / scalar, y / scalar};
-        }
-
-        vector& operator+=(const vector& other) noexcept {
-            x += other.x;
-            y += other.y;
-            return static_cast<vector&>(*this);
-        }
-
-        vector& operator-=(const vector& other) noexcept  {
-            x -= other.x;
-            y -= other.y;
-            return static_cast<vector&>(*this);
-        }
-
-        vector& operator*=(float scalar) noexcept {
-            x *= scalar;
-            y *= scalar;
-            return static_cast<vector&>(*this);
-        }
-
-        vector& operator/=(float scalar) noexcept {
-            x /= scalar;
-            y /= scalar;
-            return static_cast<vector&>(*this);
-        }
-
-        [[nodiscard]] float length() const noexcept {
-            return std::sqrt(x * x + y * y);
-        }
-
-        [[nodiscard]] float length_squared() const noexcept {
-            return x * x + y * y;
-        }
-
-        [[nodiscard]] vector normalized() const noexcept {
-            float len = length();
-            return vector{ x / len, y / len };
-        }
-
-        [[nodiscard]] float dot(const vector &other) const noexcept {
-            return x * other.x + y * other.y;
-        }
-
-        [[nodiscard]] float cross(const vector &other) const noexcept {
-            return x * other.y - y * other.x;
-        }
-    };
-
     struct position {
         float x{ 0.0f };
         float y{ 0.0f };
@@ -84,8 +16,8 @@ namespace clayborne {
     struct velocity {
         float x{ 0.0f };
         float y{ 0.0f };
-        float x_subpos{ 0.0f };
-        float y_subpos{ 0.0f };
+        float subpos_x{ 0.0f };
+        float subpos_y{ 0.0f };
     };
 
     struct collider {
@@ -95,8 +27,7 @@ namespace clayborne {
         struct collision {
             entt::entity self{ entt::null };
             entt::entity other{ entt::null };
-            float normal_x{ 0.0f };
-            float normal_y{ 0.0f };
+            vec2 normal;
         };
 
         // TODO: make an actual collision handler
@@ -117,7 +48,7 @@ namespace clayborne {
             (position_1.x + collider_1.w > position_2.x) && 
             (position_1.y + collider_1.h > position_2.y) && 
             (position_2.x + collider_2.w > position_1.x) && 
-            (position_2.y + collider_2.h > position_1.y );
+            (position_2.y + collider_2.h > position_1.y);
     }
 
     template<typename... Includes, typename...Excludes>

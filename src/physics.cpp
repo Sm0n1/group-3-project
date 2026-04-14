@@ -10,94 +10,94 @@ namespace clayborne {
     void update_physics(entt::registry &registry, Uint64 dt_ns) {
         // const auto start = std::chrono::steady_clock::now();
 
-        float delta_time{ static_cast<float>(static_cast<double>(dt_ns) / SDL_NS_PER_SECOND )};
+        const float delta_time{ static_cast<float>(static_cast<double>(dt_ns) / SDL_NS_PER_SECOND )};
 
         // Move entities that cannot collide
         auto noncollidable_view{ registry.view<position, const velocity>(entt::exclude<collider>) };
-        for (auto [entity, pos, vel]: noncollidable_view.each()) {
-            pos.x += vel.x * delta_time;
-            pos.y += vel.y * delta_time;
+        for (auto [entity, position, velocity]: noncollidable_view.each()) {
+            position.x += velocity.x * delta_time;
+            position.y += velocity.y * delta_time;
         }
         
         // Move entities that may collide
         auto collidable_view{ registry.view<position, velocity, const collider>() };
         for (auto [self, self_position, self_velocity, self_collider]: collidable_view.each()) {
-            self_velocity.x_subpos += self_velocity.x * delta_time;
-            self_velocity.y_subpos += self_velocity.y * delta_time;
+            self_velocity.subpos_x += self_velocity.x * delta_time;
+            self_velocity.subpos_y += self_velocity.y * delta_time;
 
-            auto x_move{ std::round(self_velocity.x_subpos) };
-            auto y_move{ std::round(self_velocity.y_subpos) };
-            auto x_sgn{ static_cast<float>(x_move > 0.0f) - static_cast<float>(x_move < 0.0f) };
-            auto y_sgn{ static_cast<float>(y_move > 0.0f) - static_cast<float>(y_move < 0.0f) };
+            auto move{ round(vec2{ self_velocity.subpos_x, self_velocity.subpos_y }) };
+            const auto sign{ sgn(move) };
 
-            self_velocity.x_subpos -= x_move;
-            self_velocity.y_subpos -= y_move;
+            self_velocity.subpos_x -= move.x;
+            self_velocity.subpos_y -= move.y;
 
             // Move one pixel at a time in the x axis
-            while (x_move != 0) {
-                x_move -= x_sgn;
-                self_position.x += x_sgn;
+            while (move.x != 0) {
+                auto self_new_position{ self_position };
+                self_new_position.x += sign.x;
+                move.x -= sign.x;
 
-                bool is_collision = false;
+                bool is_collision{ false };
                 auto view{ registry.view<const position, const collider>() };
                 for (auto [other, other_position, other_collider]: view.each()) {
                     if (self == other) {
                         continue;
                     }
 
-                    if (overlap(self_position, self_collider, other_position, other_collider)) {
+                    if (overlap(self_new_position, self_collider, other_position, other_collider)) {
                         is_collision = true;
                         if (self_collider.collide) {
-                            (*self_collider.collide)(registry, {self, other, -x_sgn, 0.0f});
+                            (*self_collider.collide)(registry, {self, other, { -sign.x, 0.0f } });
                             const auto other_collider_opt{ registry.try_get<clayborne::collider>(other) };
                             if (other_collider_opt && (*other_collider_opt).collide) {
-                                (*other_collider_opt->collide)(registry, {other, self, x_sgn, 0.0f });
+                                (*other_collider_opt->collide)(registry, { other, self, { sign.x, 0.0f } });
                             }
                         }
                         else if (other_collider.collide) {
-                            (*other_collider.collide)(registry, {other, self, x_sgn, 0.0f});
+                            (*other_collider.collide)(registry, { other, self, { sign.x, 0.0f } });
                         }
                     }
                 }
 
-                // Undo move if it caused a collision
                 if (is_collision) {
-                    self_position.x -= x_sgn; // undo move
                     break;
+                } else {
+                    self_position = self_new_position;
                 }
             }
 
             // Move one pixel at a time in the y axis
-            while (y_move != 0) {
-                y_move -= y_sgn;
-                self_position.y += y_sgn;
+            while (move.y != 0) {
+                position self_new_position{ self_position };
+                self_new_position.y += sign.y;
+                move.y -= sign.y;
 
-                bool is_collision = false;
+                bool is_collision{ false };
                 auto view{ registry.view<const position, const collider>() };
                 for (auto [other, other_position, other_collider]: view.each()) {
                     if (self == other) {
                         continue;
                     }
                     
-                    if (overlap(self_position, self_collider, other_position, other_collider)) {
+                    if (overlap(self_new_position, self_collider, other_position, other_collider)) {
                         is_collision = true;
                         if (self_collider.collide) {
-                            (*self_collider.collide)(registry, {self,  other, 0.0f, -y_sgn });
+                            (*self_collider.collide)(registry, { self,  other, { 0.0f, -sign.y } });
                             const auto other_collider_opt{ registry.try_get<clayborne::collider>(other) };
                             if (other_collider_opt && (*other_collider_opt).collide) {
-                                (*other_collider_opt->collide)(registry, {other, self, 0.0f, y_sgn });
+                                (*other_collider_opt->collide)(registry, { other, self, { 0.0f, sign.y } });
                             }
                         }
                         else if (other_collider.collide) {
-                            (*other_collider.collide)(registry, {other, self, 0.0f, y_sgn });
+                            (*other_collider.collide)(registry, { other, self, { 0.0f, sign.y } });
                         }
                     }
                 }
 
-                // Undo move if it caused a collision 
                 if (is_collision) {
-                    self_position.y -= y_sgn; // undo move
                     break;
+                } else {
+                    self_position = self_new_position;
                 }
             }
         }
