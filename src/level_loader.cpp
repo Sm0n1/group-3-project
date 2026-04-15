@@ -9,6 +9,7 @@
 #include "clay.hpp"
 #include "player.hpp"
 #include "resources.hpp"
+#include "interactables.hpp"
 
 namespace clayborne {
     std::vector<tile_group> merge_tiles_greedy(const std::array<std::array<std::uint8_t, tile_cols>, tile_rows> &tiles) {
@@ -125,6 +126,7 @@ namespace clayborne {
 
         constexpr int grass_tile{ 1 };
         constexpr int clay_tile{ 2 };
+        constexpr int lava_tile{ 3 };
 
         const int level_x{ data["x"] };
         const int level_y{ data["y"] };
@@ -145,6 +147,13 @@ namespace clayborne {
                 registry.emplace<clay>(tile);
                 break;
             }
+            case lava_tile: {
+                auto tile{ registry.create() };
+                registry.emplace<position>(tile, level_x + tg.x * 8.0f, level_y + tg.y * 8.0f);
+                registry.emplace<collider>(tile, tg.w * 8.0f, tg.h * 8.0f);
+                // TODO: implement death
+                break;
+            }
             default:
                 return std::unexpected("Failed to load tile " + std::to_string(tg.tile) + ": invalid tile id");
             }
@@ -157,7 +166,17 @@ namespace clayborne {
                 int y{ entity_list[0]["y"] };
                 // TODO: use an actual resource loader
                 auto r{ resources{ .spritesheet = nullptr } };
-                init_player(registry, r, static_cast<float>(x * level_x), static_cast<float>(y * level_y));
+                init_player(registry, r, static_cast<float>(x + level_x), static_cast<float>(y +  level_y));
+            }
+            else if (entity_name == "Door") {
+                int x{ entity_list[0]["x"] };
+                int y{ entity_list[0]["y"] };
+                (void)create_door(registry, static_cast<float>(x + level_x), static_cast<float>(y + level_y), false, entt::null);
+            }
+            else if (entity_name == "Sensor") {
+                int x{ entity_list[0]["x"] };
+                int y{ entity_list[0]["y"] };
+                (void)create_sensor(registry, static_cast<float>(x + level_x), static_cast<float>(y + level_y));
             }
             else {
                 return std::unexpected("Failed to load entity " + entity_name + ": invalid entity id");
@@ -173,6 +192,27 @@ namespace clayborne {
         registry.emplace<position>(level_entity, static_cast<float>(level_x), static_cast<float>(level_y));
         registry.emplace<clayborne::renderer>(level_entity, level_sprite, SDL_FRect{ 0.0f, 0.0f, 320.0f, 180.0f }, SDL_FRect{ 0.0f, 0.0f, 320.0f, 180.0f }, -1);
 
-        return std::monostate{};
+        return {};
+    }
+
+    std::expected<std::monostate, std::string> load_levels(const std::filesystem::path& levels, entt::registry &registry, SDL_Renderer *renderer) {
+        for (auto level : std::filesystem::directory_iterator(levels)) {
+            if (!std::filesystem::is_directory(level)) {
+                std::println("{} not a directory", level.path().string());
+                continue;
+            }
+
+            if (!level.path().filename().string().starts_with("Level_")) {
+                std::println("{} not a level", level.path().string());
+                continue;
+            }
+
+            const auto result{ load_level(level.path(), registry, renderer) };
+            if (!result) {
+                return result;
+            }
+        }
+
+        return {};
     }
 }

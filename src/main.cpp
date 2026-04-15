@@ -26,7 +26,7 @@ struct gamestate {
     Uint64 accumulated_time{ 0 };
     entt::registry registry;
     entt::entity player;
-    clayborne::camera camera;
+    entt::entity camera;
     clayborne::resources resources;
     bool is_fullscreen{ false };
 
@@ -80,13 +80,17 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     // Initialize camera
     gs.camera = clayborne::init_camera(gs.registry);
 
-    // Initialize player
-    gs.player = clayborne::init_player(gs.registry, gs.resources, 70.0f, 140.0f);
-
-    // Initialize starting level
-    auto level_load_result{ clayborne::load_level("data/levels/Level_0", gs.registry, gs.renderer) };
+    // Initialize levels
+    auto level_load_result{ clayborne::load_levels("data/levels", gs.registry, gs.renderer) };
     if (!level_load_result) {
         std::println("{}", level_load_result.error());
+        return SDL_APP_FAILURE;
+    }
+
+    // Initialize player
+    gs.player = gs.registry.view<clayborne::player>().front();
+    if (gs.player == entt::null) {
+        std::println("Level contains no player");
         return SDL_APP_FAILURE;
     }
     
@@ -101,7 +105,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
 
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
     auto &gs{ *static_cast<gamestate*>(appstate) };
-    clayborne::player &player{ gs.registry.get<clayborne::player>(gs.player) };
+    auto &player{ gs.registry.get<clayborne::player>(gs.player) };
+    auto &campos{ gs.registry.get<clayborne::position>(gs.camera) };
 
     switch (event->type) {
     case SDL_EVENT_QUIT: [[fallthrough]];
@@ -125,6 +130,10 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
         case SDL_SCANCODE_A: player.left = true; break;
         case SDL_SCANCODE_S: player.down = true; break;
         case SDL_SCANCODE_D: player.right = true; break;
+        case SDL_SCANCODE_UP: campos.y -= 184.0f; break;
+        case SDL_SCANCODE_DOWN: campos.y += 184.0f; break;
+        case SDL_SCANCODE_LEFT: campos.x -= 320.0f; break;
+        case SDL_SCANCODE_RIGHT: campos.x += 320.0f; break;
         // ------------------------ //
         default:
             break;

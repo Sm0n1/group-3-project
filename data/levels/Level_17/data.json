@@ -1,9 +1,9 @@
 {
 	"identifier": "Level_17",
 	"uniqueIdentifer": "9539c2f0-21a0-11f1-919d-dd77c4998798",
-	"x": -1440,
+	"x": -1280,
 	"y": 368,
-	"width": 360,
+	"width": 320,
 	"height": 184,
 	"bgColor": "#696A79",
 	"neighbourLevels": [
@@ -28,9 +28,9 @@
 		"Sensor": [
 			{
 				"id": "Sensor",
-				"iid": "68536920-21a0-11f1-919d-4f52658fbc87",
+				"iid": "2fca32d0-21a0-11f1-919d-7b2d3d55ea94",
 				"layer": "Entities",
-				"x": 320,
+				"x": 272,
 				"y": 144,
 				"width": 8,
 				"height": 8,

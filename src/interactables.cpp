@@ -44,12 +44,12 @@ namespace clayborne {
     [[nodiscard]] entt::entity create_door(entt::registry &registry, const float x, const float y, const bool is_default_open, const entt::entity toggle_sensor) noexcept {
         auto entity{ registry.create() };
 
-        registry.emplace<door>(entity, toggle_sensor, 8.0f, 8.0f, is_default_open, false);
+        registry.emplace<door>(entity, toggle_sensor, 8.0f, 16.0f, is_default_open, false);
         registry.emplace<position>(entity, x, y);
-        registry.emplace<renderer>(entity, nullptr, SDL_FRect{}, SDL_FRect{ 0.0f, 0.0f, 8.0f, 8.0f }, 0);
+        registry.emplace<renderer>(entity, nullptr, SDL_FRect{}, SDL_FRect{ 0.0f, 0.0f, 8.0f, 16.0f }, 0);
 
         if (!is_default_open) {
-            registry.emplace<collider>(entity, 8.0f, 8.0f, std::nullopt);
+            registry.emplace<collider>(entity, 8.0f, 16.0f, std::nullopt);
         }
         
         return entity;
@@ -62,7 +62,7 @@ namespace clayborne {
         for (auto [de, dp, d] : doors.each()) {
             d.is_open = d.is_default_open;
             for (auto [se, s] : sensors.each()) {
-                if (d.sensor == se && s.is_sensing) {
+                if ((d.sensor == entt::null || d.sensor == se) && s.is_sensing) {
                     d.is_open = !d.is_default_open;
                     break;
                 }

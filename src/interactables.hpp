@@ -21,7 +21,7 @@ namespace clayborne {
     void sense(entt::registry &registry) noexcept;
 
     struct door {
-        entt::entity sensor{ entt::null };
+        entt::entity sensor{ entt::null }; // If null, doors listen to all sensors
         float w{ 8.0f };
         float h{ 8.0f };
         bool is_default_open{ false };

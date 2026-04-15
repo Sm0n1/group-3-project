@@ -15,21 +15,19 @@
 
 namespace clayborne {
     // TODO: match destination rectangle with window
-    clayborne::camera init_camera(entt::registry &registry) {
-        clayborne::camera camera{ 
-            .entity = registry.create()
-        };
+    entt::entity init_camera(entt::registry &registry) {
+        auto camera{ registry.create() };
 
-        registry.emplace<clayborne::position>(camera.entity, 0.0f, 0.0f);
+        registry.emplace<clayborne::position>(camera, 0.0f, 0.0f);
 
         return camera;
     }
 
-    void deinit_camera(clayborne::camera &camera, entt::registry &registry) {
-        registry.destroy(camera.entity);
+    void deinit_camera(const entt::entity camera, entt::registry &registry) {
+        registry.destroy(camera);
     }
 
-    void render(const clayborne::camera &camera, const entt::registry &registry, SDL_Renderer *renderer, SDL_Texture *canvas) {
+    void render(const entt::entity camera, const entt::registry &registry, SDL_Renderer *renderer, SDL_Texture *canvas) {
         // Clear last frame
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
@@ -38,7 +36,7 @@ namespace clayborne {
 
         // Draw camera view
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        auto &camera_position = registry.get<const clayborne::position>(camera.entity);
+        auto &camera_position = registry.get<const clayborne::position>(camera);
         auto view = registry.view<const clayborne::position, const clayborne::renderer>();
         for (auto [entity, position, renderable]: view.each()) {
             const SDL_FRect dstrect{
