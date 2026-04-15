@@ -12,6 +12,7 @@
 #include "clay.hpp"
 #include "utils.hpp"
 #include "resources.hpp"
+#include "interactables.hpp"
 
 namespace clayborne {
     template<bool X, int Amount>
@@ -73,6 +74,7 @@ namespace clayborne {
         auto &velocity{ registry.get<clayborne::velocity>(collision.self) };
         auto &collider{ registry.get<clayborne::collider>(collision.self) };
         auto &renderer{ registry.get<clayborne::renderer>(collision.self) };
+        auto &activator{ registry.get<clayborne::activator>(collision.self) };
 
         // --------------------- //
         // Horizontal Collisions //
@@ -124,6 +126,7 @@ namespace clayborne {
             // Update player shape
             position.y -= player::hitbox_height - player::headless_hitbox_height;
             collider.h = player::hitbox_height;
+            activator.h = player::hitbox_height;
             set_player_tall(true, renderer);
         }
 
@@ -246,14 +249,13 @@ namespace clayborne {
         }
     }
 
-    
-
     entt::entity init_player(entt::registry &registry, clayborne::resources &resources, float x, float y) noexcept {
         auto player_entity{ registry.create() };
 
         registry.emplace<player>(player_entity);
         registry.emplace<position>(player_entity, x, y);
         registry.emplace<velocity>(player_entity);
+        registry.emplace<activator>(player_entity, player::hitbox_width, player::hitbox_width);
 
         auto &collider{ registry.emplace<clayborne::collider>(player_entity) };
         collider.w = player::hitbox_width;
@@ -276,11 +278,12 @@ namespace clayborne {
             (void)event;
         }
 
-        auto &player{ registry.get<clayborne::player>(player_entity)};
+        auto &player{ registry.get<clayborne::player>(player_entity) };
         auto &velocity{ registry.get<clayborne::velocity>(player_entity) };
         auto &position{ registry.get<clayborne::position>(player_entity) };
         auto &collider{ registry.get<clayborne::collider>(player_entity) };
         auto &renderer{ registry.get<clayborne::renderer>(player_entity) };
+        auto &activator{ registry.get<clayborne::activator>(player_entity) };
 
         // ----------------------------- //
         // Update States, Flags & Timers //
@@ -470,6 +473,7 @@ namespace clayborne {
                         velocity.y = 0.0f;
                         position.y += player::hitbox_height - player::headless_hitbox_height;
                         collider.h = player::headless_hitbox_height;
+                        activator.h = player::headless_hitbox_height;
                         set_player_tall(false, renderer);
                         // TODO: create the buried head entity
                     }
@@ -545,6 +549,7 @@ namespace clayborne {
                             position = new_position;
                             velocity.y = 0.0f;
                             collider.h = player::headless_hitbox_height;
+                            activator.h = player::headless_hitbox_height;
                             set_player_tall(false, renderer);
 
                             player.head = registry.create();
@@ -554,6 +559,7 @@ namespace clayborne {
                             registry.emplace<clayborne::position>(player.head, head_position);
                             registry.emplace<clayborne::velocity>(player.head, head_velocity);
                             registry.emplace<clayborne::collider>(player.head, head_collider);
+                            registry.emplace<clayborne::activator>(player.head, head::hitbox_width, head::hitbox_height);
                           
                             auto &head_renderer{ registry.emplace<clayborne::renderer>(player.head) };
                             head_renderer.texture = renderer.texture;

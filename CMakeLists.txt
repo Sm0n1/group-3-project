@@ -41,6 +41,7 @@ target_sources(clayborne PRIVATE
     src/camera.cpp
     src/player.cpp
     src/physics.cpp
+    src/interactables.cpp
     src/resources.cpp
     src/engine/input/manager.cpp
     src/engine/input/map.cpp

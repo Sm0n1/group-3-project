@@ -8,13 +8,14 @@
 #include <cstdio>
 #include <fstream>
 #include <string>
-// #include <print>
+#include <print>
 #include "engine/input/manager.hpp"
 #include "camera.hpp"
 #include "player.hpp"
 #include "physics.hpp"
 #include "resources.hpp"
 #include "clay.hpp"
+#include "interactables.hpp"
 
 struct gamestate {
     SDL_Window *window{ nullptr };
@@ -98,6 +99,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
         return SDL_APP_FAILURE;
     }
 
+    auto sensor{ clayborne::create_sensor(gs.registry, 70.0f, 168.0f) };
     std::string line;
 
     float x{0};
@@ -118,8 +120,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
             }
             //gs.registry.emplace<clayborne::renderer>(tile, nullptr, SDL_FRect{}, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = tile_size, .h = tile_size });
         }
+        else if (line == "2") {
+            (void)clayborne::create_door(gs.registry, x * tile_size, y * tile_size, false, sensor);
+        }
 
-        if (line == "0" ||  line == "1") {
+        if (line == "0" ||  line == "1" || line == "2") {
             x = x + 1;
             if (x >= 40) {
                 x = 0;
@@ -204,6 +209,8 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
     while (gs.accumulated_time >= SDL_NS_PER_SECOND / 60) {
         clayborne::update_player(gs.player, gs.registry, gs.inputs, SDL_NS_PER_SECOND / 60);
         clayborne::update_physics(gs.registry, SDL_NS_PER_SECOND / 60);
+        clayborne::sense(gs.registry);
+        clayborne::toggle_doors(gs.registry);
         gs.accumulated_time -= SDL_NS_PER_SECOND / 60;
     }
 
@@ -228,9 +235,9 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) {
     SDL_DestroyWindow(gs.window);
 
     switch (result) {
-    case SDL_APP_SUCCESS: [[fallthrough]]; // std::println("App Success"); break;
-    case SDL_APP_FAILURE: [[fallthrough]]; // std::println("App Failure"); break;
-    case SDL_APP_CONTINUE: [[fallthrough]]; // std::unreachable();
+    case SDL_APP_SUCCESS: std::println("App Success"); break;
+    case SDL_APP_FAILURE: std::println("App Failure"); break;
+    case SDL_APP_CONTINUE: std::unreachable();
     default:
         break;
     }

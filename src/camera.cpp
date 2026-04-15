@@ -11,6 +11,7 @@
 #include <entt/entt.hpp>
 #include "camera.hpp"
 #include "physics.hpp"
+#include "interactables.hpp"
 
 namespace clayborne {
     // TODO: match destination rectangle with window
@@ -56,6 +57,13 @@ namespace clayborne {
                 SDL_RenderTexture(renderer, renderable.texture, &renderable.srcrect, &dstrect);
             }
             else {
+                auto d = registry.try_get<door>(entity);
+                if (d && d->is_open) {
+                    SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+                    SDL_RenderFillRect(renderer, &dstrect);
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                    continue;
+                }
                 SDL_RenderFillRect(renderer, &dstrect);
             }
         }
