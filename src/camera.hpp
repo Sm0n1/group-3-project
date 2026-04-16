@@ -18,9 +18,11 @@ namespace clayborne {
         int z{ 0 };
     };
 
-    clayborne::camera init_camera(entt::registry &registry);
-    void deinit_camera(clayborne::camera &camera, entt::registry &registry);
-    void render(const clayborne::camera &camera, const entt::registry &registry, SDL_Renderer *renderer, SDL_Texture *canvas);
+    entt::entity init_camera(entt::registry &registry);
+    void deinit_camera(const entt::entity camera, entt::registry &registry);
+    void render(const entt::entity camera, const entt::registry &registry, SDL_Renderer *renderer, SDL_Texture *canvas);
+
+    void camera_player_follow(const entt::entity camera, const entt::entity player, entt::registry &registry);
 }
 
 #endif // CLAYBORNE_CAMERA_HPP

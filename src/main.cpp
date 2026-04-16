@@ -8,13 +8,15 @@
 #include <cstdio>
 #include <fstream>
 #include <string>
-// #include <print>
+#include <print>
 #include "engine/input/manager.hpp"
 #include "camera.hpp"
 #include "player.hpp"
 #include "physics.hpp"
 #include "resources.hpp"
 #include "clay.hpp"
+#include "interactables.hpp"
+#include "level_loader.hpp"
 
 struct gamestate {
     SDL_Window *window{ nullptr };
@@ -24,7 +26,7 @@ struct gamestate {
     Uint64 accumulated_time{ 0 };
     entt::registry registry;
     entt::entity player;
-    clayborne::camera camera;
+    entt::entity camera;
     clayborne::resources resources;
     bool is_fullscreen{ false };
 
@@ -78,56 +80,19 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     // Initialize camera
     gs.camera = clayborne::init_camera(gs.registry);
 
+    // Initialize levels
+    auto level_load_result{ clayborne::load_levels("data/levels", gs.registry, gs.renderer) };
+    if (!level_load_result) {
+        std::println("{}", level_load_result.error());
+        return SDL_APP_FAILURE;
+    }
+
     // Initialize player
-    gs.player = clayborne::init_player(gs.registry, gs.resources, 70.0f, 140.0f);
-
-    // Quick and dirty ldtk super simple level format reader
-    // TODO: move this to its own file
-    SDL_Texture *level_sprite{ IMG_LoadTexture(gs.renderer, "data/levels/sprite.png") };
-    if (!level_sprite) {
-        SDL_Log("IMG load texture failed: %s", SDL_GetError());
+    gs.player = gs.registry.view<clayborne::player>().front();
+    if (gs.player == entt::null) {
+        std::println("Level contains no player");
         return SDL_APP_FAILURE;
     }
-    auto level{ gs.registry.create() };
-    gs.registry.emplace<clayborne::position>(level, 0.0f, 0.0f);
-    gs.registry.emplace<clayborne::renderer>(level, level_sprite, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = 320.0f, .h = 180.0f }, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = 320.0f, .h = 180.0f }, -1);
-
-    std::ifstream file("data/levels/tiles.csv");
-    if (!file) {
-        SDL_Log("file stream failed to open");
-        return SDL_APP_FAILURE;
-    }
-
-    std::string line;
-
-    float x{0};
-    float y{0};
-
-    float tile_size{ 8.0f };
-
-    while (getline(file, line, ',')) {
-        line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
-        line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
-
-        if (line == "1") {
-            auto tile{ gs.registry.create() };
-            gs.registry.emplace<clayborne::position>(tile, x * tile_size, y * tile_size);
-            gs.registry.emplace<clayborne::collider>(tile, tile_size, tile_size);
-            if (y >= 22) {
-                gs.registry.emplace<clayborne::clay>(tile);
-            }
-            //gs.registry.emplace<clayborne::renderer>(tile, nullptr, SDL_FRect{}, SDL_FRect{ .x = 0.0f, .y = 0.0f, .w = tile_size, .h = tile_size });
-        }
-
-        if (line == "0" ||  line == "1") {
-            x = x + 1;
-            if (x >= 40) {
-                x = 0;
-                y = y + 1;
-            }
-        }
-    }
-    // end of level loader
     
     // Initialize timer
     gs.current_time = SDL_GetTicksNS();
@@ -140,7 +105,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
 
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
     auto &gs{ *static_cast<gamestate*>(appstate) };
-    clayborne::player &player{ gs.registry.get<clayborne::player>(gs.player) };
+    auto &player{ gs.registry.get<clayborne::player>(gs.player) };
 
     switch (event->type) {
     case SDL_EVENT_QUIT: [[fallthrough]];
@@ -204,6 +169,9 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
     while (gs.accumulated_time >= SDL_NS_PER_SECOND / 60) {
         clayborne::update_player(gs.player, gs.registry, gs.inputs, SDL_NS_PER_SECOND / 60);
         clayborne::update_physics(gs.registry, SDL_NS_PER_SECOND / 60);
+        clayborne::sense(gs.registry);
+        clayborne::toggle_doors(gs.registry);
+        clayborne::camera_player_follow(gs.camera, gs.player, gs.registry);
         gs.accumulated_time -= SDL_NS_PER_SECOND / 60;
     }
 
@@ -228,9 +196,9 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) {
     SDL_DestroyWindow(gs.window);
 
     switch (result) {
-    case SDL_APP_SUCCESS: [[fallthrough]]; // std::println("App Success"); break;
-    case SDL_APP_FAILURE: [[fallthrough]]; // std::println("App Failure"); break;
-    case SDL_APP_CONTINUE: [[fallthrough]]; // std::unreachable();
+    case SDL_APP_SUCCESS: std::println("App Success"); break;
+    case SDL_APP_FAILURE: std::println("App Failure"); break;
+    case SDL_APP_CONTINUE: std::unreachable();
     default:
         break;
     }

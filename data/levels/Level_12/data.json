@@ -1,0 +1,32 @@
+{
+	"identifier": "Level_12",
+	"uniqueIdentifer": "a2e2d450-21a0-11f1-97ad-abbd4ad5be27",
+	"x": -960,
+	"y": 552,
+	"width": 320,
+	"height": 184,
+	"bgColor": "#696A79",
+	"neighbourLevels": [
+		{
+			"levelIid": "2cb93210-21a0-11f1-97ad-096e58bf4932",
+			"dir": "n"
+		},
+		{
+			"levelIid": "9f0c77f0-21a0-11f1-97ad-d1d283d1b77b",
+			"dir": "ne"
+		},
+		{
+			"levelIid": "a23d6c90-21a0-11f1-97ad-f9c7266d9a94",
+			"dir": "e"
+		},
+		{
+			"levelIid": "9539c2f0-21a0-11f1-919d-dd77c4998798",
+			"dir": "nw"
+		}
+	],
+	"customFields" : {},
+	"layers": [
+		"IntGrid.png"
+	],
+	"entities" : {}
+}

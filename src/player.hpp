@@ -32,6 +32,7 @@ namespace clayborne {
             start, // Running, jumping, and falling
             throwing, // Throwing head
             launched, // Launched by exploding head
+            dead,
         };
 
         // ---------------------------- //
@@ -117,6 +118,13 @@ namespace clayborne {
         float head_buffer_timer{ 0.0f };
         float head_throw_timer{ 0.0f };
         float head_launch_timer{ 0.0f };
+
+        // ---------- //
+        // Death Data //
+        // ---------- //
+
+        float respawn_x{ 0.0f };
+        float respawn_y{ 0.0f };
     };
 
     struct head {

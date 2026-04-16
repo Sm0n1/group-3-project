@@ -1,0 +1,63 @@
+{
+	"identifier": "Level_5",
+	"uniqueIdentifer": "fd95cc70-21a0-11f1-97ad-f16fef0c83a8",
+	"x": -320,
+	"y": 0,
+	"width": 320,
+	"height": 184,
+	"bgColor": "#696A79",
+	"neighbourLevels": [
+		{
+			"levelIid": "3367a7f0-21a0-11f1-97ad-c9d2647a3948",
+			"dir": "e"
+		},
+		{
+			"levelIid": "7c913bf0-21a0-11f1-97ad-c998b928fa92",
+			"dir": "ne"
+		},
+		{
+			"levelIid": "bfe36d10-21a0-11f1-97ad-df89361e82e1",
+			"dir": "n"
+		},
+		{
+			"levelIid": "dd614e50-21a0-11f1-97ad-4d9a78d8214f",
+			"dir": "w"
+		},
+		{
+			"levelIid": "13e46ce0-21a0-11f1-97ad-0987f9dc4fc0",
+			"dir": "nw"
+		}
+	],
+	"customFields" : {},
+	"layers": [
+		"IntGrid.png"
+	],
+	"entities": {
+		"Door": [
+			{
+				"id": "Door",
+				"iid": "578977b0-21a0-11f1-919d-c9d65c14d003",
+				"layer": "Entities",
+				"x": 48,
+				"y": 48,
+				"width": 8,
+				"height": 16,
+				"color": 14120515,
+				"customFields" : {}
+			}
+		],
+		"Sensor": [
+			{
+				"id": "Sensor",
+				"iid": "592db1d0-21a0-11f1-919d-df1dad24167d",
+				"layer": "Entities",
+				"x": 184,
+				"y": 120,
+				"width": 8,
+				"height": 8,
+				"color": 15389866,
+				"customFields" : {}
+			}
+		]
+	}
+}

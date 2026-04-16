@@ -32,6 +32,7 @@ target_compile_features(clayborne PUBLIC cxx_std_23)
 target_include_directories(clayborne SYSTEM PRIVATE
     vendored/entt/single_include
     vendored/SDL/include
+    vendored/json/single_include
 )
 
 target_link_libraries(clayborne PRIVATE SDL3::SDL3 SDL3_image::SDL3_image)
@@ -41,6 +42,8 @@ target_sources(clayborne PRIVATE
     src/camera.cpp
     src/player.cpp
     src/physics.cpp
+    src/interactables.cpp
+    src/level_loader.cpp
     src/resources.cpp
     src/engine/input/manager.cpp
     src/engine/input/map.cpp

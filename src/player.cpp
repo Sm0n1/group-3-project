@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_timer.h>
 #include <algorithm>
+#include <print>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -12,6 +13,7 @@
 #include "clay.hpp"
 #include "utils.hpp"
 #include "resources.hpp"
+#include "interactables.hpp"
 
 namespace clayborne {
     template<bool X, int Amount>
@@ -73,6 +75,7 @@ namespace clayborne {
         auto &velocity{ registry.get<clayborne::velocity>(collision.self) };
         auto &collider{ registry.get<clayborne::collider>(collision.self) };
         auto &renderer{ registry.get<clayborne::renderer>(collision.self) };
+        auto &activator{ registry.get<clayborne::activator>(collision.self) };
 
         // --------------------- //
         // Horizontal Collisions //
@@ -124,6 +127,7 @@ namespace clayborne {
             // Update player shape
             position.y -= player::hitbox_height - player::headless_hitbox_height;
             collider.h = player::hitbox_height;
+            activator.h = player::hitbox_height;
             set_player_tall(true, renderer);
         }
 
@@ -246,14 +250,40 @@ namespace clayborne {
         }
     }
 
-    
+    static void respawn_player(entt::registry &registry, player &p, position &pos, velocity &vel) noexcept {
+        p.state = player::state::start;
+        vel.x = 0.0f;
+        vel.y = 0.0f;
+
+        // Respawn on head if it is on clay
+        if (p.head != entt::null) {
+            auto head_position{ registry.get<const position>(p.head) };
+            auto head_collider{ registry.get<const collider>(p.head) };
+            auto below{ head_position };
+            below.y += 1.0f;
+            if (overlap_any<clay>(registry, p.head, below, head_collider)) {
+                registry.destroy(p.head);
+                p.head = entt::null;
+                pos.x = head_position.x;
+                pos.y = head_position.y;
+                return;
+            }
+        }
+        
+        pos.x = p.respawn_x;
+        pos.y = p.respawn_y;
+    }
 
     entt::entity init_player(entt::registry &registry, clayborne::resources &resources, float x, float y) noexcept {
         auto player_entity{ registry.create() };
 
-        registry.emplace<player>(player_entity);
+        auto &player_player{ registry.emplace<player>(player_entity) };
+        player_player.respawn_x = x;
+        player_player.respawn_y = y;
+
         registry.emplace<position>(player_entity, x, y);
         registry.emplace<velocity>(player_entity);
+        registry.emplace<activator>(player_entity, player::hitbox_width, player::hitbox_height);
 
         auto &collider{ registry.emplace<clayborne::collider>(player_entity) };
         collider.w = player::hitbox_width;
@@ -276,15 +306,20 @@ namespace clayborne {
             (void)event;
         }
 
-        auto &player{ registry.get<clayborne::player>(player_entity)};
+        auto &player{ registry.get<clayborne::player>(player_entity) };
         auto &velocity{ registry.get<clayborne::velocity>(player_entity) };
         auto &position{ registry.get<clayborne::position>(player_entity) };
         auto &collider{ registry.get<clayborne::collider>(player_entity) };
         auto &renderer{ registry.get<clayborne::renderer>(player_entity) };
+        auto &activator{ registry.get<clayborne::activator>(player_entity) };
 
         // ----------------------------- //
         // Update States, Flags & Timers //
         // ----------------------------- //
+
+        if (player.state == player::state::dead) {
+            respawn_player(registry, player, position, velocity);
+        }
 
         // Check if grounded
         player.is_grounded = false;
@@ -303,6 +338,8 @@ namespace clayborne {
             below.y += 1.0f;
             if (overlap_any<clayborne::clay>(registry, player_entity , below, collider)) {
                 player.is_on_clay = true;
+                player.respawn_x = position.x;
+                player.respawn_y = position.y;
             }
         }
 
@@ -470,6 +507,7 @@ namespace clayborne {
                         velocity.y = 0.0f;
                         position.y += player::hitbox_height - player::headless_hitbox_height;
                         collider.h = player::headless_hitbox_height;
+                        activator.h = player::headless_hitbox_height;
                         set_player_tall(false, renderer);
                         // TODO: create the buried head entity
                     }
@@ -545,6 +583,7 @@ namespace clayborne {
                             position = new_position;
                             velocity.y = 0.0f;
                             collider.h = player::headless_hitbox_height;
+                            activator.h = player::headless_hitbox_height;
                             set_player_tall(false, renderer);
 
                             player.head = registry.create();
@@ -554,6 +593,7 @@ namespace clayborne {
                             registry.emplace<clayborne::position>(player.head, head_position);
                             registry.emplace<clayborne::velocity>(player.head, head_velocity);
                             registry.emplace<clayborne::collider>(player.head, head_collider);
+                            registry.emplace<clayborne::activator>(player.head, head::hitbox_width, head::hitbox_height);
                           
                             auto &head_renderer{ registry.emplace<clayborne::renderer>(player.head) };
                             head_renderer.texture = renderer.texture;
