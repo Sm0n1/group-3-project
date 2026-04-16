@@ -76,7 +76,7 @@ namespace clayborne {
         }
 
         std::println("...load data");
-        auto data{ nlohmann::json::parse(data_file, nullptr, false) };
+        auto data = nlohmann::json::parse(data_file, nullptr, false);
         if (data.is_discarded()) {
             return std::unexpected("Failed to parse " + data_path.string());
         }
