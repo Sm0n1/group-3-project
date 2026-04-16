@@ -188,6 +188,18 @@ namespace clayborne {
 
         std::println("...load entities");
         const auto entities = data["entities"];
+
+        std::println("data type: {}", entities.type_name());
+        std::println("data json: {}", entities.dump(2));
+
+        if (!entities.is_object()) {
+            return std::unexpected(
+                "Expected object in entities" +
+                ", got " + std::string(entities.type_name()) +
+                ": " + entities.dump(2)
+            );
+        }
+
         for (auto& [entity_name, entity_list] : entities.items()) {
             if (entity_name == "Player") {
                 int x{ entity_list[0]["x"] };
