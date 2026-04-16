@@ -113,7 +113,9 @@ namespace clayborne {
                 }
 
                 std::uint8_t tile{ 0 };
-                auto [ptr, ec] = std::from_chars(start, comma, tile);
+                int temp{ 0 };
+                auto [ptr, ec] = std::from_chars(start, comma, temp);
+                tile = static_cast<std::uint8_t>(temp);
 
                 if (ec != std::errc{}) {
                     return std::unexpected("Failed to parse " + grid_path.string() + ": invalid integer");
