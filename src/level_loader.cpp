@@ -69,16 +69,19 @@ namespace clayborne {
         const auto grid_path{ level / "IntGrid.csv" };
         const auto image_path{ level / "_composite.png" };
         
+        std::println("...open data file");
         std::ifstream data_file{ data_path };
         if (!data_file) {
             return std::unexpected("Failed to open " + data_path.string());
         }
 
+        std::println("...load data");
         auto data{ nlohmann::json::parse(data_file, nullptr, false) };
         if (data.is_discarded()) {
             return std::unexpected("Failed to parse " + data_path.string());
         }
 
+        std::println("...open grid file");
         std::ifstream grid_file{ grid_path };
         if (!grid_file) {
             return std::unexpected("Failed to open " + grid_path.string());
