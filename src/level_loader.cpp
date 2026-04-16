@@ -187,7 +187,7 @@ namespace clayborne {
         }
 
         std::println("...load entities");
-        const auto entities{ data["entities"] };
+        const auto entities = data["entities"];
         for (auto& [entity_name, entity_list] : entities.items()) {
             if (entity_name == "Player") {
                 int x{ entity_list[0]["x"] };
