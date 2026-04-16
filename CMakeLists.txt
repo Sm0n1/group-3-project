@@ -84,7 +84,18 @@ if(EMSCRIPTEN)
         SUFFIX ".html"
     )
 
+    target_compile_options(clayborne PUBLIC
+        "-g3"
+        "-fexceptions"
+    )
+
     target_link_options(clayborne PRIVATE
+        "-O0"
+        "-g3"
+        "-sASSERTIONS=2"
+        "-sEXCEPTION_STACK_TRACES=1"
+        "-sDISABLE_EXCEPTION_CATCHING=0"
+        
         "-sUSE_SDL=3"
         "-sALLOW_MEMORY_GROWTH=1"
         "-sNO_EXIT_RUNTIME=1"

@@ -1,3 +1,4 @@
+#include <SDL3/SDL_init.h>
 #define SDL_MAIN_USE_CALLBACKS
 
 // #include <utility>
@@ -34,6 +35,8 @@ struct gamestate {
 };
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
+try {
+
     (void)argc;
     (void)argv;
 
@@ -101,6 +104,17 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     gs.inputs = {};
 
     return SDL_APP_CONTINUE;
+
+} catch (const std::exception& e) {
+    std::cerr << "std::exception: " << e.what() << '\n';
+    return SDL_APP_FAILURE;
+} catch (const char* e) {
+    std::cerr << "const char*: " << e << '\n';
+    return SDL_APP_FAILURE;
+} catch (...) {
+    std::cerr << "Unknown exception\n";
+    return SDL_APP_FAILURE;
+}
 }
 
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
