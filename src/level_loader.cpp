@@ -81,6 +81,17 @@ namespace clayborne {
             return std::unexpected("Failed to parse " + data_path.string());
         }
 
+        std::println("data type: {}", data.type_name());
+        std::println("data json: {}", data.dump(2));
+
+        if (!data.is_object()) {
+            return std::unexpected(
+                "Expected object in " + data_path.string() +
+                ", got " + std::string(data.type_name()) +
+                ": " + data.dump(2)
+            );
+        }
+
         std::println("...open grid file");
         std::ifstream grid_file{ grid_path };
         if (!grid_file) {
