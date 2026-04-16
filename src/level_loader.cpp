@@ -189,8 +189,8 @@ namespace clayborne {
         std::println("...load entities");
         const auto entities = data["entities"];
 
-        std::println("data type: {}", entities.type_name());
-        std::println("data json: {}", entities.dump(2));
+        std::println("entities type: {}", entities.type_name());
+        std::println("entities json: {}", entities.dump(2));
 
         if (!entities.is_object()) {
             return std::unexpected(
