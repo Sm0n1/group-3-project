@@ -1,4 +1,5 @@
 /build/
 /builddir/
 /.clangd
+/.clangd-disabled
 .vscode

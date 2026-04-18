@@ -1,10 +1,8 @@
 #include <SDL3_image/SDL_image.h>
 #include <nlohmann/json.hpp>
 #include <fstream>
-#include <print>
 #include "level_loader.hpp"
 #include "camera.hpp"
-#include "utils.hpp"
 #include "physics.hpp"
 #include "clay.hpp"
 #include "player.hpp"
@@ -69,30 +67,16 @@ namespace clayborne {
         const auto grid_path{ level / "IntGrid.csv" };
         const auto image_path{ level / "_composite.png" };
         
-        std::println("...open data file");
         std::ifstream data_file{ data_path };
         if (!data_file) {
             return std::unexpected("Failed to open " + data_path.string());
         }
 
-        std::println("...load data");
         auto data = nlohmann::json::parse(data_file, nullptr, false);
         if (data.is_discarded()) {
             return std::unexpected("Failed to parse " + data_path.string());
         }
 
-        std::println("data type: {}", data.type_name());
-        std::println("data json: {}", data.dump(2));
-
-        if (!data.is_object()) {
-            return std::unexpected(
-                "Expected object in " + data_path.string() +
-                ", got " + std::string(data.type_name()) +
-                ": " + data.dump(2)
-            );
-        }
-
-        std::println("...open grid file");
         std::ifstream grid_file{ grid_path };
         if (!grid_file) {
             return std::unexpected("Failed to open " + grid_path.string());
@@ -135,7 +119,7 @@ namespace clayborne {
                 std::uint8_t tile{ 0 };
                 std::string temp_s(start, comma);
                 char* temp_end = nullptr;
-                unsigned long value = std::strtoul(temp_s.c_str(), &temp_end, 10);
+                unsigned long value = strtoul(temp_s.c_str(), &temp_end, 10);
                 if (temp_end != temp_s.c_str() + temp_s.size() || value > 255) {
                     return std::unexpected("Failed to parse " + grid_path.string() + ": invalid integer");
                 }
@@ -150,7 +134,6 @@ namespace clayborne {
         constexpr int clay_tile{ 2 };
         constexpr int lava_tile{ 3 };
 
-        std::println("...load level position");
         const int level_x{ data["x"] };
         const int level_y{ data["y"] };
 
@@ -186,19 +169,7 @@ namespace clayborne {
             }
         }
 
-        std::println("...load entities");
         const auto entities = data["entities"];
-
-        std::println("entities type: {}", entities.type_name());
-        std::println("entities json: {}", entities.dump(2));
-
-        if (!entities.is_object()) {
-            return std::unexpected(
-                "Expected object in entities" +
-                ", got " + std::string(entities.type_name()) +
-                ": " + entities.dump(2)
-            );
-        }
 
         for (auto& [entity_name, entity_list] : entities.items()) {
             if (entity_name == "Player") {
@@ -238,16 +209,14 @@ namespace clayborne {
     std::expected<std::monostate, std::string> load_levels(const std::filesystem::path& levels, entt::registry &registry, SDL_Renderer *renderer) {
         for (auto level : std::filesystem::directory_iterator(levels)) {
             if (!std::filesystem::is_directory(level)) {
-                std::println("{} not a directory", level.path().string());
                 continue;
             }
 
             if (!level.path().filename().string().starts_with("Level_")) {
-                std::println("{} not a level", level.path().string());
                 continue;
             }
 
-            println("Load level...({})", level.path().string());
+            SDL_Log("Load level...(%s)", level.path().string().c_str());
 
             const auto result{ load_level(level.path(), registry, renderer) };
             if (!result) {

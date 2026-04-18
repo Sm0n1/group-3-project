@@ -1,7 +1,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_timer.h>
 #include <algorithm>
-#include <print>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>

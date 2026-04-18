@@ -5,30 +5,9 @@
 #include <cmath>
 #include <iostream>
 #include <source_location>
+#include <algorithm>
 
 namespace clayborne {
-    // Calls a function and returns std::nullopt if it throws an exception.
-    // Functions that return void return std::monostate instead.
-    template<typename F, typename... A>
-    std::optional<std::conditional_t<
-        std::is_void_v<std::invoke_result_t<F, A...>>,
-        std::monostate,
-        std::invoke_result_t<F, A...>
-    >> call(F &&f, A &&...a) {
-        try {
-            if constexpr (std::is_void_v<std::invoke_result_t<F, A...>>) {
-                std::forward<F>(f)(std::forward<A>(a)...);
-                return std::monostate{};
-            }
-            else {
-                return std::forward<F>(f)(std::forward<A>(a)...);
-            }
-        }
-        catch (...) {
-            return std::nullopt;
-        }
-    }
-
     constexpr float inv_sqrt2{ 0.70710678f };
     constexpr float pi{ 3.14159265358979323846f };
 

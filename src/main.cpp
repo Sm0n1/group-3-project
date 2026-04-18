@@ -7,15 +7,11 @@
 #include <SDL3_image/SDL_image.h>
 #include <entt/entt.hpp>
 #include <cstdio>
-#include <fstream>
-#include <string>
-#include <print>
 #include "engine/input/manager.hpp"
 #include "camera.hpp"
 #include "player.hpp"
 #include "physics.hpp"
 #include "resources.hpp"
-#include "clay.hpp"
 #include "interactables.hpp"
 #include "level_loader.hpp"
 
@@ -85,14 +81,14 @@ try {
     // Initialize levels
     auto level_load_result{ clayborne::load_levels("data/levels", gs.registry, gs.renderer) };
     if (!level_load_result) {
-        std::println("{}", level_load_result.error());
+        SDL_Log("%s", level_load_result.error().c_str());
         return SDL_APP_FAILURE;
     }
 
     // Initialize player
     gs.player = gs.registry.view<clayborne::player>().front();
     if (gs.player == entt::null) {
-        std::println("Level contains no player");
+        SDL_Log("Level contains no player");
         return SDL_APP_FAILURE;
     }
     
@@ -105,13 +101,13 @@ try {
     return SDL_APP_CONTINUE;
 
 } catch (const std::exception& e) {
-    std::println("std::exception: {}", e.what());
+    SDL_Log("std::exception: %s", e.what());
     return SDL_APP_FAILURE;
 } catch (const char* e) {
-    std::println("const char*: {}", e);
+    SDL_Log("const char*: %s", e);
     return SDL_APP_FAILURE;
 } catch (...) {
-    std::println("Unknown exception");
+    SDL_Log("Unknown exception");
     return SDL_APP_FAILURE;
 }
 }
@@ -209,8 +205,8 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) {
     SDL_DestroyWindow(gs.window);
 
     switch (result) {
-    case SDL_APP_SUCCESS: std::println("App Success"); break;
-    case SDL_APP_FAILURE: std::println("App Failure"); break;
+    case SDL_APP_SUCCESS: SDL_Log("App Success"); break;
+    case SDL_APP_FAILURE: SDL_Log("App Failure"); break;
     case SDL_APP_CONTINUE: std::unreachable();
     default:
         break;

@@ -3,8 +3,6 @@
 #include <entt/entt.hpp>
 #include "camera.hpp"
 #include "physics.hpp"
-#include "resources.hpp"
-#include <print>
 #include <SDL3/SDL_oldnames.h>
 #include <SDL3/SDL_render.h>
 #include <cstdio>
