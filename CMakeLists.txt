@@ -57,23 +57,23 @@ if(MSVC)
     )
 else()
     target_compile_options(clayborne PRIVATE
-        # -Wall
-        # -Wextra
-        # -Werror
-        # -Wshadow
-        # -Wconversion
-        # -Wdouble-promotion
-        # -Wformat=2
-        # -Wundef
-        # -Wnull-dereference
-        # -Wpedantic
-        # -Wimplicit-fallthrough
-        # -Wmissing-declarations
-        # -Wcast-qual
-        # -Wold-style-cast
-        # -Woverloaded-virtual
-        # -Wnon-virtual-dtor
-        # -Wzero-as-null-pointer-constant
+        -Wall
+        -Wextra
+        -Werror
+        -Wshadow
+        -Wconversion
+        -Wdouble-promotion
+        -Wformat=2
+        -Wundef
+        -Wnull-dereference
+        -Wpedantic
+        -Wimplicit-fallthrough
+        -Wmissing-declarations
+        -Wcast-qual
+        -Wold-style-cast
+        -Woverloaded-virtual
+        -Wnon-virtual-dtor
+        -Wzero-as-null-pointer-constant
         $<$<CONFIG:Debug>:-O0 -g>
         $<$<CONFIG:Release>:-O3 -DNDEBUG>
     )

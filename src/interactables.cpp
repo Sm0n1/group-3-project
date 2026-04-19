@@ -1,6 +1,8 @@
 #include <SDL3/SDL.h>
 #include <entt/entt.hpp>
 #include "interactables.hpp"
+#include "physics.hpp"
+#include "camera.hpp"
 
 namespace clayborne {
     [[nodiscard]] entt::entity create_sensor(entt::registry &registry, const float x, const float y) noexcept {

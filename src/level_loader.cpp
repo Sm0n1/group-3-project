@@ -37,7 +37,7 @@ namespace clayborne {
                 std::uint8_t h{ 1 };
                 bool can_expand{ true };
                 while (y + h < tile_rows && can_expand) {
-                    for (int dx{ 0 }; dx < w; dx += 1) {
+                    for (std::uint8_t dx{ 0 }; dx < w; dx += 1) {
                         if (tile != tiles[y + h][x + dx] || visited_tiles[y + h][x + dx]) {
                             can_expand = false;
                             break;
@@ -49,8 +49,8 @@ namespace clayborne {
                     }
                 }
 
-                for (int dy = 0; dy < h; dy += 1) {
-                    for (int dx = 0; dx < w; dx += 1) {
+                for (std::uint8_t dy = 0; dy < h; dy += 1) {
+                    for (std::uint8_t dx = 0; dx < w; dx += 1) {
                         visited_tiles[y + dy][x + dx] = true;
                     }
                 }
@@ -134,8 +134,8 @@ namespace clayborne {
         constexpr int clay_tile{ 2 };
         constexpr int lava_tile{ 3 };
 
-        const int level_x{ data["x"] };
-        const int level_y{ data["y"] };
+        const float level_x{ data["x"] };
+        const float level_y{ data["y"] };
 
         auto tile_groups{ merge_tiles_greedy(tiles) };
         for (auto tg : tile_groups) {
@@ -173,21 +173,21 @@ namespace clayborne {
 
         for (auto& [entity_name, entity_list] : entities.items()) {
             if (entity_name == "Player") {
-                int x{ entity_list[0]["x"] };
-                int y{ entity_list[0]["y"] };
+                float x{ entity_list[0]["x"] };
+                float y{ entity_list[0]["y"] };
                 // TODO: use an actual resource loader
                 auto r{ resources{ .spritesheet = nullptr } };
-                init_player(registry, r, static_cast<float>(x + level_x), static_cast<float>(y +  level_y));
+                init_player(registry, r, level_x + x, level_y + y);
             }
             else if (entity_name == "Door") {
-                int x{ entity_list[0]["x"] };
-                int y{ entity_list[0]["y"] };
-                (void)create_door(registry, static_cast<float>(x + level_x), static_cast<float>(y + level_y), false, entt::null);
+                float x{ entity_list[0]["x"] };
+                float y{ entity_list[0]["y"] };
+                (void)create_door(registry, level_x + x, level_y + y, false, entt::null);
             }
             else if (entity_name == "Sensor") {
-                int x{ entity_list[0]["x"] };
-                int y{ entity_list[0]["y"] };
-                (void)create_sensor(registry, static_cast<float>(x + level_x), static_cast<float>(y + level_y));
+                float x{ entity_list[0]["x"] };
+                float y{ entity_list[0]["y"] };
+                (void)create_sensor(registry, level_x + x, level_y + y);
             }
             else {
                 return std::unexpected("Failed to load entity " + entity_name + ": invalid entity id");
@@ -200,7 +200,7 @@ namespace clayborne {
         }
 
         auto level_entity{ registry.create() };
-        registry.emplace<position>(level_entity, static_cast<float>(level_x), static_cast<float>(level_y));
+        registry.emplace<position>(level_entity, level_x, level_y);
         registry.emplace<clayborne::renderer>(level_entity, level_sprite, SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f }, SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f }, -1);
 
         return {};
