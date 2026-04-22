@@ -7,6 +7,7 @@
 #include <entt/entt.hpp>
 #include "engine/input/manager.hpp"
 #include "resources.hpp"
+#include "animation.hpp"
 
 namespace clayborne {
     struct player {
@@ -151,7 +152,7 @@ namespace clayborne {
         float explosion_timer{ 0.0f };
     };
     
-    entt::entity init_player(entt::registry &registry, clayborne::resources &resources, float x, float y) noexcept;
+    entt::entity init_player(entt::registry &registry, float x, float y, SDL_Renderer *renderer, clayborne::animation_cache &animations) noexcept;
     void update_player(entt::entity player_entity, entt::registry &registry, const input::manager &inputs, Uint64 dt_ns) noexcept;
 }
 

@@ -1,3 +1,4 @@
+#include "animation.hpp"
 #include <SDL3/SDL_init.h>
 #define SDL_MAIN_USE_CALLBACKS
 
@@ -27,12 +28,13 @@ struct gamestate {
     clayborne::resources resources;
     bool is_fullscreen{ false };
 
+    clayborne::animation_cache animations{};
+
     clayborne::input::manager inputs;
 };
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
 try {
-
     (void)argc;
     (void)argv;
 
@@ -59,9 +61,6 @@ try {
         return SDL_APP_FAILURE;
     }
 
-    // Initialize resources
-    gs.resources = clayborne::init_resources(gs.renderer);
-
     // Enable automatic scaling
     SDL_SetRenderLogicalPresentation(gs.renderer, 320, 180, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
     
@@ -75,11 +74,14 @@ try {
     // Scale the canvas with sharp edges
     SDL_SetTextureScaleMode(gs.canvas, SDL_SCALEMODE_NEAREST);
 
+    // Initialize resources
+    gs.resources = clayborne::init_resources(gs.renderer);
+
     // Initialize camera
     gs.camera = clayborne::init_camera(gs.registry);
 
     // Initialize levels
-    auto level_load_result{ clayborne::load_levels("data/levels", gs.registry, gs.renderer) };
+    auto level_load_result{ clayborne::load_levels("data/levels", gs.registry, gs.renderer, gs.animations) };
     if (!level_load_result) {
         SDL_Log("%s", level_load_result.error().c_str());
         return SDL_APP_FAILURE;
@@ -181,6 +183,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
         clayborne::sense(gs.registry);
         clayborne::toggle_doors(gs.registry);
         clayborne::camera_player_follow(gs.camera, gs.player, gs.registry);
+        clayborne::animate(gs.registry);
         gs.accumulated_time -= SDL_NS_PER_SECOND / 60;
     }
 

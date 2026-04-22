@@ -1,5 +1,5 @@
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_timer.h>
+#include <SDL3_image/SDL_image.h>
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -13,6 +13,7 @@
 #include "utils.hpp"
 #include "resources.hpp"
 #include "interactables.hpp"
+#include "animation.hpp"
 
 namespace clayborne {
     template<bool X, int Amount>
@@ -273,7 +274,7 @@ namespace clayborne {
         pos.y = p.respawn_y;
     }
 
-    entt::entity init_player(entt::registry &registry, clayborne::resources &resources, float x, float y) noexcept {
+    entt::entity init_player(entt::registry &registry, float x, float y, SDL_Renderer *r, clayborne::animation_cache &animations) noexcept {
         auto player_entity{ registry.create() };
 
         auto &player_player{ registry.emplace<player>(player_entity) };
@@ -290,7 +291,12 @@ namespace clayborne {
         collider.collide = player_collision_handler;
 
         auto &renderer{ registry.emplace<clayborne::renderer>(player_entity) };
-        renderer.texture = resources.spritesheet;
+        renderer.texture = SDL_CreateTextureFromSurface(r, IMG_Load("data/temp.png"));
+
+        auto &animator{ registry.emplace<clayborne::animator>(player_entity) };
+        animator.resource = animations.load(entt::hashed_string("temp"), "data/temp.json").first->second;
+        animator.current_frame = 0;
+        animator.is_looping = true;
 
         set_player_tall(true, renderer);
         

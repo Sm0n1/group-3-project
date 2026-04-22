@@ -5,6 +5,7 @@
 #include <entt/entt.hpp>
 #include <filesystem>
 #include <expected>
+#include "animation.hpp"
 
 namespace clayborne {
     struct tile_group {
@@ -19,8 +20,8 @@ namespace clayborne {
     constexpr int tile_cols{ 40 };
 
     std::vector<tile_group> merge_tiles_greedy(const std::array<std::array<std::uint8_t, tile_cols>, tile_rows> &tiles);
-    std::expected<std::monostate, std::string> load_level(const std::filesystem::path &level, entt::registry &registry, SDL_Renderer *renderer);
-    std::expected<std::monostate, std::string> load_levels(const std::filesystem::path &levels, entt::registry &registry, SDL_Renderer *renderer);
+    std::expected<std::monostate, std::string> load_level(const std::filesystem::path &level, entt::registry &registry, SDL_Renderer *renderer, animation_cache &animations);
+    std::expected<std::monostate, std::string> load_levels(const std::filesystem::path &levels, entt::registry &registry, SDL_Renderer *renderer, animation_cache &animations);
 }
 
 #endif // CLAYBORNE_LEVEL_LOADER_HPP

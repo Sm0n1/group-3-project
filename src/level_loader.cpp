@@ -62,7 +62,7 @@ namespace clayborne {
         return tile_groups;
     }
 
-    std::expected<std::monostate, std::string> load_level(const std::filesystem::path& level, entt::registry &registry, SDL_Renderer *renderer) {
+    std::expected<std::monostate, std::string> load_level(const std::filesystem::path& level, entt::registry &registry, SDL_Renderer *renderer, animation_cache &animations) {
         const auto data_path{ level / "data.json" };
         const auto grid_path{ level / "IntGrid.csv" };
         const auto image_path{ level / "_composite.png" };
@@ -175,9 +175,7 @@ namespace clayborne {
             if (entity_name == "Player") {
                 float x{ entity_list[0]["x"] };
                 float y{ entity_list[0]["y"] };
-                // TODO: use an actual resource loader
-                auto r{ resources{ .spritesheet = nullptr } };
-                init_player(registry, r, level_x + x, level_y + y);
+                init_player(registry, level_x + x, level_y + y, renderer, animations);
             }
             else if (entity_name == "Door") {
                 float x{ entity_list[0]["x"] };
@@ -206,7 +204,7 @@ namespace clayborne {
         return {};
     }
 
-    std::expected<std::monostate, std::string> load_levels(const std::filesystem::path& levels, entt::registry &registry, SDL_Renderer *renderer) {
+    std::expected<std::monostate, std::string> load_levels(const std::filesystem::path& levels, entt::registry &registry, SDL_Renderer *renderer, animation_cache &animations) {
         for (auto level : std::filesystem::directory_iterator(levels)) {
             if (!std::filesystem::is_directory(level)) {
                 continue;
@@ -218,7 +216,7 @@ namespace clayborne {
 
             SDL_Log("Load level...(%s)", level.path().string().c_str());
 
-            const auto result{ load_level(level.path(), registry, renderer) };
+            const auto result{ load_level(level.path(), registry, renderer, animations) };
             if (!result) {
                 return result;
             }
