@@ -43,9 +43,9 @@ target_sources(clayborne PRIVATE
     src/player.cpp
     src/physics.cpp
     src/interactables.cpp
-    src/animation.cpp
+    src/sprite.cpp
+    src/rendering.cpp
     src/level_loader.cpp
-    src/resources.cpp
     src/engine/input/manager.cpp
     src/engine/input/map.cpp
 )

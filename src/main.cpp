@@ -1,8 +1,5 @@
-#include "animation.hpp"
-#include <SDL3/SDL_init.h>
 #define SDL_MAIN_USE_CALLBACKS
 
-// #include <utility>
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
@@ -12,9 +9,10 @@
 #include "camera.hpp"
 #include "player.hpp"
 #include "physics.hpp"
-#include "resources.hpp"
 #include "interactables.hpp"
 #include "level_loader.hpp"
+#include "sprite.hpp"
+#include "rendering.hpp"
 
 struct gamestate {
     SDL_Window *window{ nullptr };
@@ -25,13 +23,10 @@ struct gamestate {
     entt::registry registry;
     entt::entity player;
     entt::entity camera;
-    clayborne::resources resources;
     bool is_fullscreen{ false };
 
-
     clayborne::texture_cache textures{};
-    clayborne::animation_loader loader{ &textures };
-    clayborne::animation_cache animations{ loader };
+    clayborne::animation_cache animations{};
 
     clayborne::input::manager inputs;
 };
@@ -77,14 +72,19 @@ try {
     // Scale the canvas with sharp edges
     SDL_SetTextureScaleMode(gs.canvas, SDL_SCALEMODE_NEAREST);
 
-    // Initialize resources
-    gs.resources = clayborne::init_resources(gs.renderer);
-
     // Initialize camera
     gs.camera = clayborne::init_camera(gs.registry);
 
     // Initialize levels
-    auto level_load_result{ clayborne::load_levels("data/levels", gs.registry, gs.renderer, gs.animations) };
+    auto level_load_result{
+        clayborne::load_levels(
+            "data/levels",
+            gs.registry,
+            gs.animations,
+            gs.textures,
+            gs.renderer
+        )
+    };
     if (!level_load_result) {
         SDL_Log("%s", level_load_result.error().c_str());
         return SDL_APP_FAILURE;
@@ -185,26 +185,28 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
         clayborne::update_physics(gs.registry, SDL_NS_PER_SECOND / 60);
         clayborne::sense(gs.registry);
         clayborne::toggle_doors(gs.registry);
-        clayborne::camera_player_follow(gs.camera, gs.player, gs.registry);
-        clayborne::animate(gs.registry);
+        clayborne::update_camera(gs.camera, gs.player, gs.registry);
+        clayborne::animate_sprites(gs.registry, gs.animations);
         gs.accumulated_time -= SDL_NS_PER_SECOND / 60;
     }
 
     // TODO: banish to the shadowrealm
-    gs.registry.sort<clayborne::renderer>([](const clayborne::renderer &lhs, const clayborne::renderer &rhs) {
-        return lhs.z < rhs.z;
-    });
+    gs.registry.sort<clayborne::sprite_renderer>(
+        [](
+            const clayborne::sprite_renderer &lhs,
+            const clayborne::sprite_renderer &rhs
+        ) {
+            return lhs.z < rhs.z;
+        }
+    );
 
-    clayborne::render(gs.camera, gs.registry, gs.renderer, gs.canvas);
+    clayborne::render(gs.camera, gs.registry, gs.textures, gs.renderer, gs.canvas);
 
     return SDL_APP_CONTINUE;
 }
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {
     auto &gs{ *static_cast<gamestate*>(appstate) };
-
-    clayborne::deinit_camera(gs.camera, gs.registry);
-    //clayborne::deinit_resources(gs.resources); //TODO implement
 
     SDL_DestroyTexture(gs.canvas);
     SDL_DestroyRenderer(gs.renderer);
@@ -213,8 +215,6 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) {
     switch (result) {
     case SDL_APP_SUCCESS: SDL_Log("App Success"); break;
     case SDL_APP_FAILURE: SDL_Log("App Failure"); break;
-    case SDL_APP_CONTINUE: std::unreachable();
-    default:
-        break;
+    default:              std::unreachable();
     }
 }

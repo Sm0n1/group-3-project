@@ -2,15 +2,15 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include "level_loader.hpp"
-#include "camera.hpp"
 #include "physics.hpp"
 #include "clay.hpp"
 #include "player.hpp"
-#include "resources.hpp"
 #include "interactables.hpp"
 
 namespace clayborne {
-    std::vector<tile_group> merge_tiles_greedy(const std::array<std::array<std::uint8_t, tile_cols>, tile_rows> &tiles) {
+    std::vector<tile_group> merge_tiles_greedy(
+        const std::array<std::array<std::uint8_t, tile_cols>, tile_rows> &tiles
+    ) {
         auto tile_groups{ std::vector<tile_group>{} };
         auto visited_tiles{ std::array<std::array<bool, tile_cols>, tile_rows>{} };
 
@@ -62,7 +62,13 @@ namespace clayborne {
         return tile_groups;
     }
 
-    std::expected<std::monostate, std::string> load_level(const std::filesystem::path& level, entt::registry &registry, SDL_Renderer *renderer, animation_cache &animations) {
+    std::expected<std::monostate, std::string> load_level(
+        const std::filesystem::path& level,
+        entt::registry &registry,
+        animation_cache &animations,
+        texture_cache &textures,
+        SDL_Renderer *renderer
+    ) {
         const auto data_path{ level / "data.json" };
         const auto grid_path{ level / "IntGrid.csv" };
         const auto image_path{ level / "_composite.png" };
@@ -175,36 +181,60 @@ namespace clayborne {
             if (entity_name == "Player") {
                 float x{ entity_list[0]["x"] };
                 float y{ entity_list[0]["y"] };
-                init_player(registry, level_x + x, level_y + y, renderer, animations);
+                init_player(registry, animations, textures, renderer, level_x + x, level_y + y);
             }
             else if (entity_name == "Door") {
                 float x{ entity_list[0]["x"] };
                 float y{ entity_list[0]["y"] };
-                (void)create_door(registry, level_x + x, level_y + y, false, entt::null);
+                (void)create_door(registry, textures, renderer, level_x + x, level_y + y, false, entt::null);
             }
             else if (entity_name == "Sensor") {
                 float x{ entity_list[0]["x"] };
                 float y{ entity_list[0]["y"] };
-                (void)create_sensor(registry, level_x + x, level_y + y);
+                (void)create_sensor(registry, textures, renderer, level_x + x, level_y + y);
             }
             else {
                 return std::unexpected("Failed to load entity " + entity_name + ": invalid entity id");
             }
         }
 
-        const auto level_sprite{ IMG_LoadTexture(renderer, image_path.string().c_str()) };
-        if (!level_sprite) {
+        const entt::hashed_string level_sprite_hs{ image_path.string().c_str() };
+        const auto level_sprite{
+            textures.load(
+                level_sprite_hs,
+                image_path.string().c_str(),
+                renderer
+            )
+        };
+        if (!level_sprite.first->second) {
             return std::unexpected("IMG load texture failed: " + std::string(SDL_GetError()));
         }
 
         auto level_entity{ registry.create() };
-        registry.emplace<position>(level_entity, level_x, level_y);
-        registry.emplace<clayborne::renderer>(level_entity, level_sprite, SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f }, SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f }, -1);
+        registry.emplace<position>(
+            level_entity,
+            level_x,
+            level_y
+        );
+        registry.emplace<struct sprite_renderer>(
+            level_entity,
+            level_sprite_hs,
+            SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f },
+            0.0f,
+            0.0f,
+            -1
+        );
 
         return {};
     }
 
-    std::expected<std::monostate, std::string> load_levels(const std::filesystem::path& levels, entt::registry &registry, SDL_Renderer *renderer, animation_cache &animations) {
+    std::expected<std::monostate, std::string> load_levels(
+        const std::filesystem::path& levels,
+        entt::registry &registry,
+        animation_cache &animations,
+        texture_cache &textures,
+        SDL_Renderer *renderer
+    ) {
         for (auto level : std::filesystem::directory_iterator(levels)) {
             if (!std::filesystem::is_directory(level)) {
                 continue;
@@ -216,7 +246,7 @@ namespace clayborne {
 
             SDL_Log("Load level...(%s)", level.path().string().c_str());
 
-            const auto result{ load_level(level.path(), registry, renderer, animations) };
+            const auto result{ load_level(level.path(), registry, animations, textures, renderer) };
             if (!result) {
                 return result;
             }

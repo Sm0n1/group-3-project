@@ -8,12 +8,12 @@
 #include <optional>
 #include "player.hpp"
 #include "physics.hpp"
-#include "camera.hpp"
 #include "clay.hpp"
 #include "utils.hpp"
-#include "resources.hpp"
 #include "interactables.hpp"
-#include "animation.hpp"
+#include "sprite.hpp"
+
+using entt::literals::operator""_hs;
 
 namespace clayborne {
     template<bool X, int Amount>
@@ -48,24 +48,20 @@ namespace clayborne {
     }
 
     // TODO perhaps change magic numbers to header consts or something.
-    static void set_player_tall(bool tall, clayborne::renderer &renderer) {
+    static void set_player_tall(bool tall, struct sprite_renderer &renderer) {
         if (tall) {
             renderer.srcrect.w = player::hitbox_width;
             renderer.srcrect.h = player::hitbox_height + 5.0f;
             renderer.srcrect.x = 4.0f;
             renderer.srcrect.y = 0.0f;
-            renderer.dstrect.w = renderer.srcrect.w;
-            renderer.dstrect.h = renderer.srcrect.h;
-            renderer.dstrect.y = -5.0f;
+            renderer.y_offset = -5.0f;
         }
         else {
             renderer.srcrect.w = player::hitbox_width;
             renderer.srcrect.h = player::headless_hitbox_height;
             renderer.srcrect.x = 4.0f;
             renderer.srcrect.y = 8.0f;
-            renderer.dstrect.w = renderer.srcrect.w;
-            renderer.dstrect.h = renderer.srcrect.h;
-            renderer.dstrect.y = 0.0f;
+            renderer.y_offset = 0.0f;
         }
     }
 
@@ -74,7 +70,7 @@ namespace clayborne {
         auto &position{ registry.get<clayborne::position>(collision.self) };
         auto &velocity{ registry.get<clayborne::velocity>(collision.self) };
         auto &collider{ registry.get<clayborne::collider>(collision.self) };
-        auto &renderer{ registry.get<clayborne::renderer>(collision.self) };
+        auto &sprite_renderer{ registry.get<struct sprite_renderer>(collision.self) };
         auto &activator{ registry.get<clayborne::activator>(collision.self) };
 
         // --------------------- //
@@ -128,7 +124,7 @@ namespace clayborne {
             position.y -= player::hitbox_height - player::headless_hitbox_height;
             collider.h = player::hitbox_height;
             activator.h = player::hitbox_height;
-            set_player_tall(true, renderer);
+            set_player_tall(true, sprite_renderer);
         }
 
         if (player.state == player::state::launched) {
@@ -274,44 +270,56 @@ namespace clayborne {
         pos.y = p.respawn_y;
     }
 
-    entt::entity init_player(entt::registry &registry, float x, float y, SDL_Renderer *r, clayborne::animation_cache &animations) noexcept {
+    entt::entity init_player(
+        entt::registry &registry,
+        animation_cache &animations,
+        texture_cache &textures,
+        SDL_Renderer *renderer,
+        float x,
+        float y
+    ) noexcept {
         auto player_entity{ registry.create() };
 
         auto &player_player{ registry.emplace<player>(player_entity) };
         player_player.respawn_x = x;
         player_player.respawn_y = y;
 
-        registry.emplace<position>(player_entity, x, y);
-        registry.emplace<velocity>(player_entity);
-        registry.emplace<activator>(player_entity, player::hitbox_width, player::hitbox_height);
+        registry.emplace<struct position>(player_entity, x, y);
+        registry.emplace<struct velocity>(player_entity);
+        registry.emplace<struct activator>(player_entity, player::hitbox_width, player::hitbox_height);
 
-        auto &collider{ registry.emplace<clayborne::collider>(player_entity) };
+        auto &collider{ registry.emplace<struct collider>(player_entity) };
         collider.w = player::hitbox_width;
         collider.h = player::hitbox_height;
         collider.collide = player_collision_handler;
 
-        
+        auto &sprite_renderer{ registry.emplace<struct sprite_renderer>(player_entity) };
+        sprite_renderer.texture = "data/temp.png"_hs;
+        if (!textures.load("data/temp.png"_hs, "data/temp.png", renderer).first->second) {
+            SDL_Log("Could not load player texture");
+            // TODO: error handling
+        }
 
-        auto& animation_set{ registry.emplace<clayborne::animation_set>(player_entity) };
-        animation_set.animators[entt::hashed_string("idle_full")] = animations.load(entt::hashed_string("player_idle_full"), "data/player_sprites/idle_full/spritesheet", r).first->second;
+        auto &sprite_animator{ registry.emplace<struct sprite_animator>(player_entity) };
+        sprite_animator.animation = "data/temp.json"_hs;
+        sprite_animator.current_frame = 0;
+        sprite_animator.is_looping = true;
+        if (!animations.load("data/temp.json"_hs, "data/temp.json").first->second) {
+            SDL_Log("Could not load player animation");
+            // TODO: error handling
+        }
 
-        auto &animator{ registry.emplace<clayborne::animator>(player_entity) };
-        animator.resource = animation_set.animators[entt::hashed_string("idle_full")];
-        animator.current_frame = 0;
-        animator.is_looping = true;
-
-        // For now, every time animator's resource is alter, also alter renderer's texture to match. TODO in future: couple these together
-        auto& renderer{ registry.emplace<clayborne::renderer>(player_entity) };
-        renderer.texture = animator.resource->spritesheet.tex;
-
-        
-
-        set_player_tall(true, renderer);
+        set_player_tall(true, sprite_renderer);
         
         return player_entity;
     }
 
-    void update_player(entt::entity player_entity, entt::registry &registry, const input::manager &inputs, Uint64 dt_ns) noexcept {
+    void update_player(
+        entt::entity player_entity,
+        entt::registry &registry,
+        const input::manager &inputs,
+        Uint64 dt_ns
+    ) noexcept {
         const float delta_time{ static_cast<float>(static_cast<double>(dt_ns) / SDL_NS_PER_SECOND) };
 
         for (auto event : inputs.get_events()) {
@@ -323,7 +331,7 @@ namespace clayborne {
         auto &velocity{ registry.get<clayborne::velocity>(player_entity) };
         auto &position{ registry.get<clayborne::position>(player_entity) };
         auto &collider{ registry.get<clayborne::collider>(player_entity) };
-        auto &renderer{ registry.get<clayborne::renderer>(player_entity) };
+        auto &renderer{ registry.get<struct sprite_renderer>(player_entity) };
         auto &activator{ registry.get<clayborne::activator>(player_entity) };
 
         // ----------------------------- //
@@ -608,13 +616,11 @@ namespace clayborne {
                             registry.emplace<clayborne::collider>(player.head, head_collider);
                             registry.emplace<clayborne::activator>(player.head, head::hitbox_width, head::hitbox_height);
                           
-                            auto &head_renderer{ registry.emplace<clayborne::renderer>(player.head) };
+                            auto &head_renderer{ registry.emplace<struct sprite_renderer>(player.head) };
                             head_renderer.texture = renderer.texture;
                             head_renderer.srcrect.w = head::hitbox_width;
                             head_renderer.srcrect.h = head::hitbox_height;
                             head_renderer.srcrect.x = 4.0f;
-                            head_renderer.dstrect.w = head::hitbox_width;
-                            head_renderer.dstrect.h = head::hitbox_height;
                         }
                         // Throw failed
                         // We still enter the throw state, but the player keeps their head and aren't moved
@@ -738,4 +744,21 @@ namespace clayborne {
         player.head_just_pressed = false;
         // ------------------------ //
     }
+
+    void animate_player(
+        entt::entity player_entity,
+        entt::registry &registry,
+        Uint64 dt_ns
+    ) noexcept {
+        auto player{ registry.get<struct player>(player_entity) };
+        auto sprite_renderer{ registry.get<struct sprite_renderer>(player_entity) };
+        auto sprite_animator{ registry.get<struct sprite_animator>(player_entity) };
+
+        (void)player;   
+        (void)sprite_renderer;
+        (void)sprite_animator;
+        (void)dt_ns;
+
+        // TODO: load animation based on state
+    } 
 }

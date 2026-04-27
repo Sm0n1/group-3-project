@@ -2,15 +2,29 @@
 #include <entt/entt.hpp>
 #include "interactables.hpp"
 #include "physics.hpp"
-#include "camera.hpp"
 
 namespace clayborne {
-    [[nodiscard]] entt::entity create_sensor(entt::registry &registry, const float x, const float y) noexcept {
+    [[nodiscard]] entt::entity create_sensor(
+        entt::registry &registry,
+        texture_cache &textures,
+        SDL_Renderer *renderer,
+        const float x,
+        const float y
+    ) noexcept {
         auto entity{ registry.create() };
 
         registry.emplace<sensor>(entity, 8.0f, 8.0f, false);
         registry.emplace<position>(entity, x, y);
-        registry.emplace<renderer>(entity, nullptr, SDL_FRect{}, SDL_FRect{ 0.0f, 0.0f, 8.0f, 8.0f }, 0);
+        auto &sr{ registry.emplace<sprite_renderer>(entity) };
+        const entt::hashed_string hash{ "data/obejcts.png" };
+        sr.texture = hash;
+        sr.srcrect.x = 8.0f;
+        sr.srcrect.w = 8.0f;
+        sr.srcrect.h = 8.0f;
+        if (!textures.load(hash, "data/objects.png", renderer).first->second) {
+            SDL_Log("Could not load door texture");
+            // TODO: error handling
+        }
 
         return entity;
     }
@@ -43,12 +57,28 @@ namespace clayborne {
         }
     }
 
-    [[nodiscard]] entt::entity create_door(entt::registry &registry, const float x, const float y, const bool is_default_open, const entt::entity toggle_sensor) noexcept {
+    [[nodiscard]] entt::entity create_door(
+        entt::registry &registry,
+        texture_cache &textures,
+        SDL_Renderer *renderer,
+        const float x,
+        const float y,
+        const bool is_default_open,
+        const entt::entity toggle_sensor
+    ) noexcept {
         auto entity{ registry.create() };
 
         registry.emplace<door>(entity, toggle_sensor, 8.0f, 16.0f, is_default_open, false);
         registry.emplace<position>(entity, x, y);
-        registry.emplace<renderer>(entity, nullptr, SDL_FRect{}, SDL_FRect{ 0.0f, 0.0f, 8.0f, 16.0f }, 0);
+        auto &sr{ registry.emplace<sprite_renderer>(entity) };
+        const entt::hashed_string hash{ "data/obejcts.png" };
+        sr.texture = hash;
+        sr.srcrect.w = 8.0f;
+        sr.srcrect.h = 16.0f;
+        if (!textures.load(hash, "data/objects.png", renderer).first->second) {
+            SDL_Log("Could not load door texture");
+            // TODO: error handling
+        }
 
         if (!is_default_open) {
             registry.emplace<collider>(entity, 8.0f, 16.0f, std::nullopt);
