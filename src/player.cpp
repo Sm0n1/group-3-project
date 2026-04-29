@@ -555,11 +555,6 @@ namespace clayborne {
                                 return overlap_any(registry, entt::null, next, head_collider, entt::exclude<clayborne::player>);
                             });
 
-                            // Move player out of head along the x-axis
-                            pay_debt(debt_x, new_position, -dir_x, 0.0f, [&](const clayborne::position next) {
-                                return overlap_any(registry, player_entity, next, new_collider, entt::exclude<clayborne::head>);
-                            });
-
                             // Skip the y-axis movement if the x-axis movement was sufficient
                             if (overlap(new_position, new_collider, head_position, head_collider)) {
                                 // Move head out of player along the y-axis
@@ -568,6 +563,14 @@ namespace clayborne {
                                 });
                                 // Move player out of head along the y-axis
                                 pay_debt(debt_y, new_position, 0.0f, -dir_y, [&](const clayborne::position next) {
+                                    return overlap_any(registry, player_entity, next, new_collider, entt::exclude<clayborne::head>);
+                                });
+                            }
+
+                            // Skip body x-axis movement if body y-axis movement and head movement was sufficient 
+                            if (overlap(new_position, new_collider, head_position, head_collider)) {
+                                // Move player out of head along the x-axis
+                                pay_debt(debt_x, new_position, -dir_x, 0.0f, [&](const clayborne::position next) {
                                     return overlap_any(registry, player_entity, next, new_collider, entt::exclude<clayborne::head>);
                                 });
                             }
