@@ -14,6 +14,7 @@ option(CLAYBORNE_VENDORED "Use vendored libraries" OFF)
 if(CLAYBORNE_VENDORED)
     set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
     add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
+
     set(SDLIMAGE_PNG  ON  CACHE BOOL "" FORCE)
     set(SDLIMAGE_JPG  OFF CACHE BOOL "" FORCE)
     set(SDLIMAGE_AVIF OFF CACHE BOOL "" FORCE)
@@ -22,20 +23,32 @@ if(CLAYBORNE_VENDORED)
     set(SDLIMAGE_WEBP OFF CACHE BOOL "" FORCE)
     set(SDLIMAGE_PNG_SAVE OFF CACHE BOOL "" FORCE)
     add_subdirectory(vendored/SDL_image EXCLUDE_FROM_ALL)
+
+    set(SDLMIXER_VORBIS OFF CACHE BOOL "" FORCE)
+    set(SDLMIXER_OPUS   OFF CACHE BOOL "" FORCE)
+    set(SDLMIXER_FLAC   OFF CACHE BOOL "" FORCE)
+    set(SDLMIXER_MP3    OFF CACHE BOOL "" FORCE)
+    set(SDLMIXER_MIDI   OFF CACHE BOOL "" FORCE)
+    set(SDLMIXER_MOD    OFF CACHE BOOL "" FORCE)
+    add_subdirectory(vendored/SDL_mixer EXCLUDE_FROM_ALL)
 else()
     find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 	find_package(SDL3_image REQUIRED CONFIG)
+    find_package(SDL3_mixer REQUIRED CONFIG)
 endif()
 
 target_compile_features(clayborne PUBLIC cxx_std_23)
 
 target_include_directories(clayborne SYSTEM PRIVATE
     vendored/entt/single_include
-    vendored/SDL/include
     vendored/json/single_include
 )
 
-target_link_libraries(clayborne PRIVATE SDL3::SDL3 SDL3_image::SDL3_image)
+target_link_libraries(clayborne PRIVATE
+    SDL3::SDL3
+    SDL3_image::SDL3_image
+    SDL3_mixer::SDL3_mixer
+)
 
 target_sources(clayborne PRIVATE
     src/main.cpp
@@ -45,6 +58,7 @@ target_sources(clayborne PRIVATE
     src/interactables.cpp
     src/sprite.cpp
     src/rendering.cpp
+    src/audio.cpp
     src/level_loader.cpp
     src/engine/input/manager.cpp
     src/engine/input/map.cpp

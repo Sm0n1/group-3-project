@@ -1,3 +1,6 @@
+#include "SDL3/SDL_init.h"
+#include "SDL3_mixer/SDL_mixer.h"
+#include "audio.hpp"
 #define SDL_MAIN_USE_CALLBACKS
 
 #include <SDL3/SDL_main.h>
@@ -13,11 +16,13 @@
 #include "level_loader.hpp"
 #include "sprite.hpp"
 #include "rendering.hpp"
+#include "sdl.hpp"
 
 struct gamestate {
     SDL_Window *window{ nullptr };
     SDL_Renderer *renderer{ nullptr };
     SDL_Texture *canvas{ nullptr };
+    MIX_Mixer *mixer{ nullptr };
     Uint64 current_time;
     Uint64 accumulated_time{ 0 };
     entt::registry registry;
@@ -27,6 +32,7 @@ struct gamestate {
 
     clayborne::texture_cache textures{};
     clayborne::animation_cache animations{};
+    clayborne::audio_cache sounds{};
 
     clayborne::input::manager inputs;
 };
@@ -71,6 +77,24 @@ try {
 
     // Scale the canvas with sharp edges
     SDL_SetTextureScaleMode(gs.canvas, SDL_SCALEMODE_NEAREST);
+
+    // Initialize SDL_mixer.
+    if (!MIX_Init()) {
+        SDL_Log("SDL_mixer init failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    // Initialize audio mixer.
+    gs.mixer = MIX_CreateMixerDevice(sdl_audio_device_default_playback, NULL);
+    if (!gs.mixer) {
+        SDL_Log("MIX create mixer with default device failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    // TODO: remove
+    if (!clayborne::load_debug_sounds(gs.sounds, gs.mixer)) {
+        return SDL_APP_FAILURE;
+    }
 
     // Initialize camera
     gs.camera = clayborne::init_camera(gs.registry);
@@ -181,11 +205,12 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
     gs.accumulated_time += frame_time;
 
     while (gs.accumulated_time >= SDL_NS_PER_SECOND / 60) {
-        clayborne::update_player(gs.player, gs.registry, gs.inputs, SDL_NS_PER_SECOND / 60);
+        clayborne::update_player(gs.player, gs.registry, gs.inputs, SDL_NS_PER_SECOND / 60, gs.sounds, gs.mixer);
         clayborne::update_physics(gs.registry, SDL_NS_PER_SECOND / 60);
         clayborne::sense(gs.registry);
         clayborne::toggle_doors(gs.registry);
         clayborne::update_camera(gs.camera, gs.player, gs.registry);
+        clayborne::update_audio(gs.registry, gs.camera);
         clayborne::animate_sprites(gs.registry, gs.animations);
         gs.accumulated_time -= SDL_NS_PER_SECOND / 60;
     }

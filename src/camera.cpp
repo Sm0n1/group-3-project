@@ -7,7 +7,7 @@
 
 namespace clayborne {
     entt::entity init_camera(entt::registry &registry) {
-        auto camera{ registry.create() };
+        const auto camera{ registry.create() };
 
         registry.emplace<struct camera>(camera);
         registry.emplace<struct position>(camera, 0.0f, 0.0f);

@@ -7,6 +7,7 @@
 #include <entt/entt.hpp>
 #include "engine/input/manager.hpp"
 #include "sprite.hpp"
+#include "audio.hpp"
 
 namespace clayborne {
     struct player {
@@ -164,7 +165,11 @@ namespace clayborne {
         entt::entity player_entity,
         entt::registry &registry,
         const input::manager &inputs,
-        Uint64 dt_ns
+        Uint64 dt_ns,
+        // TODO: Replace with audio event sink
+        audio_cache &sounds,
+        // TODO: Replace with audio event sink
+        MIX_Mixer *mixer
     ) noexcept;
 
     void animate_player(

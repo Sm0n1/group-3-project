@@ -11,7 +11,6 @@
 #include "clay.hpp"
 #include "utils.hpp"
 #include "interactables.hpp"
-#include "sprite.hpp"
 
 using entt::literals::operator""_hs;
 
@@ -318,7 +317,11 @@ namespace clayborne {
         entt::entity player_entity,
         entt::registry &registry,
         const input::manager &inputs,
-        Uint64 dt_ns
+        Uint64 dt_ns,
+        // TODO: Replace with audio event sink
+        audio_cache &sounds,
+        // TODO: Replace with audio event sink
+        MIX_Mixer *mixer
     ) noexcept {
         const float delta_time{ static_cast<float>(static_cast<double>(dt_ns) / SDL_NS_PER_SECOND) };
 
@@ -493,6 +496,9 @@ namespace clayborne {
                 velocity.x += player::jump_horizontal_speed * move_input;
                 velocity.y = player::jump_vertical_speed;
                 player.jump_boost_speed = velocity.y;
+
+                // TODO: Replace with audio event sink
+                (void)play_sound(registry, sounds, mixer, "data/jump.wav"_hs, 1.0f, false);
             }
 
             // Reset jump buffer timer on ground
@@ -679,6 +685,9 @@ namespace clayborne {
 
                     registry.destroy(player.head);
                     player.head = entt::null;
+
+                    // TODO: Replace with audio event sink
+                    (void)play_sound(registry, sounds, mixer, "data/explosion.wav"_hs, 1.0f, false);
                 }
             }
         }
