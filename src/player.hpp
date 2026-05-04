@@ -92,7 +92,7 @@ namespace clayborne {
 
         bool is_grounded{ false }; //
         bool is_on_clay{ false }; // False if not grounded
-        bool is_head_attached{ true }; //
+        bool is_head_attached{ false }; //
         facing facing{ facing::right }; //
         state state{ state::start }; //
 

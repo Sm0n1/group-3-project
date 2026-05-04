@@ -282,17 +282,17 @@ namespace clayborne {
 
         registry.emplace<position>(player_entity, x, y);
         registry.emplace<velocity>(player_entity);
-        registry.emplace<activator>(player_entity, player::hitbox_width, player::hitbox_height);
+        registry.emplace<activator>(player_entity, player::hitbox_width, player::headless_hitbox_height);
 
         auto &collider{ registry.emplace<clayborne::collider>(player_entity) };
         collider.w = player::hitbox_width;
-        collider.h = player::hitbox_height;
+        collider.h = player::headless_hitbox_height;;
         collider.collide = player_collision_handler;
 
         auto &renderer{ registry.emplace<clayborne::renderer>(player_entity) };
         renderer.texture = resources.spritesheet;
 
-        set_player_tall(true, renderer);
+        set_player_tall(false, renderer);
         
         return player_entity;
     }
