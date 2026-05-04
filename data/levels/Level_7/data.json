@@ -1,40 +1,192 @@
 {
 	"identifier": "Level_7",
-	"uniqueIdentifer": "110f2240-21a0-11f1-97ad-bf91f58bd7e8",
-	"x": -960,
-	"y": 0,
+	"uniqueIdentifer": "7facfc30-21a0-11f1-92a0-27a8165637c0",
+	"x": -640,
+	"y": -184,
 	"width": 320,
 	"height": 184,
 	"bgColor": "#696A79",
 	"neighbourLevels": [
 		{
-			"levelIid": "dd614e50-21a0-11f1-97ad-4d9a78d8214f",
+			"levelIid": "fd95cc70-21a0-11f1-97ad-f16fef0c83a8",
+			"dir": "se"
+		},
+		{
+			"levelIid": "9ae2fe70-21a0-11f1-9904-f585badd8ac6",
+			"dir": "sw"
+		},
+		{
+			"levelIid": "bc9e8e80-21a0-11f1-92a0-d7f47e982b9d",
 			"dir": "e"
 		},
 		{
-			"levelIid": "20346460-21a0-11f1-97ad-bd86858f66c9",
-			"dir": "s"
-		},
-		{
-			"levelIid": "13e46ce0-21a0-11f1-97ad-0987f9dc4fc0",
+			"levelIid": "811dca40-21a0-11f1-92a0-85951d21af9b",
 			"dir": "ne"
 		},
 		{
-			"levelIid": "28e06f40-21a0-11f1-97ad-f97c00646532",
-			"dir": "n"
+			"levelIid": "aff93c50-21a0-11f1-92a0-07e6fb9ff776",
+			"dir": "s"
 		},
 		{
-			"levelIid": "2ffd4410-21a0-11f1-97ad-f71b91b840a6",
+			"levelIid": "6dccb490-21a0-11f1-92a0-c9e38e4de1f1",
 			"dir": "w"
 		},
 		{
-			"levelIid": "4af282d0-21a0-11f1-97ad-13b279b9003b",
-			"dir": "nw"
+			"levelIid": "c3c158f0-21a0-11f1-92a0-a30b1ccfced9",
+			"dir": "n"
 		}
 	],
 	"customFields" : {},
 	"layers": [
 		"IntGrid.png"
 	],
-	"entities" : {}
+	"entities": {
+		"Sensor": [
+			{
+				"id": "Sensor",
+				"iid": "0ea4de80-21a0-11f1-92a0-bdc346c52a0b",
+				"layer": "Entities",
+				"x": 240,
+				"y": 136,
+				"width": 8,
+				"height": 8,
+				"color": 15389866,
+				"customFields" : {}
+			}
+		],
+		"Door": [
+			{
+				"id": "Door",
+				"iid": "0f9f6b20-21a0-11f1-92a0-8f87c9d7d865",
+				"layer": "Entities",
+				"x": 136,
+				"y": 120,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "0fe65f30-21a0-11f1-92a0-7d043bfe122a",
+				"layer": "Entities",
+				"x": 136,
+				"y": 128,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "1020d020-21a0-11f1-92a0-9fd365b8e489",
+				"layer": "Entities",
+				"x": 136,
+				"y": 136,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "2c5063a0-21a0-11f1-92a0-6fe4caf35035",
+				"layer": "Entities",
+				"x": 56,
+				"y": 144,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "2c83f6c0-21a0-11f1-92a0-475d58d3cd13",
+				"layer": "Entities",
+				"x": 64,
+				"y": 144,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "2cd0b730-21a0-11f1-92a0-53117fd446cc",
+				"layer": "Entities",
+				"x": 72,
+				"y": 144,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "2d0311d0-21a0-11f1-92a0-75f68b7003fc",
+				"layer": "Entities",
+				"x": 80,
+				"y": 144,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "369af8c0-21a0-11f1-92a0-839f30fab8e5",
+				"layer": "Entities",
+				"x": 16,
+				"y": 144,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "37292f00-21a0-11f1-92a0-71c8e4354af0",
+				"layer": "Entities",
+				"x": 24,
+				"y": 144,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "37652690-21a0-11f1-92a0-a7be1808441c",
+				"layer": "Entities",
+				"x": 32,
+				"y": 144,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "37b78c50-21a0-11f1-92a0-ffe02138ac42",
+				"layer": "Entities",
+				"x": 40,
+				"y": 144,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "37f64300-21a0-11f1-92a0-35f5381f8e69",
+				"layer": "Entities",
+				"x": 48,
+				"y": 144,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			}
+		]
+	}
 }

@@ -77,7 +77,7 @@ namespace clayborne {
         // Head Constants //
         // -------------- //
 
-        static constexpr float head_throw_duration{ 0.30f }; // Time in seconds in the throwing state
+        static constexpr float head_throw_duration{ 0.20f }; // Time in seconds in the throwing state
         static constexpr float head_throw_speed{ 240.0f }; // Speed applied to the thrown head
         static constexpr float head_throw_end_speed{ 160.0f }; // Speed applied to the head when it exits the thrown state
         static constexpr float head_launch_duration{ 0.15f }; // Time in seconds in the launched state
