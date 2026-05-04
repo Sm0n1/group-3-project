@@ -285,11 +285,11 @@ namespace clayborne {
 
         registry.emplace<struct position>(player_entity, x, y);
         registry.emplace<struct velocity>(player_entity);
-        registry.emplace<struct activator>(player_entity, player::hitbox_width, player::hitbox_height);
+        registry.emplace<struct activator>(player_entity, player::hitbox_width, player::headless_hitbox_height);
 
         auto &collider{ registry.emplace<struct collider>(player_entity) };
         collider.w = player::hitbox_width;
-        collider.h = player::hitbox_height;
+        collider.h = player::headless_hitbox_height;;
         collider.collide = player_collision_handler;
 
         auto &sprite_renderer{ registry.emplace<struct sprite_renderer>(player_entity) };
@@ -297,7 +297,7 @@ namespace clayborne {
 
         registry.emplace<struct sprite_animator>(player_entity);
 
-        set_player_tall(true, sprite_renderer);
+        set_player_tall(false, sprite_renderer);
         
         return player_entity;
     }
