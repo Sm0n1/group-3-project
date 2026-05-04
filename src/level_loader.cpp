@@ -180,14 +180,18 @@ namespace clayborne {
                 init_player(registry, r, level_x + x, level_y + y);
             }
             else if (entity_name == "Door") {
-                float x{ entity_list[0]["x"] };
-                float y{ entity_list[0]["y"] };
-                (void)create_door(registry, level_x + x, level_y + y, false, entt::null);
+                for (size_t i = 0; i<entity_list.size(); i++) {
+                    float x{ entity_list[i]["x"] };
+                    float y{ entity_list[i]["y"] };
+                    (void)create_door(registry, level_x + x, level_y + y, false, entt::null);
+                }
             }
             else if (entity_name == "Sensor") {
-                float x{ entity_list[0]["x"] };
-                float y{ entity_list[0]["y"] };
-                (void)create_sensor(registry, level_x + x, level_y + y);
+                for (size_t i = 0; i<entity_list.size(); i++) {
+                    float x{ entity_list[i]["x"] };
+                    float y{ entity_list[i]["y"] };
+                    (void)create_sensor(registry, level_x + x, level_y + y);
+                }
             }
             else {
                 return std::unexpected("Failed to load entity " + entity_name + ": invalid entity id");
