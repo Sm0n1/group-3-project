@@ -1,32 +1,46 @@
 {
 	"identifier": "Level_15",
-	"uniqueIdentifer": "2ffd4410-21a0-11f1-97ad-f71b91b840a6",
-	"x": -1280,
-	"y": 0,
+	"uniqueIdentifer": "6a83e6a0-21a0-11f1-92a0-d3709a0a168b",
+	"x": 0,
+	"y": -736,
 	"width": 320,
 	"height": 184,
 	"bgColor": "#696A79",
 	"neighbourLevels": [
 		{
-			"levelIid": "110f2240-21a0-11f1-97ad-bf91f58bd7e8",
-			"dir": "e"
+			"levelIid": "2297f400-21a0-11f1-92a0-711a5d02a899",
+			"dir": "sw"
 		},
 		{
-			"levelIid": "20346460-21a0-11f1-97ad-bd86858f66c9",
+			"levelIid": "ce4c1970-21a0-11f1-92a0-51d598a20f4c",
+			"dir": "w"
+		},
+		{
+			"levelIid": "c02103e0-21a0-11f1-92a0-1d8a8069dbc9",
+			"dir": "s"
+		},
+		{
+			"levelIid": "b45b0770-21a0-11f1-92a0-31abc403c47f",
 			"dir": "se"
-		},
-		{
-			"levelIid": "28e06f40-21a0-11f1-97ad-f97c00646532",
-			"dir": "ne"
-		},
-		{
-			"levelIid": "4af282d0-21a0-11f1-97ad-13b279b9003b",
-			"dir": "n"
 		}
 	],
 	"customFields" : {},
 	"layers": [
 		"IntGrid.png"
 	],
-	"entities" : {}
+	"entities": {
+		"Sensor": [
+			{
+				"id": "Sensor",
+				"iid": "33a5ebf0-21a0-11f1-92a0-e50136ed64b3",
+				"layer": "Entities",
+				"x": 80,
+				"y": 120,
+				"width": 8,
+				"height": 8,
+				"color": 15389866,
+				"customFields" : {}
+			}
+		]
+	}
 }

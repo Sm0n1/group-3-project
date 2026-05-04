@@ -1,23 +1,23 @@
 {
 	"identifier": "Level_17",
-	"uniqueIdentifer": "9539c2f0-21a0-11f1-919d-dd77c4998798",
-	"x": -1280,
-	"y": 368,
+	"uniqueIdentifer": "b45b0770-21a0-11f1-92a0-31abc403c47f",
+	"x": 320,
+	"y": -552,
 	"width": 320,
 	"height": 184,
 	"bgColor": "#696A79",
 	"neighbourLevels": [
 		{
-			"levelIid": "20346460-21a0-11f1-97ad-bd86858f66c9",
-			"dir": "ne"
+			"levelIid": "498d7c40-21a0-11f1-92a0-79fb24d7ec41",
+			"dir": "sw"
 		},
 		{
-			"levelIid": "2cb93210-21a0-11f1-97ad-096e58bf4932",
-			"dir": "e"
+			"levelIid": "6a83e6a0-21a0-11f1-92a0-d3709a0a168b",
+			"dir": "nw"
 		},
 		{
-			"levelIid": "a2e2d450-21a0-11f1-97ad-abbd4ad5be27",
-			"dir": "se"
+			"levelIid": "c02103e0-21a0-11f1-92a0-1d8a8069dbc9",
+			"dir": "w"
 		}
 	],
 	"customFields" : {},
@@ -28,10 +28,10 @@
 		"Sensor": [
 			{
 				"id": "Sensor",
-				"iid": "2fca32d0-21a0-11f1-919d-7b2d3d55ea94",
+				"iid": "c010ec60-21a0-11f1-92a0-93f9400985bf",
 				"layer": "Entities",
-				"x": 272,
-				"y": 144,
+				"x": 56,
+				"y": 88,
 				"width": 8,
 				"height": 8,
 				"color": 15389866,

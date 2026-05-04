@@ -1,30 +1,30 @@
 {
 	"identifier": "Level_0",
-	"uniqueIdentifer": "3367a7f0-21a0-11f1-97ad-c9d2647a3948",
-	"x": 0,
+	"uniqueIdentifer": "fd95cc70-21a0-11f1-97ad-f16fef0c83a8",
+	"x": -320,
 	"y": 0,
 	"width": 320,
 	"height": 184,
 	"bgColor": "#696A79",
 	"neighbourLevels": [
 		{
-			"levelIid": "560f4090-21a0-11f1-97ad-49cb69037f1b",
+			"levelIid": "f0acbf30-21a0-11f1-8b4b-8fbb33464376",
 			"dir": "e"
 		},
 		{
-			"levelIid": "ca0ab830-21a0-11f1-97ad-e15bbe16ec06",
+			"levelIid": "4a7f35d0-21a0-11f1-8b4b-9f4a39a4de22",
 			"dir": "ne"
 		},
 		{
-			"levelIid": "7c913bf0-21a0-11f1-97ad-c998b928fa92",
+			"levelIid": "bc9e8e80-21a0-11f1-92a0-d7f47e982b9d",
 			"dir": "n"
 		},
 		{
-			"levelIid": "bfe36d10-21a0-11f1-97ad-df89361e82e1",
+			"levelIid": "7facfc30-21a0-11f1-92a0-27a8165637c0",
 			"dir": "nw"
 		},
 		{
-			"levelIid": "fd95cc70-21a0-11f1-97ad-f16fef0c83a8",
+			"levelIid": "aff93c50-21a0-11f1-92a0-07e6fb9ff776",
 			"dir": "w"
 		}
 	],
@@ -33,13 +33,48 @@
 		"IntGrid.png"
 	],
 	"entities": {
+		"Door": [
+			{
+				"id": "Door",
+				"iid": "3de799e0-21a0-11f1-8b4b-cd28a66d0c6e",
+				"layer": "Entities",
+				"x": 8,
+				"y": 136,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "3e5799c0-21a0-11f1-8b4b-fd4c94a9d461",
+				"layer": "Entities",
+				"x": 8,
+				"y": 120,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "3fbe55b0-21a0-11f1-8b4b-593eafab523f",
+				"layer": "Entities",
+				"x": 8,
+				"y": 128,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			}
+		],
 		"Player": [
 			{
 				"id": "Player",
-				"iid": "29736df0-21a0-11f1-919d-737b8dc78080",
+				"iid": "5f3d8860-21a0-11f1-8b4b-113ae475a246",
 				"layer": "Entities",
-				"x": 176,
-				"y": 56,
+				"x": 48,
+				"y": 144,
 				"width": 8,
 				"height": 8,
 				"color": 12470831,
