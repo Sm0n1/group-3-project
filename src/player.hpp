@@ -77,11 +77,11 @@ namespace clayborne {
         // Head Constants //
         // -------------- //
 
-        static constexpr float head_throw_duration{ 0.15f }; // Time in seconds in the throwing state
+        static constexpr float head_throw_duration{ 0.30f }; // Time in seconds in the throwing state
         static constexpr float head_throw_speed{ 240.0f }; // Speed applied to the thrown head
         static constexpr float head_throw_end_speed{ 160.0f }; // Speed applied to the head when it exits the thrown state
         static constexpr float head_launch_duration{ 0.15f }; // Time in seconds in the launched state
-        static constexpr float head_launch_speed{ 240.0f }; // Speed applied to the player when they are launched by head explosion
+        static constexpr float head_launch_speed{ 280.0f }; // Speed applied to the player when they are launched by head explosion
         static constexpr float head_launch_end_speed{ 160.0f }; // Speed applied to the player when they exit the launched state
         static constexpr float head_buffer_duration{ 0.08f }; // Duration in seconds a held head button input is buffered
         static constexpr int   head_launch_corner_correction{ 4 }; // Number of pixels the player is shifted to move past corners whilst launched
