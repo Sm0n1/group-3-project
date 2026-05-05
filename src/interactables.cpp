@@ -77,7 +77,7 @@ namespace clayborne {
 
             // Only add the collider if the coast is clear!
             collider dc{ d.w, d.h, std::nullopt };
-            if (!overlap_any(registry, de, dp, dc)) {
+            if (!overlap_any<struct velocity>(registry, de, dp, dc)) {
                 registry.emplace_or_replace<collider>(de, dc);
             }
         }

@@ -14,6 +14,7 @@
 #include "resources.hpp"
 #include "interactables.hpp"
 #include "level_loader.hpp"
+#include "utils.hpp"
 
 struct gamestate {
     SDL_Window *window{ nullptr };
