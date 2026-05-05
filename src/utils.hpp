@@ -6,10 +6,22 @@
 #include <iostream>
 #include <source_location>
 #include <algorithm>
+#include <chrono>
+#include <SDL3/SDL.h>
 
 namespace clayborne {
     constexpr float inv_sqrt2{ 0.70710678f };
     constexpr float pi{ 3.14159265358979323846f };
+
+    template <typename Func>
+    inline void time(Func &&foo) {
+        const auto start = std::chrono::steady_clock::now();
+        std::forward<Func>(foo)();
+        const auto end = std::chrono::steady_clock::now();
+        const auto total_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+        const auto percent_of_frame{ (static_cast<double>(total_ns) / (SDL_NS_PER_SECOND / 60.0)) * 100.0 };
+        printf("physics_time: %.2f%% of 60 FPS frame\n", percent_of_frame);
+    }
 
     inline void log(const char* msg, const std::source_location loc = std::source_location::current()) {
         std::cout << loc.line() << " " << msg << std::endl;

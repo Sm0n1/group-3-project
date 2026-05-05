@@ -51,7 +51,7 @@ namespace clayborne {
             (position_2.y + collider_2.h > position_1.y);
     }
 
-    template<typename... Includes, typename...Excludes>
+    template<typename ...Includes, typename ...Excludes>
     [[nodiscard]] bool overlap_any(
         const entt::registry &registry,
         const entt::entity self,
@@ -60,10 +60,13 @@ namespace clayborne {
         entt::exclude_t<Excludes...> excludes = entt::exclude_t{}
     ) noexcept {
         auto view{ registry.view<const clayborne::position, const clayborne::collider, Includes...>(excludes) };
-        for (auto [other, other_position, other_collider]: view.each()) {
+        for (auto other : view) {
             if (self == other) {
                 continue;
             }
+
+            const auto &other_position{ view.template get<struct position>(other) };
+            const auto &other_collider{ view.template get<struct collider>(other) };
 
             if (overlap(self_position, self_collider, other_position, other_collider)) {
                 return true;
