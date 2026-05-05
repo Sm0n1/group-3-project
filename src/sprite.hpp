@@ -36,9 +36,13 @@ namespace clayborne {
         SDL_FRect srcrect{};
         float x_offset{ 0.0f };
         float y_offset{ 0.0f };
+        float w_tiled{ 1.0f };
+        float h_tiled{ 1.0f };
         int z{ 0 };
         std::optional<SDL_FPoint> center{ std::nullopt };
         SDL_FlipMode flip{ SDL_FLIP_NONE };
+        Uint8 alpha{ 255 };
+        bool is_tiled{ false };
     };
 
     void animate_sprites(

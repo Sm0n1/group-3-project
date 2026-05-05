@@ -29,7 +29,9 @@ namespace clayborne {
         texture_cache &textures,
         SDL_Renderer *renderer,
         const float x,
-        const float y
+        const float y,
+        const float w,
+        const float h
     ) noexcept;
 
     [[nodiscard]] entt::entity create_door(
@@ -38,6 +40,8 @@ namespace clayborne {
         SDL_Renderer *renderer,
         const float x,
         const float y,
+        const float w,
+        const float h,
         const bool is_default_open,
         const entt::entity toggle_sensor
     ) noexcept;

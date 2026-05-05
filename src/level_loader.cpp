@@ -186,12 +186,12 @@ namespace clayborne {
             else if (entity_name == "Door") {
                 float x{ entity_list[0]["x"] };
                 float y{ entity_list[0]["y"] };
-                (void)create_door(registry, textures, renderer, level_x + x, level_y + y, false, entt::null);
+                (void)create_door(registry, textures, renderer, level_x + x, level_y + y, 8.0f, 16.0f, false, entt::null);
             }
             else if (entity_name == "Sensor") {
                 float x{ entity_list[0]["x"] };
                 float y{ entity_list[0]["y"] };
-                (void)create_sensor(registry, textures, renderer, level_x + x, level_y + y);
+                (void)create_sensor(registry, textures, renderer, level_x + x, level_y + y, 8.0f, 8.0f);
             }
             else {
                 return std::unexpected("Failed to load entity " + entity_name + ": invalid entity id");
@@ -211,19 +211,17 @@ namespace clayborne {
         }
 
         auto foreground_entity{ registry.create() };
-        registry.emplace<position>(
-            foreground_entity,
-            level_x,
-            level_y
-        );
-        registry.emplace<struct sprite_renderer>(
-            foreground_entity,
-            foreground_hs,
-            SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f },
-            0.0f,
-            0.0f,
-            2
-        );
+        auto &foreground_sprite_position{
+            registry.emplace<position>(foreground_entity)
+        };
+        foreground_sprite_position.x = level_x;
+        foreground_sprite_position.y = level_y;
+        auto &foreground_sprite_renderer{
+            registry.emplace<struct sprite_renderer>(foreground_entity)
+        };
+        foreground_sprite_renderer.texture = foreground_hs;
+        foreground_sprite_renderer.srcrect = SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f };
+        foreground_sprite_renderer.z = 2;
 
         const entt::hashed_string background_hs{ background_path.c_str() };
         const auto background_texture{
@@ -238,19 +236,17 @@ namespace clayborne {
         }
 
         auto background_entity{ registry.create() };
-        registry.emplace<position>(
-            background_entity,
-            level_x,
-            level_y
-        );
-        registry.emplace<struct sprite_renderer>(
-            background_entity,
-            background_hs,
-            SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f },
-            0.0f,
-            0.0f,
-            -1
-        );
+        auto &background_sprite_position{
+            registry.emplace<position>(background_entity)
+        };
+        background_sprite_position.x = level_x;
+        background_sprite_position.y = level_y;
+        auto &background_sprite_renderer{
+            registry.emplace<struct sprite_renderer>(background_entity)
+        };
+        background_sprite_renderer.texture = background_hs;
+        background_sprite_renderer.srcrect = SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f };
+        background_sprite_renderer.z = -1;
 
         return {};
     }

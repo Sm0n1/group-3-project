@@ -1,7 +1,6 @@
 #include <SDL3/SDL_log.h>
 #include <fstream>
 #include <SDL3_image/SDL_image.h>
-#include "interactables.hpp"
 #include "sprite.hpp"
 
 namespace clayborne {
@@ -64,15 +63,6 @@ namespace clayborne {
                 continue;
             }
 
-            const auto &frame{ animation->frames[a.current_frame] };
-
-            r.srcrect.x = frame.x;
-            r.srcrect.y = frame.y;
-            r.srcrect.w = frame.w;
-            r.srcrect.h = frame.h;
-
-            a.current_frame += 1;
-
             if (a.current_frame >= animation->frames.size()) {
                 if (a.is_looping) {
                     a.current_frame = 0;
@@ -81,6 +71,15 @@ namespace clayborne {
                     a.current_frame = animation->frames.size() - 1;
                 }
             }
+
+            const auto &frame{ animation->frames[a.current_frame] };
+
+            r.srcrect.x = frame.x;
+            r.srcrect.y = frame.y;
+            r.srcrect.w = frame.w;
+            r.srcrect.h = frame.h;
+
+            a.current_frame += 1;
         }
     }
 }

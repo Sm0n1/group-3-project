@@ -5,9 +5,6 @@
 #include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_timer.h>
 #include <entt/entt.hpp>
-#include <expected>
-#include <variant>
-#include "SDL3/SDL_surface.h"
 #include "engine/input/manager.hpp"
 #include "sprite.hpp"
 #include "audio.hpp"
@@ -95,6 +92,7 @@ namespace clayborne {
         // -------------- //
 
         bool is_grounded{ false }; //
+        bool is_landing{ false };
         bool is_on_clay{ false }; // False if not grounded
         bool is_head_attached{ true }; //
         facing facing{ facing::right }; //
