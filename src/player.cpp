@@ -785,28 +785,38 @@ namespace clayborne {
             }
         };
 
-        if (player.is_grounded) {
-            // TODO: landing animation
-            if (player.left == player.right) {
-                if (player.is_head_attached) play("idle");
-                else                         play("idle_headless");
-                sprite_animator.is_looping = true;
+        switch (player.state) {
+        case player::state::start:
+            if (player.is_grounded) {
+                // TODO: landing animation
+                if (player.left == player.right) {
+                    if (player.is_head_attached) play("idle");
+                    else                         play("idle_headless");
+                    sprite_animator.is_looping = true;
+                }
+                else {
+                    if (player.is_head_attached) play("run");
+                    else                         play("run_headless");
+                    sprite_animator.is_looping = true;
+                }
+            }
+            else if (velocity.y < 0.0f) {
+                if (player.is_head_attached) play("jump");
+                else                         play("jump_headless");
+                sprite_animator.is_looping = false;
             }
             else {
-                if (player.is_head_attached) play("run");
-                else                         play("run_headless");
+                if (player.is_head_attached) play("fall");
+                else                         play("fall_headless");
                 sprite_animator.is_looping = true;
             }
-        }
-        else if (velocity.y < 0.0f) {
-            if (player.is_head_attached) play("jump");
-            else                         play("jump_headless");
+            break;
+        case player::state::throwing:
+            play("throw_head");
             sprite_animator.is_looping = false;
-        }
-        else {
-            if (player.is_head_attached) play("fall");
-            else                         play("fall_headless");
-            sprite_animator.is_looping = true;
+            break;
+        default:
+            break;
         }
 
         if (player.facing == player::facing::left) {
