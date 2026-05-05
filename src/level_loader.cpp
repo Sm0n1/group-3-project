@@ -2,15 +2,15 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include "level_loader.hpp"
-#include "camera.hpp"
 #include "physics.hpp"
 #include "clay.hpp"
 #include "player.hpp"
-#include "resources.hpp"
 #include "interactables.hpp"
 
 namespace clayborne {
-    std::vector<tile_group> merge_tiles_greedy(const std::array<std::array<std::uint8_t, tile_cols>, tile_rows> &tiles) {
+    std::vector<tile_group> merge_tiles_greedy(
+        const std::array<std::array<std::uint8_t, tile_cols>, tile_rows> &tiles
+    ) {
         auto tile_groups{ std::vector<tile_group>{} };
         auto visited_tiles{ std::array<std::array<bool, tile_cols>, tile_rows>{} };
 
@@ -62,10 +62,16 @@ namespace clayborne {
         return tile_groups;
     }
 
-    std::expected<std::monostate, std::string> load_level(const std::filesystem::path& level, entt::registry &registry, SDL_Renderer *renderer) {
+    std::expected<std::monostate, std::string> load_level(
+        const std::filesystem::path& level,
+        entt::registry &registry,
+        texture_cache &textures,
+        SDL_Renderer *renderer
+    ) {
         const auto data_path{ level / "data.json" };
         const auto grid_path{ level / "IntGrid.csv" };
-        const auto image_path{ level / "_composite.png" };
+        const auto foreground_path{ level / "IntGrid.png" };
+        const auto background_path{ level / "_bg.png" };
         
         std::ifstream data_file{ data_path };
         if (!data_file) {
@@ -175,38 +181,82 @@ namespace clayborne {
             if (entity_name == "Player") {
                 float x{ entity_list[0]["x"] };
                 float y{ entity_list[0]["y"] };
-                // TODO: use an actual resource loader
-                auto r{ resources{ .spritesheet = nullptr } };
-                init_player(registry, r, level_x + x, level_y + y);
+                init_player(registry, level_x + x, level_y + y);
             }
             else if (entity_name == "Door") {
                 float x{ entity_list[0]["x"] };
                 float y{ entity_list[0]["y"] };
-                (void)create_door(registry, level_x + x, level_y + y, false, entt::null);
+                (void)create_door(registry, textures, renderer, level_x + x, level_y + y, 8.0f, 16.0f, false, entt::null);
             }
             else if (entity_name == "Sensor") {
                 float x{ entity_list[0]["x"] };
                 float y{ entity_list[0]["y"] };
-                (void)create_sensor(registry, level_x + x, level_y + y);
+                (void)create_sensor(registry, textures, renderer, level_x + x, level_y + y, 8.0f, 8.0f);
             }
             else {
                 return std::unexpected("Failed to load entity " + entity_name + ": invalid entity id");
             }
         }
 
-        const auto level_sprite{ IMG_LoadTexture(renderer, image_path.string().c_str()) };
-        if (!level_sprite) {
+        const entt::hashed_string foreground_hs{ foreground_path.c_str() };
+        const auto foreground_texture{
+            textures.load(
+                foreground_hs,
+                foreground_path.c_str(),
+                renderer
+            )
+        };
+        if (!foreground_texture.first->second) {
             return std::unexpected("IMG load texture failed: " + std::string(SDL_GetError()));
         }
 
-        auto level_entity{ registry.create() };
-        registry.emplace<position>(level_entity, level_x, level_y);
-        registry.emplace<clayborne::renderer>(level_entity, level_sprite, SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f }, SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f }, -1);
+        auto foreground_entity{ registry.create() };
+        auto &foreground_sprite_position{
+            registry.emplace<position>(foreground_entity)
+        };
+        foreground_sprite_position.x = level_x;
+        foreground_sprite_position.y = level_y;
+        auto &foreground_sprite_renderer{
+            registry.emplace<struct sprite_renderer>(foreground_entity)
+        };
+        foreground_sprite_renderer.texture = foreground_hs;
+        foreground_sprite_renderer.srcrect = SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f };
+        foreground_sprite_renderer.z = 2;
+
+        const entt::hashed_string background_hs{ background_path.c_str() };
+        const auto background_texture{
+            textures.load(
+                background_hs,
+                background_path.c_str(),
+                renderer
+            )
+        };
+        if (!background_texture.first->second) {
+            return std::unexpected("IMG load texture failed: " + std::string(SDL_GetError()));
+        }
+
+        auto background_entity{ registry.create() };
+        auto &background_sprite_position{
+            registry.emplace<position>(background_entity)
+        };
+        background_sprite_position.x = level_x;
+        background_sprite_position.y = level_y;
+        auto &background_sprite_renderer{
+            registry.emplace<struct sprite_renderer>(background_entity)
+        };
+        background_sprite_renderer.texture = background_hs;
+        background_sprite_renderer.srcrect = SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f };
+        background_sprite_renderer.z = -1;
 
         return {};
     }
 
-    std::expected<std::monostate, std::string> load_levels(const std::filesystem::path& levels, entt::registry &registry, SDL_Renderer *renderer) {
+    std::expected<std::monostate, std::string> load_levels(
+        const std::filesystem::path& levels,
+        entt::registry &registry,
+        texture_cache &textures,
+        SDL_Renderer *renderer
+    ) {
         for (auto level : std::filesystem::directory_iterator(levels)) {
             if (!std::filesystem::is_directory(level)) {
                 continue;
@@ -218,7 +268,7 @@ namespace clayborne {
 
             SDL_Log("Load level...(%s)", level.path().string().c_str());
 
-            const auto result{ load_level(level.path(), registry, renderer) };
+            const auto result{ load_level(level.path(), registry, textures, renderer) };
             if (!result) {
                 return result;
             }

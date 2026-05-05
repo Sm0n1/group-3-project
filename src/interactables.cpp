@@ -2,15 +2,34 @@
 #include <entt/entt.hpp>
 #include "interactables.hpp"
 #include "physics.hpp"
-#include "camera.hpp"
 
 namespace clayborne {
-    [[nodiscard]] entt::entity create_sensor(entt::registry &registry, const float x, const float y) noexcept {
+    [[nodiscard]] entt::entity create_sensor(
+        entt::registry &registry,
+        texture_cache &textures,
+        SDL_Renderer *renderer,
+        const float x,
+        const float y,
+        const float w,
+        const float h
+    ) noexcept {
         auto entity{ registry.create() };
 
-        registry.emplace<sensor>(entity, 8.0f, 8.0f, false);
+        registry.emplace<sensor>(entity, w, h, false);
         registry.emplace<position>(entity, x, y);
-        registry.emplace<renderer>(entity, nullptr, SDL_FRect{}, SDL_FRect{ 0.0f, 0.0f, 8.0f, 8.0f }, 0);
+        auto &sr{ registry.emplace<sprite_renderer>(entity) };
+        const entt::hashed_string hash{ "data/objects.png" };
+        sr.texture = hash;
+        sr.srcrect.x = 8.0f;
+        sr.srcrect.w = 8.0f;
+        sr.srcrect.h = 8.0f;
+        sr.w_tiled = w;
+        sr.h_tiled = h;
+        sr.is_tiled = true;
+        if (!textures.load(hash, "data/objects.png", renderer).first->second) {
+            SDL_Log("Could not load sensor texture");
+            // TODO: error handling
+        }
 
         return entity;
     }
@@ -43,15 +62,42 @@ namespace clayborne {
         }
     }
 
-    [[nodiscard]] entt::entity create_door(entt::registry &registry, const float x, const float y, const bool is_default_open, const entt::entity toggle_sensor) noexcept {
+    [[nodiscard]] entt::entity create_door(
+        entt::registry &registry,
+        texture_cache &textures,
+        SDL_Renderer *renderer,
+        const float x,
+        const float y,
+        const float w,
+        const float h,
+        const bool is_default_open,
+        const entt::entity toggle_sensor
+    ) noexcept {
         auto entity{ registry.create() };
 
-        registry.emplace<door>(entity, toggle_sensor, 8.0f, 16.0f, is_default_open, false);
+        registry.emplace<door>(entity, toggle_sensor, w, h, is_default_open, false);
         registry.emplace<position>(entity, x, y);
-        registry.emplace<renderer>(entity, nullptr, SDL_FRect{}, SDL_FRect{ 0.0f, 0.0f, 8.0f, 16.0f }, 0);
+        auto &sr{ registry.emplace<sprite_renderer>(entity) };
+        const entt::hashed_string hash{ "data/objects.png" };
+        sr.texture = hash;
+        sr.srcrect.w = 8.0f;
+        sr.srcrect.h = 8.0f;
+        sr.w_tiled = w;
+        sr.h_tiled = h;
+        sr.is_tiled = true;
+        if (!textures.load(hash, "data/objects.png", renderer).first->second) {
+            SDL_Log("Could not load door texture");
+            // TODO: error handling
+        }
 
         if (!is_default_open) {
-            registry.emplace<collider>(entity, 8.0f, 16.0f, std::nullopt);
+            registry.emplace<collider>(entity, w, h, std::nullopt);
+            sr.alpha = 255;
+            sr.z = 1;
+        }
+        else {
+            sr.alpha = 128;
+            sr.z = 0;
         }
         
         return entity;
@@ -59,9 +105,9 @@ namespace clayborne {
 
     void toggle_doors(entt::registry &registry) noexcept {
         auto sensors{ registry.view<const sensor>() };
-        auto doors{ registry.view<position, door>() };
+        auto doors{ registry.view<position, sprite_renderer, door>() };
 
-        for (auto [de, dp, d] : doors.each()) {
+        for (auto [de, dp, dsr, d] : doors.each()) {
             d.is_open = d.is_default_open;
             for (auto [se, s] : sensors.each()) {
                 if ((d.sensor == entt::null || d.sensor == se) && s.is_sensing) {
@@ -72,6 +118,8 @@ namespace clayborne {
 
             if (d.is_open) {
                 registry.remove<collider>(de);
+                dsr.alpha = 128;
+                dsr.z = 0;
                 continue;
             }
 
@@ -79,6 +127,8 @@ namespace clayborne {
             collider dc{ d.w, d.h, std::nullopt };
             if (!overlap_any(registry, de, dp, dc)) {
                 registry.emplace_or_replace<collider>(de, dc);
+                dsr.alpha = 255;
+                dsr.z = 1;
             }
         }
     }

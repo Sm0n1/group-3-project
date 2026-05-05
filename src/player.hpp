@@ -6,7 +6,8 @@
 #include <SDL3/SDL_timer.h>
 #include <entt/entt.hpp>
 #include "engine/input/manager.hpp"
-#include "resources.hpp"
+#include "sprite.hpp"
+#include "audio.hpp"
 
 namespace clayborne {
     struct player {
@@ -91,6 +92,7 @@ namespace clayborne {
         // -------------- //
 
         bool is_grounded{ false }; //
+        bool is_landing{ false };
         bool is_on_clay{ false }; // False if not grounded
         bool is_head_attached{ true }; //
         facing facing{ facing::right }; //
@@ -150,9 +152,63 @@ namespace clayborne {
         float throw_timer{ 0.0f };
         float explosion_timer{ 0.0f };
     };
+
+    inline bool load_player_data(
+        texture_cache &textures,
+        SDL_Renderer *renderer,
+        animation_cache &animations
+    ) {
+        using entt::literals::operator""_hs;
+
+        auto texture_iter{ std::filesystem::directory_iterator("data/textures/player") };
+        for (auto texture : texture_iter) {
+            const auto path{ texture.path().c_str() };
+
+            SDL_Log("Loading texture...(%s)", path);
+
+            if (!textures.load(entt::hashed_string{ path }, path, renderer).first->second) {
+                SDL_Log("Could not load texture");
+                return false;
+            }
+        }
+
+        auto animation_iter{ std::filesystem::directory_iterator("data/animations/player") };
+        for (auto animation : animation_iter) {
+            const auto path{ animation.path().c_str() };
+
+            SDL_Log("Loading animation...(%s)", path);
+
+            if (!animations.load(entt::hashed_string{ path }, path).first->second) {
+                SDL_Log("Could not load animation");
+                return false;
+            }
+        }
+
+        return true;
+    }
     
-    entt::entity init_player(entt::registry &registry, clayborne::resources &resources, float x, float y) noexcept;
-    void update_player(entt::entity player_entity, entt::registry &registry, const input::manager &inputs, Uint64 dt_ns) noexcept;
+    entt::entity init_player(
+        entt::registry &registry,
+        float x,
+        float y
+    ) noexcept;
+
+    void update_player(
+        entt::entity player_entity,
+        entt::registry &registry,
+        const input::manager &inputs,
+        Uint64 dt_ns,
+        // TODO: Replace with events
+        audio_cache &sounds,
+        // TODO: Replace with events
+        MIX_Mixer *mixer
+    ) noexcept;
+
+    void animate_player(
+        entt::entity player_entity,
+        entt::registry &registry,
+        animation_cache &animations
+    ) noexcept;
 }
 
 #endif // CLAYBORNE_PLAYER_HPP
