@@ -1,10 +1,13 @@
 #ifndef CLAYBORNE_SPRITE_HPP
 #define CLAYBORNE_SPRITE_HPP
 
+#include "SDL3/SDL_rect.h"
+#include "SDL3/SDL_surface.h"
 #include <SDL3/SDL.h>
 #include <memory>
 #include <nlohmann/json.hpp>
 #include <entt/entt.hpp>
+#include <optional>
 #include <vector>
 
 namespace clayborne {
@@ -34,6 +37,8 @@ namespace clayborne {
         float x_offset{ 0.0f };
         float y_offset{ 0.0f };
         int z{ 0 };
+        std::optional<SDL_FPoint> center{ std::nullopt };
+        SDL_FlipMode flip{ SDL_FLIP_NONE };
     };
 
     void animate_sprites(

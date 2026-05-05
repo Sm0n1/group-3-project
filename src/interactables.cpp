@@ -89,9 +89,9 @@ namespace clayborne {
 
     void toggle_doors(entt::registry &registry) noexcept {
         auto sensors{ registry.view<const sensor>() };
-        auto doors{ registry.view<position, door>() };
+        auto doors{ registry.view<position, sprite_renderer, door>() };
 
-        for (auto [de, dp, d] : doors.each()) {
+        for (auto [de, dp, dsr, d] : doors.each()) {
             d.is_open = d.is_default_open;
             for (auto [se, s] : sensors.each()) {
                 if ((d.sensor == entt::null || d.sensor == se) && s.is_sensing) {
@@ -102,6 +102,7 @@ namespace clayborne {
 
             if (d.is_open) {
                 registry.remove<collider>(de);
+                dsr.z = 0;
                 continue;
             }
 
@@ -109,6 +110,7 @@ namespace clayborne {
             collider dc{ d.w, d.h, std::nullopt };
             if (!overlap_any(registry, de, dp, dc)) {
                 registry.emplace_or_replace<collider>(de, dc);
+                dsr.z = 1;
             }
         }
     }

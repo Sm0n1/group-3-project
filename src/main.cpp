@@ -96,6 +96,10 @@ try {
         return SDL_APP_FAILURE;
     }
 
+    if (!clayborne::load_player_data(gs.textures, gs.renderer, gs.animations)) {
+        return SDL_APP_FAILURE;
+    }
+
     // Initialize camera
     gs.camera = clayborne::init_camera(gs.registry);
 
@@ -104,7 +108,6 @@ try {
         clayborne::load_levels(
             "data/levels",
             gs.registry,
-            gs.animations,
             gs.textures,
             gs.renderer
         )
@@ -204,15 +207,18 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
     gs.current_time += frame_time;
     gs.accumulated_time += frame_time;
 
-    while (gs.accumulated_time >= SDL_NS_PER_SECOND / 60) {
-        clayborne::update_player(gs.player, gs.registry, gs.inputs, SDL_NS_PER_SECOND / 60, gs.sounds, gs.mixer);
-        clayborne::update_physics(gs.registry, SDL_NS_PER_SECOND / 60);
+    constexpr auto dt_ns{ SDL_NS_PER_SECOND / 60 };
+
+    while (gs.accumulated_time >= dt_ns) {
+        clayborne::update_player(gs.player, gs.registry, gs.inputs, dt_ns, gs.sounds, gs.mixer);
+        clayborne::update_physics(gs.registry, dt_ns);
         clayborne::sense(gs.registry);
         clayborne::toggle_doors(gs.registry);
         clayborne::update_camera(gs.camera, gs.player, gs.registry);
         clayborne::update_audio(gs.registry, gs.camera);
+        clayborne::animate_player(gs.player, gs.registry, gs.animations);
         clayborne::animate_sprites(gs.registry, gs.animations);
-        gs.accumulated_time -= SDL_NS_PER_SECOND / 60;
+        gs.accumulated_time -= dt_ns;
     }
 
     // TODO: banish to the shadowrealm

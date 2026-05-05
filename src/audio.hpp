@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <SDL3_mixer/SDL_mixer.h>
 #include <entt/entt.hpp>
+#include <vector>
 
 namespace clayborne {
     using audio_resource = MIX_Audio;
@@ -14,6 +15,12 @@ namespace clayborne {
     };
 
     using audio_cache = entt::resource_cache<audio_resource, audio_loader>;
+
+    struct audio_manager {
+        MIX_Mixer *mixer{ nullptr };
+        audio_cache sounds{};
+        std::vector<MIX_Track *> tracks{};
+    };
 
     // TODO: cache unused tracks instead of creating a new track for every sound.
 

@@ -7,8 +7,11 @@
 #include <entt/entt.hpp>
 #include <optional>
 #include "player.hpp"
+#include "SDL3/SDL_log.h"
+#include "SDL3/SDL_surface.h"
 #include "physics.hpp"
 #include "clay.hpp"
+#include "sprite.hpp"
 #include "utils.hpp"
 #include "interactables.hpp"
 
@@ -60,7 +63,7 @@ namespace clayborne {
             renderer.srcrect.h = player::headless_hitbox_height;
             renderer.srcrect.x = 4.0f;
             renderer.srcrect.y = 8.0f;
-            renderer.y_offset = 0.0f;
+            renderer.y_offset = -2.0f;
         }
     }
 
@@ -271,9 +274,6 @@ namespace clayborne {
 
     entt::entity init_player(
         entt::registry &registry,
-        animation_cache &animations,
-        texture_cache &textures,
-        SDL_Renderer *renderer,
         float x,
         float y
     ) noexcept {
@@ -293,20 +293,9 @@ namespace clayborne {
         collider.collide = player_collision_handler;
 
         auto &sprite_renderer{ registry.emplace<struct sprite_renderer>(player_entity) };
-        sprite_renderer.texture = "data/temp.png"_hs;
-        if (!textures.load("data/temp.png"_hs, "data/temp.png", renderer).first->second) {
-            SDL_Log("Could not load player texture");
-            // TODO: error handling
-        }
+        sprite_renderer.z = 1;
 
-        auto &sprite_animator{ registry.emplace<struct sprite_animator>(player_entity) };
-        sprite_animator.animation = "data/temp.json"_hs;
-        sprite_animator.current_frame = 0;
-        sprite_animator.is_looping = true;
-        if (!animations.load("data/temp.json"_hs, "data/temp.json").first->second) {
-            SDL_Log("Could not load player animation");
-            // TODO: error handling
-        }
+        registry.emplace<struct sprite_animator>(player_entity);
 
         set_player_tall(true, sprite_renderer);
         
@@ -318,9 +307,9 @@ namespace clayborne {
         entt::registry &registry,
         const input::manager &inputs,
         Uint64 dt_ns,
-        // TODO: Replace with audio event sink
+        // TODO: Replace with events
         audio_cache &sounds,
-        // TODO: Replace with audio event sink
+        // TODO: Replace with events
         MIX_Mixer *mixer
     ) noexcept {
         const float delta_time{ static_cast<float>(static_cast<double>(dt_ns) / SDL_NS_PER_SECOND) };
@@ -487,6 +476,7 @@ namespace clayborne {
             bool is_buffered_jump{ player.jump_pressed && player.is_grounded && player.jump_buffer_timer > 0.0f };
             bool is_coyote_jump{ player.jump_just_pressed && player.jump_grace_timer > 0.0f };
             if (is_buffered_jump || is_coyote_jump) {
+                player.is_grounded = false;
                 player.jump_buffer_timer = 0.0f;
                 player.jump_grace_timer = 0.0f;
                 player.jump_boost_timer = player::jump_boost_duration;
@@ -623,10 +613,10 @@ namespace clayborne {
                             registry.emplace<clayborne::activator>(player.head, head::hitbox_width, head::hitbox_height);
                           
                             auto &head_renderer{ registry.emplace<struct sprite_renderer>(player.head) };
-                            head_renderer.texture = renderer.texture;
-                            head_renderer.srcrect.w = head::hitbox_width;
-                            head_renderer.srcrect.h = head::hitbox_height;
-                            head_renderer.srcrect.x = 4.0f;
+                            head_renderer.texture = "data/textures/player/head.png"_hs;
+                            head_renderer.srcrect.w = 8.0f;
+                            head_renderer.srcrect.h = 8.0f;
+                            head_renderer.flip = player.facing == player::facing::left ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
                         }
                         // Throw failed
                         // We still enter the throw state, but the player keeps their head and aren't moved
@@ -757,17 +747,73 @@ namespace clayborne {
     void animate_player(
         entt::entity player_entity,
         entt::registry &registry,
-        Uint64 dt_ns
+        animation_cache &animations
     ) noexcept {
         auto player{ registry.get<struct player>(player_entity) };
-        auto sprite_renderer{ registry.get<struct sprite_renderer>(player_entity) };
-        auto sprite_animator{ registry.get<struct sprite_animator>(player_entity) };
 
-        (void)player;   
-        (void)sprite_renderer;
-        (void)sprite_animator;
-        (void)dt_ns;
+        const auto velocity{ registry.get<const struct velocity>(player_entity) };
+        auto &sprite_renderer{ registry.get<struct sprite_renderer>(player_entity) };
+        auto &sprite_animator{ registry.get<struct sprite_animator>(player_entity) };
 
-        // TODO: load animation based on state
+        // TODO: something that is not this ugly mess
+        auto play{
+            [&](std::string filename){
+                const entt::hashed_string texture{ 
+                    ("data/textures/player/" + filename + ".png").c_str()
+                };
+
+                const entt::hashed_string animation{
+                    ("data/animations/player/" + filename + ".json").c_str()
+                };
+
+                if (sprite_animator.animation == animation) {
+                    SDL_Log(
+                        "Animation %s continued: frame %d, x: %f, y: %f",
+                        filename.c_str(),
+                        static_cast<int>(sprite_animator.current_frame),
+                        static_cast<double>(animations[sprite_animator.animation]->frames[sprite_animator.current_frame].x),
+                        static_cast<double>(animations[sprite_animator.animation]->frames[sprite_animator.current_frame].y)
+                    );
+                    return;
+                }
+
+                SDL_Log("Animation changed to %s", filename.c_str());
+                
+                sprite_renderer.texture = texture;
+                sprite_animator.animation = animation;
+                sprite_animator.current_frame = 0;
+            }
+        };
+
+        if (player.is_grounded) {
+            // TODO: landing animation
+            if (player.left == player.right) {
+                if (player.is_head_attached) play("idle");
+                else                         play("idle_headless");
+                sprite_animator.is_looping = true;
+            }
+            else {
+                if (player.is_head_attached) play("run");
+                else                         play("run_headless");
+                sprite_animator.is_looping = true;
+            }
+        }
+        else if (velocity.y < 0.0f) {
+            if (player.is_head_attached) play("jump");
+            else                         play("jump_headless");
+            sprite_animator.is_looping = false;
+        }
+        else {
+            if (player.is_head_attached) play("fall");
+            else                         play("fall_headless");
+            sprite_animator.is_looping = true;
+        }
+
+        if (player.facing == player::facing::left) {
+            sprite_renderer.flip = SDL_FLIP_HORIZONTAL;
+        }
+        else {
+            sprite_renderer.flip = SDL_FLIP_NONE;
+        }
     } 
 }

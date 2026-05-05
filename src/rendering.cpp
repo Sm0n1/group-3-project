@@ -32,6 +32,7 @@ namespace clayborne {
             };
 
             if (texture) {
+                // TODO: do better...
                 auto door = registry.try_get<const struct door>(entity);
                 if (door && door->is_open) {
                     SDL_SetTextureAlphaMod(texture.handle().get(), 128);
@@ -39,7 +40,16 @@ namespace clayborne {
                     SDL_SetTextureAlphaMod(texture.handle().get(), 255);
                     continue;
                 }
-                SDL_RenderTexture(renderer, texture.handle().get(), &sprite_renderer.srcrect, &dstrect);
+
+                SDL_RenderTextureRotated(
+                    renderer,
+                    texture.handle().get(),
+                    &sprite_renderer.srcrect,
+                    &dstrect,
+                    0.0,
+                    sprite_renderer.center ? &*sprite_renderer.center : nullptr,
+                    sprite_renderer.flip
+                );
             }
         }
 

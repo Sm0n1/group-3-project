@@ -5,6 +5,9 @@
 #include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_timer.h>
 #include <entt/entt.hpp>
+#include <expected>
+#include <variant>
+#include "SDL3/SDL_surface.h"
 #include "engine/input/manager.hpp"
 #include "sprite.hpp"
 #include "audio.hpp"
@@ -151,12 +154,43 @@ namespace clayborne {
         float throw_timer{ 0.0f };
         float explosion_timer{ 0.0f };
     };
+
+    inline bool load_player_data(
+        texture_cache &textures,
+        SDL_Renderer *renderer,
+        animation_cache &animations
+    ) {
+        using entt::literals::operator""_hs;
+
+        auto texture_iter{ std::filesystem::directory_iterator("data/textures/player") };
+        for (auto texture : texture_iter) {
+            const auto path{ texture.path().c_str() };
+
+            SDL_Log("Loading texture...(%s)", path);
+
+            if (!textures.load(entt::hashed_string{ path }, path, renderer).first->second) {
+                SDL_Log("Could not load texture");
+                return false;
+            }
+        }
+
+        auto animation_iter{ std::filesystem::directory_iterator("data/animations/player") };
+        for (auto animation : animation_iter) {
+            const auto path{ animation.path().c_str() };
+
+            SDL_Log("Loading animation...(%s)", path);
+
+            if (!animations.load(entt::hashed_string{ path }, path).first->second) {
+                SDL_Log("Could not load animation");
+                return false;
+            }
+        }
+
+        return true;
+    }
     
     entt::entity init_player(
         entt::registry &registry,
-        clayborne::animation_cache &animations,
-        clayborne::texture_cache &textures,
-        SDL_Renderer *renderer,
         float x,
         float y
     ) noexcept;
@@ -166,16 +200,16 @@ namespace clayborne {
         entt::registry &registry,
         const input::manager &inputs,
         Uint64 dt_ns,
-        // TODO: Replace with audio event sink
+        // TODO: Replace with events
         audio_cache &sounds,
-        // TODO: Replace with audio event sink
+        // TODO: Replace with events
         MIX_Mixer *mixer
     ) noexcept;
 
     void animate_player(
         entt::entity player_entity,
         entt::registry &registry,
-        Uint64 dt_ns
+        animation_cache &animations
     ) noexcept;
 }
 

@@ -26,7 +26,6 @@ namespace clayborne {
     std::expected<std::monostate, std::string> load_level(
         const std::filesystem::path &level,
         entt::registry &registry,
-        animation_cache &animations,
         texture_cache &textures,
         SDL_Renderer *renderer
     );
@@ -34,7 +33,6 @@ namespace clayborne {
     std::expected<std::monostate, std::string> load_levels(
         const std::filesystem::path &levels,
         entt::registry &registry,
-        animation_cache &animations,
         texture_cache &textures,
         SDL_Renderer *renderer
     );

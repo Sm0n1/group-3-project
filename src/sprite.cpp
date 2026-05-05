@@ -60,19 +60,26 @@ namespace clayborne {
         auto view{ registry.view<struct sprite_renderer, struct sprite_animator>() };
         for (auto [e, r, a] : view.each()) {
             auto animation{ animations[a.animation] };
-            if(!animation) {
+            if(!animation || animation->frames.empty()) {
                 continue;
             }
 
-            const auto frame{ animation->frames[a.current_frame] };
+            const auto &frame{ animation->frames[a.current_frame] };
 
             r.srcrect.x = frame.x;
             r.srcrect.y = frame.y;
             r.srcrect.w = frame.w;
             r.srcrect.h = frame.h;
-            
-            if (a.current_frame++ >= animation->frames.size()) {
-                a.current_frame = !a.is_looping * animation->frames.size();
+
+            a.current_frame += 1;
+
+            if (a.current_frame >= animation->frames.size()) {
+                if (a.is_looping) {
+                    a.current_frame = 0;
+                }
+                else {
+                    a.current_frame = animation->frames.size() - 1;
+                }
             }
         }
     }
