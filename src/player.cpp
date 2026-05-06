@@ -219,9 +219,9 @@ namespace clayborne {
         player_player.respawn_x = x;
         player_player.respawn_y = y;
 
-        registry.emplace<struct position>(player_entity, x, y);
-        registry.emplace<struct velocity>(player_entity);
-        registry.emplace<struct activator>(player_entity, player::hitbox_width, player::headless_hitbox_height);
+        registry.emplace<position>(player_entity, x, y);
+        registry.emplace<velocity>(player_entity);
+        registry.emplace<activator>(player_entity, player::hitbox_width, player::hitbox_height);
 
         auto &collider{ registry.emplace<struct collider>(player_entity) };
         collider.w = player::hitbox_width;

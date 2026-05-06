@@ -7,8 +7,8 @@
 #include <entt/entt.hpp>
 
 namespace clayborne {
-    // A camera is both a view into the world and a microphone.
     struct camera {};
+
     entt::entity init_camera(entt::registry &registry);
     void update_camera(const entt::entity camera, const entt::entity player, entt::registry &registry);
 

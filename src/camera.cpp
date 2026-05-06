@@ -1,11 +1,23 @@
-#include <cstdio>
-#include <entt/entt.hpp>
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+#include <cassert>
+#include <cmath>
+#include <cstddef>
+#include <entt/entt.hpp>
 #include "camera.hpp"
 #include "physics.hpp"
+#include <SDL3/SDL_oldnames.h>
+#include <SDL3/SDL_render.h>
+#include <cstdio>
+#include <entt/entt.hpp>
+#include <vector>
+#include "camera.hpp"
+#include "physics.hpp"
+#include "interactables.hpp"
+#include "utils.hpp"
 
 namespace clayborne {
+    // TODO: match destination rectangle with window
     entt::entity init_camera(entt::registry &registry) {
         const auto camera{ registry.create() };
 
