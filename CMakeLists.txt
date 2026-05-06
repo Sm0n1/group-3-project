@@ -54,6 +54,7 @@ target_sources(clayborne PRIVATE
     src/main.cpp
     src/camera.cpp
     src/player.cpp
+    src/head.cpp
     src/physics.cpp
     src/interactables.cpp
     src/sprite.cpp

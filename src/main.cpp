@@ -1,6 +1,7 @@
 #include "SDL3/SDL_init.h"
 #include "SDL3_mixer/SDL_mixer.h"
 #include "audio.hpp"
+#include "head.hpp"
 #define SDL_MAIN_USE_CALLBACKS
 
 #include <SDL3/SDL_main.h>
@@ -211,6 +212,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
 
     while (gs.accumulated_time >= dt_ns) {
         clayborne::update_player(gs.player, gs.registry, gs.inputs, dt_ns, gs.sounds, gs.mixer);
+        clayborne::update_heads(gs.registry, dt_ns, gs.animations, gs.sounds, gs.mixer);
         clayborne::update_physics(gs.registry, dt_ns);
         clayborne::sense(gs.registry);
         clayborne::toggle_doors(gs.registry);

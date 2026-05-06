@@ -95,6 +95,7 @@ namespace clayborne {
         bool is_landing{ false };
         bool is_on_clay{ false }; // False if not grounded
         bool is_head_attached{ false }; //
+        bool is_head_detonated{ true }; //
         facing facing{ facing::right }; //
         state state{ state::start }; //
 
@@ -113,9 +114,6 @@ namespace clayborne {
         // Head Data //
         // --------- //
 
-        entt::entity head{ entt::null };
-        entt::entity buried_head{ entt::null };
-
         // Allows buffering a head throw/detonation to trigger when possible.
         float head_buffer_timer{ 0.0f };
         float head_throw_timer{ 0.0f };
@@ -127,30 +125,6 @@ namespace clayborne {
 
         float respawn_x{ 0.0f };
         float respawn_y{ 0.0f };
-    };
-
-    struct head {
-        static constexpr float hitbox_width{ 8.0f };
-        static constexpr float hitbox_height{ 8.0f };
-         
-        static constexpr float throw_deceleration{ 500.0f };
-        static constexpr int   throw_corner_correction{ 3 };
-
-        static constexpr float explosion_duration{ 0.3f };
-        static constexpr float explosion_radius{ 14.0f };
-
-        enum class state {
-            start,
-            buried,
-            thrown,
-            detonated,
-        };
-
-        bool is_grounded{ false };
-        state state{ state::start };
-
-        float throw_timer{ 0.0f };
-        float explosion_timer{ 0.0f };
     };
 
     inline bool load_player_data(

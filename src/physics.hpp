@@ -74,6 +74,37 @@ namespace clayborne {
         }
         return false;
     }
+
+    template<bool X, int Amount>
+    inline bool corner_correction(entt::registry &r, entt::entity e, position &p, velocity &v, collider &c) {
+        const float move{ X ? sgn(v.x) : sgn(v.y) };
+        
+        if (move == 0.0f) {
+            return false;
+        }
+
+        for (int i{ 1 }; i <= Amount; i += 1) {
+            for (int direction : { -1, 1 }) {
+                auto new_p{ p };
+
+                if constexpr (X) {
+                    new_p.x += move;
+                    new_p.y += static_cast<float>(i * direction);
+                }
+                else {
+                    new_p.x += static_cast<float>(i * direction);
+                    new_p.y += move;
+                }
+                
+                if (!overlap_any(r, e, new_p, c)) {
+                    p = new_p;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
 
 #endif // CLAYBORNE_PHYSICS_HPP

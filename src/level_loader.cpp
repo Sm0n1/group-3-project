@@ -5,6 +5,7 @@
 #include "physics.hpp"
 #include "clay.hpp"
 #include "player.hpp"
+#include "head.hpp"
 #include "interactables.hpp"
 
 namespace clayborne {
@@ -163,9 +164,15 @@ namespace clayborne {
                 auto tile{ registry.create() };
                 registry.emplace<position>(tile, level_x + tg.x * 8.0f, level_y + tg.y * 8.0f);
                 registry.emplace<collider>(tile, tg.w * 8.0f, tg.h * 8.0f, [](entt::registry &r, const collider::collision &c) {
-                    auto p{ r.try_get<player>(c.other) };
-                    if (p) {
-                        p->state = player::state::dead;
+                    auto player{ r.try_get<struct player>(c.other) };
+                    if (player) {
+                        player->state = player::state::dead;
+                        return;
+                    }
+                    auto head{ r.try_get<struct head>(c.other) };
+                    if (head) {
+                        head->state = head::state::detonated;
+                        return;
                     }
                 });
                 break;
