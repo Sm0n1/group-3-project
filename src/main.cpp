@@ -23,6 +23,7 @@ struct gamestate {
     SDL_Window *window{ nullptr };
     SDL_Renderer *renderer{ nullptr };
     SDL_Texture *canvas{ nullptr };
+    SDL_Texture *vignette{ nullptr };
     MIX_Mixer *mixer{ nullptr };
     Uint64 current_time;
     Uint64 accumulated_time{ 0 };
@@ -67,10 +68,10 @@ try {
     }
 
     // Enable automatic scaling
-    SDL_SetRenderLogicalPresentation(gs.renderer, 320, 180, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
+    SDL_SetRenderLogicalPresentation(gs.renderer, clayborne::canvas_width, clayborne::canvas_height, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
     
     // Initialize canvas
-    gs.canvas = SDL_CreateTexture(gs.renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, 320, 180);
+    gs.canvas = SDL_CreateTexture(gs.renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, clayborne::canvas_width, clayborne::canvas_height);
     if (!gs.canvas) {
         SDL_Log("SDL create texture failed: %s", SDL_GetError());
         return SDL_APP_FAILURE;
@@ -78,6 +79,12 @@ try {
 
     // Scale the canvas with sharp edges
     SDL_SetTextureScaleMode(gs.canvas, SDL_SCALEMODE_NEAREST);
+
+    // Initialize vignette
+    gs.vignette = clayborne::init_vignette(gs.renderer);
+    if (!gs.vignette) {
+        return SDL_APP_FAILURE;
+    }
 
     // Initialize SDL_mixer.
     if (!MIX_Init()) {
@@ -217,7 +224,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
         clayborne::sense(gs.registry);
         clayborne::toggle_doors(gs.registry);
         clayborne::update_camera(gs.camera, gs.player, gs.registry);
-        clayborne::update_audio(gs.registry, gs.camera);
+        clayborne::update_audio(gs.registry, gs.camera);  
         clayborne::animate_player(gs.player, gs.registry, gs.animations);
         clayborne::animate_sprites(gs.registry, gs.animations);
         gs.accumulated_time -= dt_ns;
@@ -233,7 +240,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
         }
     );
 
-    clayborne::render(gs.camera, gs.registry, gs.textures, gs.renderer, gs.canvas);
+    clayborne::render(gs.camera, gs.registry, gs.textures, gs.renderer, gs.canvas, gs.vignette);
 
     return SDL_APP_CONTINUE;
 }
@@ -241,6 +248,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {
     auto &gs{ *static_cast<gamestate*>(appstate) };
 
+    SDL_DestroyTexture(gs.vignette);
     SDL_DestroyTexture(gs.canvas);
     SDL_DestroyRenderer(gs.renderer);
     SDL_DestroyWindow(gs.window);

@@ -5,15 +5,18 @@
 #include "physics.hpp"
 #include "camera.hpp"
 
+using entt::literals::operator""_hs;
+
 namespace clayborne {
     // Load audio
     audio_loader::result_type audio_loader::operator()(
         const std::filesystem::path &path,
         MIX_Mixer *mixer
     ) noexcept {
-        auto audio{ MIX_LoadAudio(mixer, path.c_str(), false) };
+        auto path_str{ path.string() };
+        auto audio{ MIX_LoadAudio(mixer, path_str.c_str(), false) };
         if (!audio) {
-            SDL_Log("Could not load audio %s: %s", path.c_str(), SDL_GetError());
+            SDL_Log("Could not load audio %s: %s", path_str.c_str(), SDL_GetError());
             return nullptr;
         }
 
@@ -27,11 +30,11 @@ namespace clayborne {
         audio_cache &sounds,
         MIX_Mixer *mixer
     ) {
-        if (!sounds.load(entt::hashed_string{ "data/jump.wav" }, "data/jump.wav", mixer).first->second) {
+        if (!sounds.load("jump"_hs, "data/jump.wav", mixer).first->second) {
             return false;
         }
 
-        if (!sounds.load(entt::hashed_string{ "data/explosion.wav" }, "data/explosion.wav", mixer).first->second) {
+        if (!sounds.load("head_explosion"_hs, "data/explosion.wav", mixer).first->second) {
             return false;
         }
 

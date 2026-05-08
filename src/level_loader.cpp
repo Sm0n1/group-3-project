@@ -7,6 +7,7 @@
 #include "player.hpp"
 #include "head.hpp"
 #include "interactables.hpp"
+#include "lighting.hpp"
 
 namespace clayborne {
     std::vector<tile_group> merge_tiles_greedy(
@@ -215,11 +216,12 @@ namespace clayborne {
             }
         }
 
-        const entt::hashed_string foreground_hs{ foreground_path.c_str() };
+        const auto foreground_path_str{ foreground_path.string() };
+        const entt::hashed_string foreground_hs{ foreground_path_str.c_str() };
         const auto foreground_texture{
             textures.load(
                 foreground_hs,
-                foreground_path.c_str(),
+                foreground_path_str.c_str(),
                 renderer
             )
         };
@@ -240,11 +242,12 @@ namespace clayborne {
         foreground_sprite_renderer.srcrect = SDL_FRect{ 0.0f, 0.0f, 320.0f, 184.0f };
         foreground_sprite_renderer.z = 2;
 
-        const entt::hashed_string background_hs{ background_path.c_str() };
+        const auto background_path_str{ background_path.string() };
+        const entt::hashed_string background_hs{ background_path_str.c_str() };
         const auto background_texture{
             textures.load(
                 background_hs,
-                background_path.c_str(),
+                background_path_str.c_str(),
                 renderer
             )
         };
@@ -269,7 +272,7 @@ namespace clayborne {
     }
 
     std::expected<std::monostate, std::string> load_levels(
-        const std::filesystem::path& levels,
+        const std::filesystem::path &levels,
         entt::registry &registry,
         texture_cache &textures,
         SDL_Renderer *renderer
@@ -283,7 +286,8 @@ namespace clayborne {
                 continue;
             }
 
-            SDL_Log("Load level...(%s)", level.path().string().c_str());
+            const auto level_path_str{ level.path().string() };
+            SDL_Log("Load level...(%s)", level_path_str.c_str());
 
             const auto result{ load_level(level.path(), registry, textures, renderer) };
             if (!result) {

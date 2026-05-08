@@ -27,7 +27,7 @@ namespace clayborne {
                 registry.get<struct sprite_renderer>(entity)
             };
 
-            sprite_renderer.texture = "data/textures/player/head_explosion.png"_hs;
+            sprite_renderer.texture = "head_explosion"_hs;
             sprite_renderer.x_offset = -8.0f;
             sprite_renderer.y_offset = -8.0f;
             sprite_renderer.z = 3;
@@ -36,7 +36,7 @@ namespace clayborne {
                 registry.emplace<struct sprite_animator>(entity)
             };
 
-            sprite_animator.animation = "data/animations/player/head_explosion.json"_hs;
+            sprite_animator.animation = "head_explosion"_hs;
             sprite_animator.current_frame = 0;
             sprite_animator.is_looping = false;
 
@@ -92,7 +92,7 @@ namespace clayborne {
         }
 
         // TODO: Replace with audio event sink
-        (void)play_sound(registry, sounds, mixer, "data/explosion.wav"_hs, 1.0f, false);
+        (void)play_sound(registry, sounds, mixer, "head_explosion"_hs, 1.0f, false);
     }
 
     static inline void update_head_in_start_state(

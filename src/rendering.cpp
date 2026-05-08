@@ -1,17 +1,13 @@
-#include "SDL3/SDL_render.h"
+#include <memory>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 #include "interactables.hpp"
 #include "physics.hpp"
 #include "sprite.hpp"
 #include "rendering.hpp"
 
 namespace clayborne {
-    struct sdl_circle {
-        double radius{ 1.0 };
-        std::vector<SDL_Vertex> vertices{};
-        std::vector<int> indices{};
-    };
-
-    static void sdl_circle_set_position(
+    void sdl_circle_set_position(
         sdl_circle &circle,
         const double center_x,
         const double center_y
@@ -28,11 +24,13 @@ namespace clayborne {
         }
     }
 
-    static sdl_circle sdl_circle_init(
+    constexpr sdl_circle sdl_circle_init(
         const std::size_t vertex_count,
         const double radius,
         const double center_x,
-        const double center_y
+        const double center_y,
+        const SDL_FColor center_color,
+        const SDL_FColor perimiter_color
     ) {
         assert(vertex_count >= 3);
         assert(radius > 0.0);
@@ -52,10 +50,7 @@ namespace clayborne {
         center_vertex.position.y = static_cast<float>(center_y);
 
         // Set center vertex color
-        center_vertex.color.r = 1.0f;
-        center_vertex.color.g = 1.0f;
-        center_vertex.color.b = 1.0f;
-        center_vertex.color.a = 1.0f;
+        center_vertex.color = center_color;
 
         // Set center vertex texture coordinates
         center_vertex.tex_coord.x = 0.0f;
@@ -69,10 +64,7 @@ namespace clayborne {
             vertex.position.y = static_cast<float>(center_y + radius * std::sin(fan_rotation_angle * static_cast<double>(i)));
             
             // Set vertex color
-            vertex.color.r = 1.0f;
-            vertex.color.g = 1.0f;
-            vertex.color.b = 1.0f;
-            vertex.color.a = 0.0f;
+            vertex.color = perimiter_color;
 
             // Set center vertex texture coordinates
             vertex.tex_coord.x = 0.0f;
@@ -89,13 +81,80 @@ namespace clayborne {
 
         return result;
     }
-    
+
+    SDL_Texture *init_vignette(
+        SDL_Renderer *renderer
+    ) {
+        SDL_Texture *texture{ SDL_CreateTexture(
+            renderer,
+            SDL_PIXELFORMAT_RGBA8888,
+            SDL_TEXTUREACCESS_STREAMING,
+            canvas_width,
+            canvas_height
+        ) };
+
+        if (!texture) {
+            SDL_Log("SDL create texture failed: %s", SDL_GetError());
+            return nullptr;
+        }
+
+        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+
+        Uint32 *pixels;
+        int pitch;
+
+        SDL_LockTexture(texture, nullptr,  static_cast<void **>(static_cast<void *>(&pixels)), &pitch);
+
+        constexpr float center_x{ 0.5f };
+        constexpr float center_y{ 0.5f };
+
+        constexpr float smoothness{ 0.8f };
+        constexpr float intensity{ 0.6f };
+
+        // Inverted for cache locality
+        for (int y{ 0 }; y < canvas_height; y += 1) {
+            for (int x{ 0 }; x < canvas_width; x += 1) {
+                const float u{ static_cast<float>(x) / static_cast<float>(canvas_width) };
+                const float v{ static_cast<float>(y) / static_cast<float>(canvas_height) };
+
+                const float delta_x{ u - center_x };
+                const float delta_y{ v - center_y };
+
+                const float delta{ SDL_sqrtf(delta_x * delta_x + delta_y * delta_y) };
+
+                constexpr auto smoothstep{
+                    [](
+                        const float e1,
+                        const float e2,
+                        float x
+                    ) {
+                        x = SDL_clamp((x - e1) / (e2 - e1), 0.0f, 1.0f);
+                        return x * x * (3.0f - 2.0f * x);
+                    }
+                };
+
+                const float vignette{ smoothstep(0.2f, smoothness, delta * intensity) };
+
+                const Uint8 alpha{ static_cast<Uint8>(vignette * 255.0f) };
+
+                pixels[y * (pitch / 4) + x] = (alpha << 24);
+                // auto pixel = pixels[y * (pitch / 4) + x];
+                // SDL_Log("x = %d, y = %d, pixel = %3d|%3d|%3d|%3d", x, y, pixel >> 24, (pixel << 8) >> 24, (pixel << 16) >> 24, (pixel << 24) >> 24);
+            }
+        }
+
+        SDL_UnlockTexture(texture);
+
+        return texture;
+    }
+
     void render(
         const entt::entity camera,
         const entt::registry &registry,
         texture_cache &textures,
         SDL_Renderer *renderer,
-        SDL_Texture *canvas
+        SDL_Texture *canvas,
+        SDL_Texture *vignette
     ) {
         // Clear last frame
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -162,6 +221,7 @@ namespace clayborne {
         // Render camera view
         SDL_SetRenderTarget(renderer, nullptr);
         SDL_RenderTexture(renderer, canvas, nullptr, nullptr);
+        SDL_RenderTexture(renderer, vignette, nullptr, nullptr);
         SDL_RenderPresent(renderer);
     }
 }

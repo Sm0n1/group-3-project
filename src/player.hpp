@@ -127,39 +127,11 @@ namespace clayborne {
         float respawn_y{ 0.0f };
     };
 
-    inline bool load_player_data(
+    bool load_player_data(
         texture_cache &textures,
         SDL_Renderer *renderer,
         animation_cache &animations
-    ) {
-        using entt::literals::operator""_hs;
-
-        auto texture_iter{ std::filesystem::directory_iterator("data/textures/player") };
-        for (auto texture : texture_iter) {
-            const auto path{ texture.path().c_str() };
-
-            SDL_Log("Loading texture...(%s)", path);
-
-            if (!textures.load(entt::hashed_string{ path }, path, renderer).first->second) {
-                SDL_Log("Could not load texture");
-                return false;
-            }
-        }
-
-        auto animation_iter{ std::filesystem::directory_iterator("data/animations/player") };
-        for (auto animation : animation_iter) {
-            const auto path{ animation.path().c_str() };
-
-            SDL_Log("Loading animation...(%s)", path);
-
-            if (!animations.load(entt::hashed_string{ path }, path).first->second) {
-                SDL_Log("Could not load animation");
-                return false;
-            }
-        }
-
-        return true;
-    }
+    );
     
     entt::entity init_player(
         entt::registry &registry,

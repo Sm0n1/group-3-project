@@ -19,6 +19,85 @@
 using entt::literals::operator""_hs;
 
 namespace clayborne {
+    static constexpr std::array texture_map{
+        std::pair{ "head"_hs, "data/textures/player/head.png" },
+        std::pair{ "idle"_hs, "data/textures/player/idle.png" },
+        std::pair{ "idle_headless"_hs, "data/textures/player/idle_headless.png" },
+        std::pair{ "run"_hs, "data/textures/player/run.png" },
+        std::pair{ "run_headless"_hs, "data/textures/player/run_headless.png" },
+        std::pair{ "jump"_hs, "data/textures/player/jump.png" },
+        std::pair{ "jump_headless"_hs, "data/textures/player/jump_headless.png" },
+        std::pair{ "fall"_hs, "data/textures/player/fall.png" },
+        std::pair{ "fall_headless"_hs, "data/textures/player/fall_headless.png" },
+        std::pair{ "land"_hs, "data/textures/player/land.png" },
+        std::pair{ "land_headless"_hs, "data/textures/player/land_headless.png" },
+        std::pair{ "throw_head"_hs, "data/textures/player/throw_head.png" },
+        std::pair{ "head_explosion"_hs, "data/textures/player/head_explosion.png" },
+        std::pair{ "resurrect"_hs, "data/textures/player/resurrect.png" },
+        std::pair{ "dust"_hs, "data/textures/player/dust.png" },
+    };
+
+    static constexpr std::array animation_map{
+        std::pair{ "idle"_hs, "data/animations/player/idle.json" },
+        std::pair{ "idle_headless"_hs, "data/animations/player/idle_headless.json" },
+        std::pair{ "run"_hs, "data/animations/player/run.json" },
+        std::pair{ "run_headless"_hs, "data/animations/player/run_headless.json" },
+        std::pair{ "jump"_hs, "data/animations/player/jump.json" },
+        std::pair{ "jump_headless"_hs, "data/animations/player/jump_headless.json" },
+        std::pair{ "fall"_hs, "data/animations/player/fall.json" },
+        std::pair{ "fall_headless"_hs, "data/animations/player/fall_headless.json" },
+        std::pair{ "land"_hs, "data/animations/player/land.json" },
+        std::pair{ "land_headless"_hs, "data/animations/player/land_headless.json" },
+        std::pair{ "throw_head"_hs, "data/animations/player/throw_head.json" },
+        std::pair{ "head_explosion"_hs, "data/animations/player/head_explosion.json" },
+        std::pair{ "resurrect"_hs, "data/animations/player/resurrect.json" },
+        std::pair{ "dust"_hs, "data/animations/player/dust.json" },
+    };
+
+    bool load_player_data(
+        texture_cache &textures,
+        SDL_Renderer *renderer,
+        animation_cache &animations
+    ) {
+        for (auto texture : texture_map) {
+            SDL_Log("Loading texture...(%s)", texture.second);
+            if (!textures.load(texture.first, texture.second, renderer).first->second) {
+                return false;
+            }
+        }
+
+        for (auto animation : animation_map) {
+            SDL_Log("Loading animation...(%s)", animation.second);
+            if (!animations.load(animation.first, animation.second).first->second) {
+                return false;
+            }
+        }
+
+        // auto texture_iter{ std::filesystem::directory_iterator("data/textures/player") };
+        // for (auto texture : texture_iter) {
+        //     const auto path{ texture.path().string() };
+
+        //     SDL_Log("Loading texture...(%s)", path.c_str());
+
+        //     if (!textures.load(entt::hashed_string{ path.c_str() }, path, renderer).first->second) {
+        //         return false;
+        //     }
+        // }
+
+        // auto animation_iter{ std::filesystem::directory_iterator("data/animations/player") };
+        // for (auto animation : animation_iter) {
+        //     const auto path{ animation.path().string() };
+
+        //     SDL_Log("Loading animation...(%s)", path.c_str());
+
+        //     if (!animations.load(entt::hashed_string{ path.c_str() }, path).first->second) {
+        //         return false;
+        //     }
+        // }
+
+        return true;
+    }
+
     // TODO perhaps change magic numbers to header consts or something.
     static void set_player_tall(bool tall, struct sprite_renderer &renderer) {
         if (tall) {
@@ -431,7 +510,7 @@ namespace clayborne {
                 player.jump_boost_speed = velocity.y;
 
                 // TODO: Replace with audio event sink
-                (void)play_sound(registry, sounds, mixer, "data/jump.wav"_hs, 1.0f, false);
+                (void)play_sound(registry, sounds, mixer, "jump"_hs, 1.0f, false);
             }
 
             // Reset jump buffer timer on ground
@@ -551,7 +630,7 @@ namespace clayborne {
                         registry.emplace<clayborne::activator>(head_entity, head::hitbox_width, head::hitbox_height);
                         
                         auto &head_renderer{ registry.emplace<struct sprite_renderer>(head_entity) };
-                        head_renderer.texture = "data/textures/player/head.png"_hs;
+                        head_renderer.texture = "head"_hs;
                         head_renderer.srcrect.w = 8.0f;
                         head_renderer.srcrect.h = 8.0f;
                         head_renderer.flip = player.facing == player::facing::left ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
@@ -595,19 +674,11 @@ namespace clayborne {
 
         // TODO: something that is not this ugly mess
         auto play{
-            [&](std::string filename){
-                const entt::hashed_string texture{ 
-                    ("data/textures/player/" + filename + ".png").c_str()
-                };
-
-                const entt::hashed_string animation{
-                    ("data/animations/player/" + filename + ".json").c_str()
-                };
-
+            [&](entt::hashed_string animation){
                 if (sprite_animator.animation == animation) {
                     // SDL_Log(
                     //     "Animation %s continued: frame %d, x: %f, y: %f",
-                    //     filename.c_str(),
+                    //     animation.data(),
                     //     static_cast<int>(sprite_animator.current_frame),
                     //     static_cast<double>(animations[sprite_animator.animation]->frames[sprite_animator.current_frame - 1].x),
                     //     static_cast<double>(animations[sprite_animator.animation]->frames[sprite_animator.current_frame - 1].y)
@@ -615,9 +686,9 @@ namespace clayborne {
                     return;
                 }
 
-                SDL_Log("Animation changed to %s", filename.c_str());
+                SDL_Log("Animation changed to %s", animation.data());
                 
-                sprite_renderer.texture = texture;
+                sprite_renderer.texture = animation;
                 sprite_animator.animation = animation;
                 sprite_animator.current_frame = 0;
             }
@@ -628,41 +699,38 @@ namespace clayborne {
             if (player.is_grounded) {
                 if (
                     player.is_landing || (
-                        (
-                            sprite_animator.animation == "data/animations/player/land.json"_hs ||
-                            sprite_animator.animation == "data/animations/player/land_headless.json"_hs
-                        ) && 
+                        (sprite_animator.animation == "land"_hs || sprite_animator.animation == "land_headless"_hs) && 
                         sprite_animator.current_frame < animations[sprite_animator.animation]->frames.size()
                     )
                 ) {
-                    if (player.is_head_attached) play("land");
-                    else                         play("land_headless");
+                    if (player.is_head_attached) play("land"_hs);
+                    else                         play("land_headless"_hs);
                     sprite_animator.is_looping = false;
                 }
                 else if (player.left == player.right) {
-                    if (player.is_head_attached) play("idle");
-                    else                         play("idle_headless");
+                    if (player.is_head_attached) play("idle"_hs);
+                    else                         play("idle_headless"_hs);
                     sprite_animator.is_looping = true;
                 }
                 else {
-                    if (player.is_head_attached) play("run");
-                    else                         play("run_headless");
+                    if (player.is_head_attached) play("run"_hs);
+                    else                         play("run_headless"_hs);
                     sprite_animator.is_looping = true;
                 }
             }
             else if (velocity.y < 0.0f) {
-                if (player.is_head_attached) play("jump");
-                else                         play("jump_headless");
+                if (player.is_head_attached) play("jump"_hs);
+                else                         play("jump_headless"_hs);
                 sprite_animator.is_looping = false;
             }
             else {
-                if (player.is_head_attached) play("fall");
-                else                         play("fall_headless");
+                if (player.is_head_attached) play("fall"_hs);
+                else                         play("fall_headless"_hs);
                 sprite_animator.is_looping = true;
             }
             break;
         case player::state::throwing:
-            play("throw_head");
+            play("throw_head"_hs);
             sprite_animator.is_looping = false;
             break;
         default:

@@ -3,6 +3,8 @@
 #include "interactables.hpp"
 #include "physics.hpp"
 
+using entt::literals::operator""_hs;
+
 namespace clayborne {
     [[nodiscard]] entt::entity create_sensor(
         entt::registry &registry,
@@ -18,15 +20,14 @@ namespace clayborne {
         registry.emplace<sensor>(entity, w, h, false);
         registry.emplace<position>(entity, x, y);
         auto &sr{ registry.emplace<sprite_renderer>(entity) };
-        const entt::hashed_string hash{ "data/objects.png" };
-        sr.texture = hash;
+        sr.texture = "objects"_hs;
         sr.srcrect.x = 8.0f;
         sr.srcrect.w = 8.0f;
         sr.srcrect.h = 8.0f;
         sr.w_tiled = w;
         sr.h_tiled = h;
         sr.is_tiled = true;
-        if (!textures.load(hash, "data/objects.png", renderer).first->second) {
+        if (!textures.load("objects"_hs, "data/objects.png", renderer).first->second) {
             SDL_Log("Could not load sensor texture");
             // TODO: error handling
         }
@@ -78,14 +79,13 @@ namespace clayborne {
         registry.emplace<door>(entity, toggle_sensor, w, h, is_default_open, false);
         registry.emplace<position>(entity, x, y);
         auto &sr{ registry.emplace<sprite_renderer>(entity) };
-        const entt::hashed_string hash{ "data/objects.png" };
-        sr.texture = hash;
+        sr.texture = "objects"_hs;
         sr.srcrect.w = 8.0f;
         sr.srcrect.h = 8.0f;
         sr.w_tiled = w;
         sr.h_tiled = h;
         sr.is_tiled = true;
-        if (!textures.load(hash, "data/objects.png", renderer).first->second) {
+        if (!textures.load("objects"_hs, "data/objects.png", renderer).first->second) {
             SDL_Log("Could not load door texture");
             // TODO: error handling
         }

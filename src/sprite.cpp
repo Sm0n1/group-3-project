@@ -10,15 +10,17 @@ namespace clayborne {
     ) noexcept {
         animation_resource resource{};
 
+        auto path_str{ path.string() };
+
         std::ifstream file{ path };
         if (!file) {
-            SDL_Log("Could not open file: %s", path.c_str());
+            SDL_Log("Could not open file: %s", path_str.c_str());
             return nullptr;
         }
 
         auto data = nlohmann::json::parse(file, nullptr, false);
         if (data.is_discarded()) {
-            SDL_Log("Could not parse file as json: %s", path.c_str());
+            SDL_Log("Could not parse file as json: %s", path_str.c_str());
             return nullptr;
         }
 
@@ -40,9 +42,10 @@ namespace clayborne {
         const std::filesystem::path &path,
         SDL_Renderer *renderer
     ) noexcept {
-        auto texture{ IMG_LoadTexture(renderer, path.c_str()) };
+        auto path_str{ path.string() };
+        auto texture{ IMG_LoadTexture(renderer, path_str.c_str()) };
         if (!texture) {
-            SDL_Log("Could not load texture %s: %s", path.c_str(), SDL_GetError());
+            SDL_Log("Could not load texture %s: %s", path_str.c_str(), SDL_GetError());
             return nullptr;
         }
 
