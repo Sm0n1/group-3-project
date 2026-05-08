@@ -38,6 +38,10 @@ namespace clayborne {
             return false;
         }
 
+        if (!sounds.load("ambiance"_hs, "data/ambiance.wav", mixer).first->second) {
+            return false;
+        }
+
         return true;
     }
 

@@ -686,7 +686,7 @@ namespace clayborne {
                     return;
                 }
 
-                SDL_Log("Animation changed to %s", animation.data());
+                // SDL_Log("Animation changed to %s", animation.data());
                 
                 sprite_renderer.texture = animation;
                 sprite_animator.animation = animation;

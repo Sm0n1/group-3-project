@@ -115,7 +115,6 @@ if(EMSCRIPTEN)
         "-sUSE_SDL=3"
         "-sALLOW_MEMORY_GROWTH=1"
         "-sNO_EXIT_RUNTIME=1"
-        # "-sMODULARIZE=1"
         "-sFORCE_FILESYSTEM=1"
         "--preload-file" "${CMAKE_SOURCE_DIR}/data@/data"
     )
