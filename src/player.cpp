@@ -269,7 +269,7 @@ namespace clayborne {
         vel.y = 0.0f;
 
         // Respawn on head if it is on clay
-        const auto head_entity{ registry.view<struct head>().front() };
+        const auto head_entity{ registry.view<struct head, struct position, struct collider>().front() };
         if (head_entity != entt::null) {
             auto head_position{ registry.get<const position>(head_entity) };
             auto head_collider{ registry.get<const collider>(head_entity) };
@@ -374,7 +374,7 @@ namespace clayborne {
         }
 
         // Check if head has been destroyed
-        if (registry.view<struct head>().front() == entt::null) {
+        if (registry.view<struct head, struct collider>().front() == entt::null) {
             player.is_head_detonated = true;
         }
 
