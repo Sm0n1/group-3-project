@@ -126,10 +126,10 @@ namespace clayborne {
                     [](
                         const float e1,
                         const float e2,
-                        float x
+                        float t
                     ) {
-                        x = SDL_clamp((x - e1) / (e2 - e1), 0.0f, 1.0f);
-                        return x * x * (3.0f - 2.0f * x);
+                        t = SDL_clamp((t - e1) / (e2 - e1), 0.0f, 1.0f);
+                        return t * t * (3.0f - 2.0f * t);
                     }
                 };
 

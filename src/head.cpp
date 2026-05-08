@@ -82,7 +82,7 @@ namespace clayborne {
                 { inv_sqrt2, -inv_sqrt2 },
             };
             const float angle = std::atan2(delta_y, delta_x);
-            const int octant = static_cast<int>(std::round(angle / (pi / 4.0f))) & 7;
+            const int octant = static_cast<int>(std::round(angle / (float(pi) / 4.0f))) & 7;
             // TODO: use events or something
             player_velocity.x = directions[octant].x * player::head_launch_speed;
             player_velocity.y = directions[octant].y * player::head_launch_speed;
