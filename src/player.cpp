@@ -15,6 +15,7 @@
 #include "utils.hpp"
 #include "interactables.hpp"
 #include "head.hpp"
+#include "vfx.hpp"
 
 using entt::literals::operator""_hs;
 
@@ -263,6 +264,60 @@ namespace clayborne {
         }
     }
 
+    static void spawn_jump_cloud_vfx(
+        entt::registry &registry,
+        const struct player &player_player,
+        const struct position &player_position
+    ) noexcept {
+        auto dust_entity{ registry.create() };
+
+        auto& respawn_vfx{ registry.emplace<struct vfx>(dust_entity) };
+        respawn_vfx.age = 0;
+        respawn_vfx.lifespan = 30; //TODO lookup the correct number of frames
+
+        auto& sprite_renderer{ registry.emplace<struct sprite_renderer>(dust_entity) };
+        sprite_renderer.texture = "dust"_hs;
+        sprite_renderer.z = 2;
+
+        auto& sprite_animator{ registry.emplace<struct sprite_animator>(dust_entity) };
+        sprite_animator.animation = "dust"_hs;
+        sprite_animator.current_frame = 0;
+        sprite_animator.is_looping = false;
+
+        auto& respawn_pos{ registry.emplace<struct position>(dust_entity) };
+        respawn_pos.x = player_position.x - 8.0f;
+        if (player_player.is_head_attached) {
+            respawn_pos.y = player_position.y + 3.0f;
+        }
+        else {
+            respawn_pos.y = player_position.y;
+        }
+    }
+
+    static void spawn_respawn_vfx(
+        entt::registry &registry,
+        const struct position &player_position
+    ) {
+        auto respawn_entity{ registry.create() };
+
+        auto &respawn_vfx{ registry.emplace<struct vfx>(respawn_entity) };
+        respawn_vfx.age = 0;
+        respawn_vfx.lifespan = 30; //TODO lookup the correct number of frames
+
+        auto &sprite_renderer { registry.emplace<struct sprite_renderer>(respawn_entity) };
+        sprite_renderer.texture = "resurrect"_hs;
+        sprite_renderer.z = 2;
+
+        auto &sprite_animator { registry.emplace<struct sprite_animator>(respawn_entity) };
+        sprite_animator.animation = "resurrect"_hs;
+        sprite_animator.current_frame = 0;
+        sprite_animator.is_looping = false;
+
+        auto& respawn_pos{ registry.emplace<struct position>(respawn_entity) };
+        respawn_pos.x = player_position.x - 8.0f;
+        respawn_pos.y = player_position.y - 12.0f;
+    }
+
     static void respawn_player(entt::registry &registry, player &p, position &pos, velocity &vel) noexcept {
         p.state = player::state::start;
         vel.x = 0.0f;
@@ -285,6 +340,8 @@ namespace clayborne {
         
         pos.x = p.respawn_x;
         pos.y = p.respawn_y;
+
+        spawn_respawn_vfx(registry, pos);
     }
 
     entt::entity init_player(
@@ -511,6 +568,8 @@ namespace clayborne {
 
                 // TODO: Replace with audio event sink
                 (void)play_sound(registry, sounds, mixer, "jump"_hs, 0.2f, false);
+
+                spawn_jump_cloud_vfx(registry, player, position);
             }
 
             // Reset jump buffer timer on ground
