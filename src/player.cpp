@@ -723,6 +723,8 @@ namespace clayborne {
                         player.head_throw_timer = player::head_throw_duration;
                         velocity.y = 0.0f;
                     }
+
+                    (void)play_sound(registry, sounds, mixer, "throw"_hs, 0.3f, false);
                 }
                 // Detonate head
                 else {

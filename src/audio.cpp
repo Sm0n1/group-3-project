@@ -42,6 +42,10 @@ namespace clayborne {
             return false;
         }
 
+        if (!sounds.load("throw"_hs, "data/throw.wav", mixer).first->second) {
+            return false;
+        }
+
         if (!sounds.load("ambiance"_hs, "data/ambiance.wav", mixer).first->second) {
             return false;
         }
