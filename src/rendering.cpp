@@ -137,7 +137,7 @@ namespace clayborne {
 
                 const Uint8 alpha{ static_cast<Uint8>(vignette * 255.0f) };
 
-                pixels[y * (pitch / 4) + x] = (alpha << 24);
+                pixels[y * (pitch / 4) + x] = static_cast<Uint32>(alpha);
                 // auto pixel = pixels[y * (pitch / 4) + x];
                 // SDL_Log("x = %d, y = %d, pixel = %3d|%3d|%3d|%3d", x, y, pixel >> 24, (pixel << 8) >> 24, (pixel << 16) >> 24, (pixel << 24) >> 24);
             }
