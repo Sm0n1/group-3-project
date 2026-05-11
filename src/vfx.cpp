@@ -9,7 +9,6 @@ namespace clayborne {
 			v.age++;
 			if (v.age > v.lifespan) {
 				registry.destroy(e);
-				SDL_Log("Effect destroyed");
 			}
 		}
 	}

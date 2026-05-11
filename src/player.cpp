@@ -295,6 +295,7 @@ namespace clayborne {
 
         auto &sprite_renderer { registry.emplace<struct sprite_renderer>(respawn_entity) };
         sprite_renderer.texture = "resurrect"_hs;
+        sprite_renderer.z = 2;
 
         auto &sprite_animator { registry.emplace<struct sprite_animator>(respawn_entity) };
         sprite_animator.animation = "resurrect"_hs;
@@ -532,6 +533,26 @@ namespace clayborne {
 
                 // TODO: Replace with audio event sink
                 (void)play_sound(registry, sounds, mixer, "jump"_hs, 1.0f, false);
+
+                // Spawn dust cloud
+                auto dust_entity{ registry.create() };
+
+                auto& respawn_vfx{ registry.emplace<struct vfx>(dust_entity) };
+                respawn_vfx.age = 0;
+                respawn_vfx.lifespan = 30; //TODO lookup the correct number of frames
+
+                auto& sprite_renderer{ registry.emplace<struct sprite_renderer>(dust_entity) };
+                sprite_renderer.texture = "dust"_hs;
+                sprite_renderer.z = 2;
+
+                auto& sprite_animator{ registry.emplace<struct sprite_animator>(dust_entity) };
+                sprite_animator.animation = "dust"_hs;
+                sprite_animator.current_frame = 0;
+                sprite_animator.is_looping = false;
+
+                auto& respawn_pos{ registry.emplace<struct position>(dust_entity) };
+                respawn_pos.x = position.x - 8.0f;
+                respawn_pos.y = position.y;
             }
 
             // Reset jump buffer timer on ground
