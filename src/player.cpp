@@ -15,6 +15,7 @@
 #include "utils.hpp"
 #include "interactables.hpp"
 #include "head.hpp"
+#include "vfx.hpp"
 
 using entt::literals::operator""_hs;
 
@@ -285,6 +286,26 @@ namespace clayborne {
         
         pos.x = p.respawn_x;
         pos.y = p.respawn_y;
+
+        auto respawn_entity{ registry.create() };
+
+        auto &respawn_vfx{ registry.emplace<struct vfx>(respawn_entity) };
+        respawn_vfx.age = 0;
+        respawn_vfx.lifespan = 30; //TODO lookup the correct number of frames
+
+        auto &sprite_renderer { registry.emplace<struct sprite_renderer>(respawn_entity) };
+        sprite_renderer.texture = "resurrect"_hs;
+
+        auto &sprite_animator { registry.emplace<struct sprite_animator>(respawn_entity) };
+        sprite_animator.animation = "resurrect"_hs;
+        sprite_animator.current_frame = 0;
+        sprite_animator.is_looping = false;
+
+        auto& respawn_pos{ registry.emplace<struct position>(respawn_entity) };
+        respawn_pos.x = pos.x - 8.0f;
+        respawn_pos.y = pos.y - 12.0f;
+        
+
     }
 
     entt::entity init_player(

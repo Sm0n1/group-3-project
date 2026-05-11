@@ -18,6 +18,7 @@
 #include "sprite.hpp"
 #include "rendering.hpp"
 #include "sdl.hpp"
+#include "vfx.hpp"
 
 struct gamestate {
     SDL_Window *window{ nullptr };
@@ -226,6 +227,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
         clayborne::toggle_doors(gs.registry);
         clayborne::update_camera(gs.camera, gs.player, gs.registry);
         clayborne::update_audio(gs.registry, gs.camera);  
+        clayborne::update_effects(gs.registry);
         clayborne::animate_player(gs.player, gs.registry, gs.animations);
         clayborne::animate_sprites(gs.registry, gs.animations);
         gs.accumulated_time -= dt_ns;
