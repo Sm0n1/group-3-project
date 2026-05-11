@@ -510,7 +510,7 @@ namespace clayborne {
                 player.jump_boost_speed = velocity.y;
 
                 // TODO: Replace with audio event sink
-                (void)play_sound(registry, sounds, mixer, "jump"_hs, 0.5f, false);
+                (void)play_sound(registry, sounds, mixer, "jump"_hs, 0.2f, false);
             }
 
             // Reset jump buffer timer on ground

@@ -92,7 +92,7 @@ namespace clayborne {
         }
 
         // TODO: Replace with audio event sink
-        (void)play_sound(registry, sounds, mixer, "head_explosion"_hs, 1.0f, false);
+        (void)play_sound(registry, sounds, mixer, "head_explosion"_hs, 0.2f, false);
     }
 
     static inline void update_head_in_start_state(
