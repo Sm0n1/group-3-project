@@ -318,30 +318,48 @@ namespace clayborne {
         respawn_pos.y = player_position.y - 12.0f;
     }
 
-    static void respawn_player(entt::registry &registry, player &p, position &pos, velocity &vel) noexcept {
-        p.state = player::state::start;
-        vel.x = 0.0f;
-        vel.y = 0.0f;
+    static void respawn_player(
+        entt::registry &registry,
+        struct player &player,
+        struct position &position,
+        struct velocity &velocity,
+        struct collider &collider,
+        struct sprite_renderer &sprite_renderer,
+        audio_cache &sounds,
+        MIX_Mixer *mixer
+    ) noexcept {
+        player.state = player::state::start;
+        velocity.x = 0.0f;
+        velocity.y = 0.0f;
 
         // Respawn on head if it is on clay
         const auto head_entity{ registry.view<struct head, struct position, struct collider>().front() };
         if (head_entity != entt::null) {
-            auto head_position{ registry.get<const position>(head_entity) };
-            auto head_collider{ registry.get<const collider>(head_entity) };
+            auto head_position{ registry.get<const struct position>(head_entity) };
+            auto head_collider{ registry.get<const struct collider>(head_entity) };
             auto below{ head_position };
             below.y += 1.0f;
             if (overlap_any<clay>(registry, head_entity, below, head_collider)) {
                 registry.destroy(head_entity);
-                pos.x = head_position.x;
-                pos.y = head_position.y;
+                position.x = head_position.x;
+                position.y = head_position.y;
                 return;
             }
         }
         
-        pos.x = p.respawn_x;
-        pos.y = p.respawn_y;
+        position.x = player.respawn_x;
+        position.y = player.respawn_y;
 
-        spawn_respawn_vfx(registry, pos);
+        // We handle head regrowth here as well just to avoid overlapping audio
+        if (!player.is_head_attached && player.is_head_detonated) {
+            player.is_head_attached = true;
+            position.y -= player::hitbox_height - player::headless_hitbox_height;
+            collider.h = player::hitbox_height;
+            set_player_tall(true, sprite_renderer);
+        }
+
+        (void)play_sound(registry, sounds, mixer, "death"_hs, 0.3f, false);
+        spawn_respawn_vfx(registry, position);
     }
 
     entt::entity init_player(
@@ -403,7 +421,7 @@ namespace clayborne {
         // ----------------------------- //
 
         if (player.state == player::state::dead) {
-            respawn_player(registry, player, position, velocity);
+            respawn_player(registry, player, position, velocity, collider, renderer, sounds, mixer);
         }
 
         // Check if grounded
@@ -591,6 +609,7 @@ namespace clayborne {
                 position.y -= player::hitbox_height - player::headless_hitbox_height;
                 collider.h = player::hitbox_height;
                 set_player_tall(true, renderer);
+                (void)play_sound(registry, sounds, mixer, "death"_hs, 0.3f, false);
                 spawn_respawn_vfx(registry, position);
             }
         }
