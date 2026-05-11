@@ -591,7 +591,7 @@ namespace clayborne {
                 position.y -= player::hitbox_height - player::headless_hitbox_height;
                 collider.h = player::hitbox_height;
                 set_player_tall(true, renderer);
-                SDL_Log("Player regrew head");
+                spawn_respawn_vfx(registry, position);
             }
         }
 
