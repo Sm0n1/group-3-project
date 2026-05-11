@@ -552,7 +552,13 @@ namespace clayborne {
 
                 auto& respawn_pos{ registry.emplace<struct position>(dust_entity) };
                 respawn_pos.x = position.x - 8.0f;
-                respawn_pos.y = position.y;
+                if (player.is_head_attached) {
+                    respawn_pos.y = position.y + 3.0f;
+                }
+                else {
+                    respawn_pos.y = position.y;
+                }
+                
             }
 
             // Reset jump buffer timer on ground
