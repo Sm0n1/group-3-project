@@ -42,6 +42,10 @@ namespace clayborne {
             return false;
         }
 
+        if (!sounds.load("music"_hs, "data/clayborne.wav", mixer).first->second) {
+            return false;
+        }
+
         return true;
     }
 
@@ -74,19 +78,28 @@ namespace clayborne {
             return entt::null;
         }
 
-        if (!MIX_SetTrackLoops(track, is_looping ? -1 : 1)) {
-            SDL_Log("MIX set track loops failed: %s", SDL_GetError());
+        auto options{ SDL_CreateProperties() };
+        if (!options) {
+            SDL_Log("SDL create properties failed for audio: %s", SDL_GetError());
             MIX_DestroyTrack(track);
             return entt::null;
         }
 
-        MIX_PlayTrack(track, 0);
+        if (!SDL_SetNumberProperty(options, MIX_PROP_PLAY_LOOPS_NUMBER, is_looping ? -1 : 0)) {
+            SDL_Log("SDL set audio looping property failed: %s", SDL_GetError());
+            MIX_DestroyTrack(track);
+            SDL_DestroyProperties(options);
+            return entt::null;
+        }
 
-        if (!MIX_PlayTrack(track, 0)) {
+        if (!MIX_PlayTrack(track, options)) {
             SDL_Log("MIX play track failed: %s", SDL_GetError());
             MIX_DestroyTrack(track);
+            SDL_DestroyProperties(options);
             return entt::null;
         }
+
+        SDL_DestroyProperties(options);
 
         auto entity{ registry.create() };
 
