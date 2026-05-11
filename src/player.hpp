@@ -96,6 +96,7 @@ namespace clayborne {
         bool is_on_clay{ false }; // False if not grounded
         bool is_head_attached{ false }; //
         bool is_head_detonated{ true }; //
+        bool is_head_caught{ false }; //
         facing facing{ facing::right }; //
         state state{ state::start }; //
 
@@ -149,6 +150,13 @@ namespace clayborne {
         // TODO: Replace with events
         MIX_Mixer *mixer
     ) noexcept;
+
+    void player_head_catch_sfx(
+        entt::entity player_entity,
+        entt::registry &registry,
+        audio_cache &sounds,
+        MIX_Mixer *mixer
+    );
 
     void animate_player(
         entt::entity player_entity,

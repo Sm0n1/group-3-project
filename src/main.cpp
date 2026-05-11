@@ -229,6 +229,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
         clayborne::update_camera(gs.camera, gs.player, gs.registry);
         clayborne::update_audio(gs.registry, gs.camera);  
         clayborne::update_effects(gs.registry);
+        clayborne::player_head_catch_sfx(gs.player, gs.registry, gs.sounds, gs.mixer);
         clayborne::animate_player(gs.player, gs.registry, gs.animations);
         clayborne::animate_sprites(gs.registry, gs.animations);
         gs.accumulated_time -= dt_ns;

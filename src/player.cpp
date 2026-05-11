@@ -160,6 +160,7 @@ namespace clayborne {
         if (registry.any_of<struct head>(collision.other) && collision.normal.y > 0.0f) {
             player.is_head_attached = true;
             player.is_head_detonated = true;
+            player.is_head_caught = true;
 
             const auto head_position{ registry.get<const clayborne::position>(collision.other) };
 
@@ -739,6 +740,21 @@ namespace clayborne {
         player.jump_just_pressed = false;
         player.head_just_pressed = false;
         // ------------------------ //
+    }
+
+    void player_head_catch_sfx(
+        entt::entity player_entity,
+        entt::registry &registry,
+        audio_cache &sounds,
+        MIX_Mixer *mixer
+    ) {
+        auto &player{ registry.get<clayborne::player>(player_entity) };
+
+        if (player.is_head_caught) {
+            play_sound(registry, sounds, mixer, "catch"_hs, 0.3f, false);
+        }
+
+        player.is_head_caught = false;
     }
 
     void animate_player(
