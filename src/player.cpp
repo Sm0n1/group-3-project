@@ -532,7 +532,7 @@ namespace clayborne {
                 player.jump_boost_speed = velocity.y;
 
                 // TODO: Replace with audio event sink
-                (void)play_sound(registry, sounds, mixer, "jump"_hs, 1.0f, false);
+                (void)play_sound(registry, sounds, mixer, "jump"_hs, 0.5f, false);
 
                 // Spawn dust cloud
                 auto dust_entity{ registry.create() };

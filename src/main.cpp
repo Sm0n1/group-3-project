@@ -104,7 +104,8 @@ try {
     if (!clayborne::load_debug_sounds(gs.sounds, gs.mixer)) {
         return SDL_APP_FAILURE;
     }
-    clayborne::play_sound(gs.registry, gs.sounds, gs.mixer, entt::hashed_string{ "ambiance" }, 1.0, true);
+    clayborne::play_sound(gs.registry, gs.sounds, gs.mixer, entt::hashed_string{ "ambiance" }, 1.5, true);
+    clayborne::play_sound(gs.registry, gs.sounds, gs.mixer, entt::hashed_string{ "music" }, 1.0, true);
 
     if (!clayborne::load_player_data(gs.textures, gs.renderer, gs.animations)) {
         return SDL_APP_FAILURE;
