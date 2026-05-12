@@ -24,22 +24,23 @@
 			"dir": "nw"
 		},
 		{
-			"levelIid": "aff93c50-21a0-11f1-92a0-07e6fb9ff776",
+			"levelIid": "8c3f6b50-48b0-11f1-b87a-a1966226134f",
 			"dir": "w"
 		}
 	],
 	"customFields" : {},
 	"layers": [
+		"Sprite_Tiles.png",
 		"IntGrid.png"
 	],
 	"entities": {
 		"Door": [
 			{
 				"id": "Door",
-				"iid": "3de799e0-21a0-11f1-8b4b-cd28a66d0c6e",
+				"iid": "43fe96c0-48b0-11f1-b4eb-d72597959dde",
 				"layer": "Entities",
-				"x": 8,
-				"y": 136,
+				"x": 16,
+				"y": 48,
 				"width": 8,
 				"height": 8,
 				"color": 14120515,
@@ -47,10 +48,10 @@
 			},
 			{
 				"id": "Door",
-				"iid": "3e5799c0-21a0-11f1-8b4b-fd4c94a9d461",
+				"iid": "446f59f0-48b0-11f1-b4eb-a7cea4caeccf",
 				"layer": "Entities",
-				"x": 8,
-				"y": 120,
+				"x": 24,
+				"y": 48,
 				"width": 8,
 				"height": 8,
 				"color": 14120515,
@@ -58,23 +59,36 @@
 			},
 			{
 				"id": "Door",
-				"iid": "3fbe55b0-21a0-11f1-8b4b-593eafab523f",
+				"iid": "4558f6a0-48b0-11f1-b4eb-f74bb28ab8c5",
 				"layer": "Entities",
-				"x": 8,
-				"y": 128,
+				"x": 32,
+				"y": 48,
 				"width": 8,
 				"height": 8,
 				"color": 14120515,
 				"customFields" : {}
 			}
 		],
+		"Sensor": [
+			{
+				"id": "Sensor",
+				"iid": "517d7be0-48b0-11f1-b4eb-cb01393687ee",
+				"layer": "Entities",
+				"x": 32,
+				"y": 72,
+				"width": 8,
+				"height": 8,
+				"color": 15389866,
+				"customFields" : {}
+			}
+		],
 		"Player": [
 			{
 				"id": "Player",
-				"iid": "5f3d8860-21a0-11f1-8b4b-113ae475a246",
+				"iid": "eaca3a40-48b0-11f1-b4eb-7b5bd7097dbf",
 				"layer": "Entities",
-				"x": 48,
-				"y": 144,
+				"x": 24,
+				"y": 152,
 				"width": 8,
 				"height": 8,
 				"color": 12470831,

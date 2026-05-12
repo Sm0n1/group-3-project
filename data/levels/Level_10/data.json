@@ -1,32 +1,141 @@
 {
 	"identifier": "Level_10",
-	"uniqueIdentifer": "6dccb490-21a0-11f1-92a0-c9e38e4de1f1",
-	"x": -960,
-	"y": -184,
+	"uniqueIdentifer": "c3c158f0-21a0-11f1-92a0-a30b1ccfced9",
+	"x": -640,
+	"y": -368,
 	"width": 320,
 	"height": 184,
 	"bgColor": "#696A79",
 	"neighbourLevels": [
 		{
-			"levelIid": "9ae2fe70-21a0-11f1-9904-f585badd8ac6",
-			"dir": "s"
-		},
-		{
-			"levelIid": "7facfc30-21a0-11f1-92a0-27a8165637c0",
-			"dir": "e"
-		},
-		{
-			"levelIid": "aff93c50-21a0-11f1-92a0-07e6fb9ff776",
+			"levelIid": "bc9e8e80-21a0-11f1-92a0-d7f47e982b9d",
 			"dir": "se"
 		},
 		{
-			"levelIid": "c3c158f0-21a0-11f1-92a0-a30b1ccfced9",
+			"levelIid": "7facfc30-21a0-11f1-92a0-27a8165637c0",
+			"dir": "s"
+		},
+		{
+			"levelIid": "811dca40-21a0-11f1-92a0-85951d21af9b",
+			"dir": "e"
+		},
+		{
+			"levelIid": "2297f400-21a0-11f1-92a0-711a5d02a899",
 			"dir": "ne"
+		},
+		{
+			"levelIid": "c38472d0-21a0-11f1-92a0-6545e7e3d51a",
+			"dir": "n"
 		}
 	],
 	"customFields" : {},
 	"layers": [
+		"Sprite_Tiles.png",
 		"IntGrid.png"
 	],
-	"entities" : {}
+	"entities": {
+		"Sensor": [
+			{
+				"id": "Sensor",
+				"iid": "935ab430-21a0-11f1-9767-f1d31c8a6c49",
+				"layer": "Entities",
+				"x": 120,
+				"y": 144,
+				"width": 8,
+				"height": 8,
+				"color": 15389866,
+				"customFields" : {}
+			}
+		],
+		"Door": [
+			{
+				"id": "Door",
+				"iid": "948eee70-21a0-11f1-9767-c3b37d5f1da4",
+				"layer": "Entities",
+				"x": 208,
+				"y": 152,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "94d45be0-21a0-11f1-9767-eb175ae2c56f",
+				"layer": "Entities",
+				"x": 200,
+				"y": 152,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "952eff00-21a0-11f1-9767-e12341165a7d",
+				"layer": "Entities",
+				"x": 192,
+				"y": 152,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "95768f50-21a0-11f1-9767-01649a0e38a5",
+				"layer": "Entities",
+				"x": 184,
+				"y": 152,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "96ab8ce0-21a0-11f1-9767-fb733f1f2da4",
+				"layer": "Entities",
+				"x": 176,
+				"y": 152,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "e9908f00-21a0-11f1-9767-2b56a75620b6",
+				"layer": "Entities",
+				"x": 232,
+				"y": 80,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "e9c35ed0-21a0-11f1-9767-2325c213e24b",
+				"layer": "Entities",
+				"x": 240,
+				"y": 80,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "ea542d20-21a0-11f1-9767-bf369e02c2c6",
+				"layer": "Entities",
+				"x": 248,
+				"y": 80,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			}
+		]
+	}
 }
