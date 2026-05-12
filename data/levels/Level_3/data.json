@@ -1,77 +1,45 @@
 {
 	"identifier": "Level_3",
-	"uniqueIdentifer": "9ae2fe70-21a0-11f1-9904-f585badd8ac6",
-	"x": -960,
-	"y": 0,
+	"uniqueIdentifer": "0719f420-21a0-11f1-9904-273a2af25a62",
+	"x": 960,
+	"y": -368,
 	"width": 320,
 	"height": 184,
 	"bgColor": "#696A79",
 	"neighbourLevels": [
 		{
-			"levelIid": "7facfc30-21a0-11f1-92a0-27a8165637c0",
-			"dir": "ne"
+			"levelIid": "f0acbf30-21a0-11f1-8b4b-8fbb33464376",
+			"dir": "sw"
+		},
+		{
+			"levelIid": "4a7f35d0-21a0-11f1-8b4b-9f4a39a4de22",
+			"dir": "w"
+		},
+		{
+			"levelIid": "72017080-21a0-11f1-92a0-1bd64d488568",
+			"dir": "s"
 		},
 		{
 			"levelIid": "aff93c50-21a0-11f1-92a0-07e6fb9ff776",
-			"dir": "e"
+			"dir": "n"
 		},
 		{
 			"levelIid": "6dccb490-21a0-11f1-92a0-c9e38e4de1f1",
-			"dir": "n"
+			"dir": "e"
+		},
+		{
+			"levelIid": "08ec7370-48b0-11f1-b87a-f1267082a9e1",
+			"dir": "ne"
+		},
+		{
+			"levelIid": "737223c0-48b0-11f1-b4eb-2bb2daf85259",
+			"dir": "nw"
 		}
 	],
 	"customFields" : {},
 	"layers": [
+		"Sprite_Tiles.png",
 		"IntGrid.png"
 	],
-	"entities": {
-		"Door": [
-			{
-				"id": "Door",
-				"iid": "d4af7110-21a0-11f1-9904-950cb7554d3c",
-				"layer": "Entities",
-				"x": 80,
-				"y": 32,
-				"width": 8,
-				"height": 8,
-				"color": 14120515,
-				"customFields" : {}
-			},
-			{
-				"id": "Door",
-				"iid": "d4f46950-21a0-11f1-9904-395a8cfa45ac",
-				"layer": "Entities",
-				"x": 88,
-				"y": 32,
-				"width": 8,
-				"height": 8,
-				"color": 14120515,
-				"customFields" : {}
-			},
-			{
-				"id": "Door",
-				"iid": "d5332000-21a0-11f1-9904-c93b0066a29a",
-				"layer": "Entities",
-				"x": 96,
-				"y": 32,
-				"width": 8,
-				"height": 8,
-				"color": 14120515,
-				"customFields" : {}
-			}
-		],
-		"Sensor": [
-			{
-				"id": "Sensor",
-				"iid": "707067e0-21a0-11f1-92a0-4bb5f87d8f0f",
-				"layer": "Entities",
-				"x": 128,
-				"y": 120,
-				"width": 8,
-				"height": 8,
-				"color": 15389866,
-				"customFields" : {}
-			}
-		]
-	}
+	"entities" : {}
 }

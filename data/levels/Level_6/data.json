@@ -1,48 +1,185 @@
 {
 	"identifier": "Level_6",
-	"uniqueIdentifer": "bc9e8e80-21a0-11f1-92a0-d7f47e982b9d",
-	"x": -320,
-	"y": -184,
+	"uniqueIdentifer": "7facfc30-21a0-11f1-92a0-27a8165637c0",
+	"x": 0,
+	"y": -368,
 	"width": 320,
 	"height": 184,
 	"bgColor": "#696A79",
 	"neighbourLevels": [
 		{
 			"levelIid": "fd95cc70-21a0-11f1-97ad-f16fef0c83a8",
-			"dir": "s"
-		},
-		{
-			"levelIid": "f0acbf30-21a0-11f1-8b4b-8fbb33464376",
 			"dir": "se"
 		},
 		{
-			"levelIid": "4a7f35d0-21a0-11f1-8b4b-9f4a39a4de22",
+			"levelIid": "bc9e8e80-21a0-11f1-92a0-d7f47e982b9d",
 			"dir": "e"
 		},
 		{
-			"levelIid": "7facfc30-21a0-11f1-92a0-27a8165637c0",
-			"dir": "w"
-		},
-		{
 			"levelIid": "811dca40-21a0-11f1-92a0-85951d21af9b",
-			"dir": "n"
-		},
-		{
-			"levelIid": "aff93c50-21a0-11f1-92a0-07e6fb9ff776",
-			"dir": "sw"
+			"dir": "ne"
 		},
 		{
 			"levelIid": "c3c158f0-21a0-11f1-92a0-a30b1ccfced9",
-			"dir": "nw"
+			"dir": "n"
 		},
 		{
-			"levelIid": "498d7c40-21a0-11f1-92a0-79fb24d7ec41",
-			"dir": "ne"
+			"levelIid": "8c3f6b50-48b0-11f1-b87a-a1966226134f",
+			"dir": "s"
 		}
 	],
 	"customFields" : {},
 	"layers": [
+		"Sprite_Tiles.png",
 		"IntGrid.png"
 	],
-	"entities" : {}
+	"entities": {
+		"Sensor": [
+			{
+				"id": "Sensor",
+				"iid": "0ea4de80-21a0-11f1-92a0-bdc346c52a0b",
+				"layer": "Entities",
+				"x": 240,
+				"y": 120,
+				"width": 8,
+				"height": 8,
+				"color": 15389866,
+				"customFields" : {}
+			}
+		],
+		"Door": [
+			{
+				"id": "Door",
+				"iid": "0f9f6b20-21a0-11f1-92a0-8f87c9d7d865",
+				"layer": "Entities",
+				"x": 136,
+				"y": 104,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "0fe65f30-21a0-11f1-92a0-7d043bfe122a",
+				"layer": "Entities",
+				"x": 136,
+				"y": 112,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "1020d020-21a0-11f1-92a0-9fd365b8e489",
+				"layer": "Entities",
+				"x": 136,
+				"y": 120,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "2c5063a0-21a0-11f1-92a0-6fe4caf35035",
+				"layer": "Entities",
+				"x": 56,
+				"y": 128,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "2c83f6c0-21a0-11f1-92a0-475d58d3cd13",
+				"layer": "Entities",
+				"x": 64,
+				"y": 128,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "2cd0b730-21a0-11f1-92a0-53117fd446cc",
+				"layer": "Entities",
+				"x": 72,
+				"y": 128,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "2d0311d0-21a0-11f1-92a0-75f68b7003fc",
+				"layer": "Entities",
+				"x": 80,
+				"y": 128,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "369af8c0-21a0-11f1-92a0-839f30fab8e5",
+				"layer": "Entities",
+				"x": 16,
+				"y": 128,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "37292f00-21a0-11f1-92a0-71c8e4354af0",
+				"layer": "Entities",
+				"x": 24,
+				"y": 128,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "37652690-21a0-11f1-92a0-a7be1808441c",
+				"layer": "Entities",
+				"x": 32,
+				"y": 128,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "37b78c50-21a0-11f1-92a0-ffe02138ac42",
+				"layer": "Entities",
+				"x": 40,
+				"y": 128,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "37f64300-21a0-11f1-92a0-35f5381f8e69",
+				"layer": "Entities",
+				"x": 48,
+				"y": 128,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			}
+		]
+	}
 }

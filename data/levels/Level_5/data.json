@@ -1,27 +1,48 @@
 {
 	"identifier": "Level_5",
-	"uniqueIdentifer": "72017080-21a0-11f1-92a0-1bd64d488568",
+	"uniqueIdentifer": "bc9e8e80-21a0-11f1-92a0-d7f47e982b9d",
 	"x": 320,
-	"y": 0,
+	"y": -368,
 	"width": 320,
 	"height": 184,
 	"bgColor": "#696A79",
 	"neighbourLevels": [
 		{
+			"levelIid": "fd95cc70-21a0-11f1-97ad-f16fef0c83a8",
+			"dir": "s"
+		},
+		{
 			"levelIid": "f0acbf30-21a0-11f1-8b4b-8fbb33464376",
-			"dir": "w"
+			"dir": "se"
 		},
 		{
 			"levelIid": "4a7f35d0-21a0-11f1-8b4b-9f4a39a4de22",
+			"dir": "e"
+		},
+		{
+			"levelIid": "7facfc30-21a0-11f1-92a0-27a8165637c0",
+			"dir": "w"
+		},
+		{
+			"levelIid": "811dca40-21a0-11f1-92a0-85951d21af9b",
+			"dir": "n"
+		},
+		{
+			"levelIid": "c3c158f0-21a0-11f1-92a0-a30b1ccfced9",
 			"dir": "nw"
 		},
 		{
-			"levelIid": "0719f420-21a0-11f1-9904-273a2af25a62",
-			"dir": "n"
+			"levelIid": "8c3f6b50-48b0-11f1-b87a-a1966226134f",
+			"dir": "sw"
+		},
+		{
+			"levelIid": "737223c0-48b0-11f1-b4eb-2bb2daf85259",
+			"dir": "ne"
 		}
 	],
 	"customFields" : {},
 	"layers": [
+		"Sprite_Tiles.png",
 		"IntGrid.png"
 	],
 	"entities" : {}
