@@ -175,12 +175,12 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
         // ------------------------ //
         // Temporary Input Handling //
         // ------------------------ //
-        case SDL_SCANCODE_J: player.jump_just_pressed = true; player.jump_pressed = true; break;
-        case SDL_SCANCODE_K: player.head_just_pressed = true; player.head_pressed = true; break;
-        case SDL_SCANCODE_W: player.up = true; break;
-        case SDL_SCANCODE_A: player.left = true; break;
-        case SDL_SCANCODE_S: player.down = true; break;
-        case SDL_SCANCODE_D: player.right = true; break;
+        case SDL_SCANCODE_J: case SDL_SCANCODE_Z: case SDL_SCANCODE_SPACE: player.jump_just_pressed = true; player.jump_pressed = true; break;
+        case SDL_SCANCODE_K: case SDL_SCANCODE_X: case SDL_SCANCODE_LSHIFT: player.head_just_pressed = true; player.head_pressed = true; break;
+        case SDL_SCANCODE_W: case SDL_SCANCODE_UP: player.up = true; break;
+        case SDL_SCANCODE_A: case SDL_SCANCODE_LEFT: player.left = true; break;
+        case SDL_SCANCODE_S: case SDL_SCANCODE_DOWN: player.down = true; break;
+        case SDL_SCANCODE_D: case SDL_SCANCODE_RIGHT: player.right = true; break;
         // ------------------------ //
         default:
             break;
@@ -191,12 +191,12 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
         // Temporary Input Handling //
         // ------------------------ //
         switch (event->key.scancode) {
-        case SDL_SCANCODE_J: player.jump_pressed = false; break;
-        case SDL_SCANCODE_K: player.head_pressed = false; break; 
-        case SDL_SCANCODE_W: player.up = false; break;
-        case SDL_SCANCODE_A: player.left = false; break;
-        case SDL_SCANCODE_S: player.down = false; break;
-        case SDL_SCANCODE_D: player.right = false; break;
+        case SDL_SCANCODE_J: case SDL_SCANCODE_Z: case SDL_SCANCODE_SPACE: player.jump_pressed = false; break;
+        case SDL_SCANCODE_K: case SDL_SCANCODE_X: case SDL_SCANCODE_LSHIFT: player.head_pressed = false; break; 
+        case SDL_SCANCODE_W: case SDL_SCANCODE_UP: player.up = false; break;
+        case SDL_SCANCODE_A: case SDL_SCANCODE_LEFT: player.left = false; break;
+        case SDL_SCANCODE_S: case SDL_SCANCODE_DOWN: player.down = false; break;
+        case SDL_SCANCODE_D: case SDL_SCANCODE_RIGHT: player.right = false; break;
         default: break;
         }
         break;
