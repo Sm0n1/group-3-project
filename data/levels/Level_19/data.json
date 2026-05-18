@@ -1,26 +1,34 @@
 {
 	"identifier": "Level_19",
-	"uniqueIdentifer": "4b827580-48b0-11f1-bdce-c104cbf4459a",
-	"x": 320,
-	"y": 0,
+	"uniqueIdentifer": "d7815890-48b0-11f1-8e42-6d8872a16f7e",
+	"x": 0,
+	"y": -552,
 	"width": 320,
 	"height": 184,
 	"bgColor": "#696A79",
 	"neighbourLevels": [
 		{
-			"levelIid": "fd95cc70-21a0-11f1-97ad-f16fef0c83a8",
-			"dir": "n"
+			"levelIid": "bc9e8e80-21a0-11f1-92a0-d7f47e982b9d",
+			"dir": "se"
 		},
 		{
-			"levelIid": "f0acbf30-21a0-11f1-8b4b-8fbb33464376",
+			"levelIid": "7facfc30-21a0-11f1-92a0-27a8165637c0",
+			"dir": "s"
+		},
+		{
+			"levelIid": "811dca40-21a0-11f1-92a0-85951d21af9b",
+			"dir": "e"
+		},
+		{
+			"levelIid": "2297f400-21a0-11f1-92a0-711a5d02a899",
 			"dir": "ne"
 		},
 		{
-			"levelIid": "8c3f6b50-48b0-11f1-b87a-a1966226134f",
-			"dir": "nw"
+			"levelIid": "ad3c4fd0-48b0-11f1-8e42-e56653989791",
+			"dir": "sw"
 		},
 		{
-			"levelIid": "4e950cb0-48b0-11f1-bdce-4dd12c9a54a8",
+			"levelIid": "08712120-48b0-11f1-8e42-713fa6331cea",
 			"dir": "w"
 		}
 	],
@@ -29,5 +37,65 @@
 		"Sprite_Tiles.png",
 		"IntGrid.png"
 	],
-	"entities" : {}
+	"entities": {
+		"Sensor": [
+			{
+				"id": "Sensor",
+				"iid": "b9957240-48b0-11f1-8e42-856c886fea6b",
+				"layer": "Entities",
+				"x": 232,
+				"y": 144,
+				"width": 8,
+				"height": 8,
+				"color": 15389866,
+				"customFields" : {}
+			}
+		],
+		"Door": [
+			{
+				"id": "Door",
+				"iid": "13cb3f90-48b0-11f1-8e42-650b3cdccff9",
+				"layer": "Entities",
+				"x": 216,
+				"y": 80,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "140a4460-48b0-11f1-8e42-27c5bd25621f",
+				"layer": "Entities",
+				"x": 216,
+				"y": 72,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "144acfd0-48b0-11f1-8e42-2f215c751b53",
+				"layer": "Entities",
+				"x": 216,
+				"y": 64,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "148c6cb0-48b0-11f1-8e42-131d6e8e0595",
+				"layer": "Entities",
+				"x": 216,
+				"y": 56,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			}
+		]
+	}
 }

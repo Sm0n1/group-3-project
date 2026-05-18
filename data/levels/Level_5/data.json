@@ -28,16 +28,16 @@
 			"dir": "n"
 		},
 		{
-			"levelIid": "c3c158f0-21a0-11f1-92a0-a30b1ccfced9",
-			"dir": "nw"
-		},
-		{
 			"levelIid": "8c3f6b50-48b0-11f1-b87a-a1966226134f",
 			"dir": "sw"
 		},
 		{
 			"levelIid": "737223c0-48b0-11f1-b4eb-2bb2daf85259",
 			"dir": "ne"
+		},
+		{
+			"levelIid": "d7815890-48b0-11f1-8e42-6d8872a16f7e",
+			"dir": "nw"
 		}
 	],
 	"customFields" : {},

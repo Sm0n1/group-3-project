@@ -20,10 +20,6 @@
 			"dir": "sw"
 		},
 		{
-			"levelIid": "c3c158f0-21a0-11f1-92a0-a30b1ccfced9",
-			"dir": "w"
-		},
-		{
 			"levelIid": "2297f400-21a0-11f1-92a0-711a5d02a899",
 			"dir": "n"
 		},
@@ -32,12 +28,12 @@
 			"dir": "ne"
 		},
 		{
-			"levelIid": "c38472d0-21a0-11f1-92a0-6545e7e3d51a",
-			"dir": "nw"
-		},
-		{
 			"levelIid": "737223c0-48b0-11f1-b4eb-2bb2daf85259",
 			"dir": "e"
+		},
+		{
+			"levelIid": "d7815890-48b0-11f1-8e42-6d8872a16f7e",
+			"dir": "w"
 		}
 	],
 	"customFields" : {},
@@ -49,9 +45,9 @@
 		"Sensor": [
 			{
 				"id": "Sensor",
-				"iid": "4c643fc0-21a0-11f1-92a0-cf80477cf1df",
+				"iid": "19356c40-48b0-11f1-8e42-5f5a1f17ce57",
 				"layer": "Entities",
-				"x": 56,
+				"x": 88,
 				"y": 96,
 				"width": 8,
 				"height": 8,
@@ -62,10 +58,10 @@
 		"Door": [
 			{
 				"id": "Door",
-				"iid": "e293a6a0-21a0-11f1-92a0-63526cf96c3c",
+				"iid": "778c9390-48b0-11f1-8e42-573f264537b6",
 				"layer": "Entities",
-				"x": 24,
-				"y": 16,
+				"x": 88,
+				"y": 32,
 				"width": 8,
 				"height": 8,
 				"color": 14120515,
@@ -73,9 +69,9 @@
 			},
 			{
 				"id": "Door",
-				"iid": "e2d5dfc0-21a0-11f1-92a0-1794faa7216e",
+				"iid": "77bfffa0-48b0-11f1-8e42-e53f883ee270",
 				"layer": "Entities",
-				"x": 24,
+				"x": 88,
 				"y": 24,
 				"width": 8,
 				"height": 8,
@@ -84,10 +80,10 @@
 			},
 			{
 				"id": "Door",
-				"iid": "e3150ba0-21a0-11f1-92a0-67ba6331183e",
+				"iid": "78045ba0-48b0-11f1-8e42-f391f7333f3d",
 				"layer": "Entities",
-				"x": 24,
-				"y": 32,
+				"x": 88,
+				"y": 16,
 				"width": 8,
 				"height": 8,
 				"color": 14120515,

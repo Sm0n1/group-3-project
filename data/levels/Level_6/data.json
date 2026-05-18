@@ -20,16 +20,20 @@
 			"dir": "ne"
 		},
 		{
-			"levelIid": "c3c158f0-21a0-11f1-92a0-a30b1ccfced9",
-			"dir": "n"
-		},
-		{
 			"levelIid": "8c3f6b50-48b0-11f1-b87a-a1966226134f",
 			"dir": "s"
 		},
 		{
-			"levelIid": "27fe2660-48b0-11f1-8eec-c7db844fd090",
-			"dir": "sw"
+			"levelIid": "d7815890-48b0-11f1-8e42-6d8872a16f7e",
+			"dir": "n"
+		},
+		{
+			"levelIid": "ad3c4fd0-48b0-11f1-8e42-e56653989791",
+			"dir": "w"
+		},
+		{
+			"levelIid": "08712120-48b0-11f1-8e42-713fa6331cea",
+			"dir": "nw"
 		}
 	],
 	"customFields" : {},
@@ -133,7 +137,7 @@
 				"id": "Door",
 				"iid": "369af8c0-21a0-11f1-92a0-839f30fab8e5",
 				"layer": "Entities",
-				"x": 16,
+				"x": 88,
 				"y": 128,
 				"width": 8,
 				"height": 8,
@@ -144,7 +148,7 @@
 				"id": "Door",
 				"iid": "37292f00-21a0-11f1-92a0-71c8e4354af0",
 				"layer": "Entities",
-				"x": 24,
+				"x": 96,
 				"y": 128,
 				"width": 8,
 				"height": 8,
