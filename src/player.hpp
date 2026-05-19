@@ -126,6 +126,7 @@ namespace clayborne {
 
         float respawn_x{ 0.0f };
         float respawn_y{ 0.0f };
+        bool respawn_clay{ false };
     };
 
     bool load_player_data(
