@@ -75,6 +75,28 @@
 				"height": 8,
 				"color": 14120515,
 				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "f12a9010-48b0-11f1-a602-3b69db5e6698",
+				"layer": "Entities",
+				"x": 88,
+				"y": 40,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
+			},
+			{
+				"id": "Door",
+				"iid": "f184be00-48b0-11f1-a602-f34a14ac21dc",
+				"layer": "Entities",
+				"x": 96,
+				"y": 40,
+				"width": 8,
+				"height": 8,
+				"color": 14120515,
+				"customFields" : {}
 			}
 		],
 		"Sensor": [
