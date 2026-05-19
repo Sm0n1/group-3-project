@@ -352,7 +352,7 @@ namespace clayborne {
         position.y = player.respawn_y;
 
         // We handle head regrowth here as well just to avoid overlapping audio
-        if (!player.is_head_attached && player.is_head_detonated) {
+        if (!player.is_head_attached && player.is_head_detonated && player.respawn_clay) {
             player.is_head_attached = true;
             position.y -= player::hitbox_height - player::headless_hitbox_height;
             collider.h = player::hitbox_height;
@@ -446,6 +446,7 @@ namespace clayborne {
                 player.is_on_clay = true;
                 player.respawn_x = position.x;
                 player.respawn_y = position.y;
+                player.respawn_clay = true;
             }
         }
 
